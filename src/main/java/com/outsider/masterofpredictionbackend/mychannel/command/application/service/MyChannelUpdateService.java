@@ -1,8 +1,7 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
 
-import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.UpdateFollowersCountDTO;
-import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.UpdateFollowingCountDTO;
+
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.UpdateProfileDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.*;
