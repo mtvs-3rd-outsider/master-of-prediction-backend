@@ -34,6 +34,20 @@ public class User {
 
     @Column(name = "user_location")
     private Location location;
+    @Column(name = "user_withdrawal")
+    private Boolean isWithdrawal;
+
+    public void setWithdrawal(Boolean withdrawal) {
+        isWithdrawal = withdrawal;
+    }
+
+    public Boolean getWithdrawal() {
+        return isWithdrawal;
+    }
+
+    public User(Boolean isWithdrawal) {
+        this.isWithdrawal = isWithdrawal;
+    }
 
     public User() {
     }
@@ -46,6 +60,7 @@ public class User {
         this.point = new BigDecimal(0);
         this.gender = gender;
         this.location = lcation;
+        this.isWithdrawal = false;
     }
 
     public Long getId() {
