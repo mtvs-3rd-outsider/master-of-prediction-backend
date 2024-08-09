@@ -1,7 +1,7 @@
-package com.outsider.masterofpredictionbackend.mychannelsubscribe.command.domain.aggregate;
+package com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.aggregate;
 
 
-import com.outsider.masterofpredictionbackend.mychannelsubscribe.command.domain.aggregate.embeded.MyChannelSubscribeId;
+import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.aggregate.embeded.MyChannelSubscribeId;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -10,8 +10,8 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "MyChannelSubscribe")
-public class MyChannelSubscribe {
+@Table(name = "ChannelSubscribe")
+public class ChannelSubscribe {
 
         @EmbeddedId
         private MyChannelSubscribeId id;
@@ -24,9 +24,11 @@ public class MyChannelSubscribe {
 
         @Column(name = "is_active", nullable = false)
         private Boolean isActive;
-        public MyChannelSubscribe() {
+
+
+        public ChannelSubscribe() {
         }
-        public MyChannelSubscribe(MyChannelSubscribeId id, LocalDateTime subscriptionDate, LocalDateTime expirationDate, Boolean isActive) {
+        public ChannelSubscribe(MyChannelSubscribeId id, LocalDateTime subscriptionDate, LocalDateTime expirationDate, Boolean isActive) {
                 this.id = id;
                 this.subscriptionDate = subscriptionDate;
                 this.expirationDate = expirationDate;
