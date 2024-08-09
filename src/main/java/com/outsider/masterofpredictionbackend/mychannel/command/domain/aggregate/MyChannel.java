@@ -11,18 +11,13 @@ public class MyChannel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Embedded
     private DisplayName displayName;
 
     @Embedded
     private Bio bio;
-
-    @Embedded
-    private Location location;
-
-    private LocalDate joinDate;
 
     @Embedded
     private Website website;
@@ -33,15 +28,12 @@ public class MyChannel {
     @Embedded
     private User user;
 
-
     public MyChannel() {
     }
 
-    public MyChannel(DisplayName displayName, Bio bio, Location location, LocalDate joinDate, Website website, UserCounts userCounts, User user) {
+    public MyChannel(DisplayName displayName, Bio bio, Website website, UserCounts userCounts, User user) {
         this.displayName = displayName;
         this.bio = bio;
-        this.location = location;
-        this.joinDate = joinDate;
         this.website = website;
         this.userCounts = userCounts;
         this.user = user;
@@ -53,36 +45,27 @@ public class MyChannel {
                 "id=" + id +
                 ", displayName=" + displayName +
                 ", bio=" + bio +
-                ", location=" + location +
-                ", joinDate=" + joinDate +
                 ", website=" + website +
                 ", userCounts=" + userCounts +
                 ", user=" + user +
                 '}';
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public DisplayName getDisplayName() {
-        return displayName;
+    public String getDisplayName() {
+        return displayName.getValue();
     }
 
-    public Bio getBio() {
-        return bio;
+    public String getBio() {
+        return bio.getValue();
     }
 
-    public Location getLocation() {
-        return location;
-    }
 
-    public LocalDate getJoinDate() {
-        return joinDate;
-    }
-
-    public Website getWebsite() {
-        return website;
+    public String getWebsite() {
+        return website.getUrl();
     }
 
     public UserCounts getUserCounts() {
@@ -105,11 +88,6 @@ public class MyChannel {
 
     public void setBio(Bio bio) {
         this.bio = bio;
-    }
-
-    public void setLocation(Location location) {
-
-        this.location = location;
     }
 
     public void setWebsite(Website website) {
