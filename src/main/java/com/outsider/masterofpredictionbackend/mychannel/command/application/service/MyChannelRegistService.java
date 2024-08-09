@@ -1,43 +1,59 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
-
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelRegistRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
-import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.*;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Bio;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.DisplayName;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.User;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.UserCounts;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Website;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * 서비스 클래스는 새로운 채널을 등록하는 기능을 제공합니다.
+ */
 @Service
 public class MyChannelRegistService {
 
-    private MyChannelRepository myChannelRepository;
+    private final MyChannelRepository myChannelRepository;
 
+    /**
+     * MyChannelRegistService의 생성자입니다.
+     *
+     * @param myChannelRepository 채널 정보를 관리하는 리포지토리
+     */
     @Autowired
-    public MyChannelRegistService(MyChannelRepository bookRepository) {
-        this.myChannelRepository = bookRepository;
+    public MyChannelRegistService(MyChannelRepository myChannelRepository) {
+        this.myChannelRepository = myChannelRepository;
     }
 
+    /**
+     * 새로운 채널을 등록합니다.
+     *
+     * 주어진 정보에 따라 새로운 채널을 생성하고, 데이터베이스에 저장합니다.
+     *
+     * @param myChannelRegistRequestDTO 등록할 채널의 정보가 담긴 DTO
+     * @return 등록된 채널의 ID
+     */
     @Transactional
-    public void registMyChannel(MyChannelRegistRequestDTO myChannelRegistRequestDTO) {
+    public Long registMyChannel(MyChannelRegistRequestDTO myChannelRegistRequestDTO) {
 
         MyChannel myChannel = new MyChannel(
-                new DisplayName( myChannelRegistRequestDTO.getDisplayName()),
+                new DisplayName(myChannelRegistRequestDTO.getDisplayName()),
                 new Bio(myChannelRegistRequestDTO.getBio()),
-                new Location( myChannelRegistRequestDTO.getLocation()),
-                myChannelRegistRequestDTO.getJoinDate(),
-                new Website(
-                        myChannelRegistRequestDTO.getWebsite()
-                ),
+                new Website(myChannelRegistRequestDTO.getWebsite()),
                 new UserCounts(
                         myChannelRegistRequestDTO.getFollowersCount(),
                         myChannelRegistRequestDTO.getFollowingCount()
                 ),
-                new User(
-                        myChannelRegistRequestDTO.getUser()
-                )
+                new User(myChannelRegistRequestDTO.getUser())
         );
-        myChannelRepository.save(myChannel);
+
+        MyChannel savedChannel = myChannelRepository.save(myChannel);
+
+        return savedChannel.getId(); // 등록된 채널의 ID 반환
     }
 }

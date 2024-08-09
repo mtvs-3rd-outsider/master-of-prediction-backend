@@ -3,8 +3,9 @@ package com.outsider.masterofpredictionbackend.mychannel.command.application.dto
 import lombok.Data;
 
 @Data
-public class UpdateFollowerCountDTO {
+public class MyChannelUpdateRequestDTO {
     private Long channelId;
-    private Boolean isPlus;
-
+    private String displayName;
+    private String bio;
+    private String website;
 }
