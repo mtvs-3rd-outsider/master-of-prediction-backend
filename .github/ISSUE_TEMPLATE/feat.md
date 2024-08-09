@@ -3,7 +3,7 @@ name: Feat
 about: 새로운 기능
 # title: "[FEAT]"
 labels: Feat
-assignees: ''
+assignees: self
 
 ---
 
