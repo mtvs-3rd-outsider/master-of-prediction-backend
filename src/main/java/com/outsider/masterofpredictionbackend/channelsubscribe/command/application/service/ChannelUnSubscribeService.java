@@ -3,7 +3,7 @@ package com.outsider.masterofpredictionbackend.channelsubscribe.command.applicat
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.dto.ChannelSubscribeRequestDTO;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.aggregate.ChannelSubscribe;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.aggregate.embeded.MyChannelSubscribeId;
-import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.repository.ChannelSubscribeRepository;
+import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.repository.ChannelSubscribeCommandRepository;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.service.UpdateFollowerService;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.service.UpdateFollowingService;
 import jakarta.transaction.Transactional;
@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 
 @Service
 public class ChannelUnSubscribeService {
-    private final ChannelSubscribeRepository repository;
+    private final ChannelSubscribeCommandRepository repository;
     private final UpdateFollowerService updateFollowerService;
     private final UpdateFollowingService updateFollowingService;
     @Autowired
-    public ChannelUnSubscribeService(ChannelSubscribeRepository repository, UpdateFollowerService updateFollowerService, UpdateFollowingService updateFollowingService) {
+    public ChannelUnSubscribeService(ChannelSubscribeCommandRepository repository, UpdateFollowerService updateFollowerService, UpdateFollowingService updateFollowingService) {
         this.repository = repository;
         this.updateFollowerService = updateFollowerService;
         this.updateFollowingService = updateFollowingService;

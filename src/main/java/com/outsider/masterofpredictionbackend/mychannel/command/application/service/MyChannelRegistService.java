@@ -5,9 +5,8 @@ import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Bio;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.DisplayName;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.User;
-import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.UserCounts;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Website;
-import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelRepository;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MyChannelRegistService {
 
-    private final MyChannelRepository myChannelRepository;
+    private final MyChannelCommandRepository myChannelRepository;
 
     /**
      * MyChannelRegistService의 생성자입니다.
@@ -26,7 +25,7 @@ public class MyChannelRegistService {
      * @param myChannelRepository 채널 정보를 관리하는 리포지토리
      */
     @Autowired
-    public MyChannelRegistService(MyChannelRepository myChannelRepository) {
+    public MyChannelRegistService(MyChannelCommandRepository myChannelRepository) {
         this.myChannelRepository = myChannelRepository;
     }
 
@@ -45,10 +44,6 @@ public class MyChannelRegistService {
                 new DisplayName(myChannelRegistRequestDTO.getDisplayName()),
                 new Bio(myChannelRegistRequestDTO.getBio()),
                 new Website(myChannelRegistRequestDTO.getWebsite()),
-                new UserCounts(
-                        myChannelRegistRequestDTO.getFollowersCount(),
-                        myChannelRegistRequestDTO.getFollowingCount()
-                ),
                 new User(myChannelRegistRequestDTO.getUser())
         );
 

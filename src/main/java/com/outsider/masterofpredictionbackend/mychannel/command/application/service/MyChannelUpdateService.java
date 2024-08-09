@@ -5,7 +5,7 @@ import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Bio;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.DisplayName;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Website;
-import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelRepository;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MyChannelUpdateService {
 
-    private final MyChannelRepository myChannelRepository;
+    private final MyChannelCommandRepository myChannelRepository;
 
     /**
      * MyChannelUpdateService의 생성자입니다.
@@ -24,7 +24,7 @@ public class MyChannelUpdateService {
      * @param myChannelRepository 채널 정보를 관리하는 리포지토리
      */
     @Autowired
-    public MyChannelUpdateService(MyChannelRepository myChannelRepository) {
+    public MyChannelUpdateService(MyChannelCommandRepository myChannelRepository) {
         this.myChannelRepository = myChannelRepository;
     }
 

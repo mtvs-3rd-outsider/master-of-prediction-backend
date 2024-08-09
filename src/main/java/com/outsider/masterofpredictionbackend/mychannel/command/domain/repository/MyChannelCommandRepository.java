@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MyChannelRepository extends JpaRepository<MyChannel, Long> {
+public interface MyChannelCommandRepository extends JpaRepository<MyChannel, Long> {
 }
