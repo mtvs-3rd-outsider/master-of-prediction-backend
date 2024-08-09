@@ -27,7 +27,7 @@ public class User {
     private int age;
 
     @Column(name = "user_point")
-    private BigDecimal point;
+    private BigDecimal points;
 
     @Column(name = "user_gender")
     private Gender gender;
@@ -57,7 +57,7 @@ public class User {
         this.password = password;
         this.nickName = nickName;
         this.age = age;
-        this.point = new BigDecimal(0);
+        this.points = new BigDecimal(0);
         this.gender = gender;
         this.location = lcation;
         this.isWithdrawal = false;
@@ -87,8 +87,8 @@ public class User {
         return age;
     }
 
-    public BigDecimal getPoint() {
-        return point;
+    public BigDecimal getPoints() {
+        return points;
     }
 
     public Gender getGender() {
@@ -111,8 +111,8 @@ public class User {
         this.age = age;
     }
 
-    public void setPoint(BigDecimal point) {
-        this.point = point;
+    public void setPoints(BigDecimal point) {
+        this.points = point;
     }
 
     public void setGender(Gender gender) {
@@ -130,7 +130,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", nickName='" + nickName + '\'' +
                 ", age=" + age +
-                ", point=" + point +
+                ", points=" + points +
                 ", gender=" + gender +
                 ", lcation=" + location +
                 '}';
