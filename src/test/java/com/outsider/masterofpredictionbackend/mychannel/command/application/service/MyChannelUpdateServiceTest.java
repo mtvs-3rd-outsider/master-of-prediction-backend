@@ -1,9 +1,9 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelRegistRequestDTO;
-import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelUpdateRequestDTO;
+import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelInfoUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
-import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelRepository;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +24,10 @@ public class MyChannelUpdateServiceTest {
     private MyChannelRegistService myChannelRegistService;
 
     @Autowired
-    private MyChannelUpdateService myChannelUpdateService;
+    private MyChannelInfoUpdateService myChannelUpdateService;
 
     @Autowired
-    private MyChannelRepository myChannelRepository;
+    private MyChannelCommandRepository myChannelRepository;
 
     private Long createdChannelId;
 
@@ -38,8 +38,6 @@ public class MyChannelUpdateServiceTest {
         registDTO.setDisplayName("Original Name");
         registDTO.setBio("Original Bio");
         registDTO.setWebsite("https://original-website.com");
-        registDTO.setFollowersCount(100);
-        registDTO.setFollowingCount(50);
         registDTO.setUser(1L);
 
         createdChannelId = myChannelRegistService.registMyChannel(registDTO);
@@ -65,7 +63,7 @@ public class MyChannelUpdateServiceTest {
         String originalBio = original.getBio();
         String originalWebsite = original.getWebsite();
 
-        MyChannelUpdateRequestDTO updateDTO = new MyChannelUpdateRequestDTO();
+        MyChannelInfoUpdateRequestDTO updateDTO = new MyChannelInfoUpdateRequestDTO();
         updateDTO.setChannelId(createdChannelId);
         updateDTO.setDisplayName(displayName);
         updateDTO.setBio(bio);
