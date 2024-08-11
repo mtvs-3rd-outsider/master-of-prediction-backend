@@ -17,9 +17,4 @@ public class WriterInfo {
      * 댓글 작성자 이름 혹은 닉네임
      * */
     private String writerName;
-
-    /**
-     * 로그인 한 사용자인지 나타내는 필드
-     * */
-    private Boolean isLoginUser;
 }
