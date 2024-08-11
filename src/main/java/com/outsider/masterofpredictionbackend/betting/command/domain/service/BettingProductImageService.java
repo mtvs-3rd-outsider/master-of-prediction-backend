@@ -1,7 +1,7 @@
-package com.outsider.masterofpredictionbackend.command.domain.service;
+package com.outsider.masterofpredictionbackend.betting.command.domain.service;
 
-import com.outsider.masterofpredictionbackend.command.domain.aggregate.BettingProductImage;
-import com.outsider.masterofpredictionbackend.command.domain.repository.BettingProductImageRepository;
+import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductImage;
+import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

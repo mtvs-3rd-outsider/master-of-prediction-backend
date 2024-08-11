@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.command.domain.aggregate;
+package com.outsider.masterofpredictionbackend.betting.command.domain.aggregate;
 
 
 import jakarta.persistence.*;
@@ -18,30 +18,38 @@ public class BettingProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
+    @Column(nullable = false)
     private String title;
 
     @Column
     private String content;
 
     @Column
+    private long userId;
+
+    @Column(nullable = false)
     private long categoryCode;
 
-    @Column
+    @Column(nullable = false)
     private LocalDate deadlineDate;
 
-    @Column
+    @Column(nullable = false)
     private LocalTime deadlineTime;
+
+    @Column(nullable = false)
+    private boolean isBlind;
 
     protected BettingProduct() {
     }
 
-    public BettingProduct(String title, String content, long categoryCode, LocalDate deadlineDate, LocalTime deadlineTime) {
+    public BettingProduct(String title, String content, long userId ,long categoryCode, LocalDate deadlineDate, LocalTime deadlineTime, boolean isBlind) {
         this.title = title;
         this.content = content;
+        this.userId = userId;
         this.categoryCode = categoryCode;
         this.deadlineDate = deadlineDate;
         this.deadlineTime = deadlineTime;
+        this.isBlind = isBlind;
     }
 
 }

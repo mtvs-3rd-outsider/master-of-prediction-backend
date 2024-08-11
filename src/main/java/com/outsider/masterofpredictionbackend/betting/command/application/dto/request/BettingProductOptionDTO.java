@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.command.application.dto;
+package com.outsider.masterofpredictionbackend.betting.command.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

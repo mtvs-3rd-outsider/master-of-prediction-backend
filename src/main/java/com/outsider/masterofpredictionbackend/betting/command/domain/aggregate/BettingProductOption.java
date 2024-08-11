@@ -1,10 +1,12 @@
-package com.outsider.masterofpredictionbackend.command.domain.aggregate;
+package com.outsider.masterofpredictionbackend.betting.command.domain.aggregate;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.ToString;
 
 @Entity
 @Table(name = "betting_product_option")
+@Getter
 public class BettingProductOption {
 
     @Id
