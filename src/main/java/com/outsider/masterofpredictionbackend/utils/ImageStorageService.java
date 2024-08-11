@@ -23,7 +23,7 @@ public class ImageStorageService {
     public static String saveImage(MultipartFile imageFile) throws IOException {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(UUID.randomUUID().toString());
+        sb.append(UUID.randomUUID());
         // uuid와 실제 파일이름 분리용문자
         sb.append(separator);
         sb.append(imageFile.getOriginalFilename());
@@ -38,6 +38,7 @@ public class ImageStorageService {
     public static void deleteImage(String fileName) {
         File file = new File(uploadDir + fileName);
         if (file.exists()) {
+            // TODO: 파일 삭제 시 예외처리
             file.delete();
         }
     }
