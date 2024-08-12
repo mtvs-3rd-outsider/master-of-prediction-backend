@@ -1,11 +1,21 @@
+server:
+  port: 8080
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: ${SSL_KEY_STORE_PASSWORD}
+    key-store-type: PKCS12
+    key-alias: tomcat
 spring:
+  config:
+    import: optional:file:.env[.properties]
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/menudb
-    username: ohgiraffers
-    password: ohgiraffers
+    url:  ${DB_USER_URL}
+    username: ${DB_USER_NAME}
+    password: ${DB_USER_PASSWORD}
+
   jpa:
-#    generate-ddl: false
+    #    generate-ddl: false
     show-sql: true
     database: mysql
     properties:
@@ -13,3 +23,49 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: create
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+  mail:
+    host: email.master-of-prediction.shop
+    username: admin@master-of-prediction.shop
+    password: ${MAIL_PASSWORD}
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: email.master-of-prediction.shop
+
+jwt:
+  expiration_time: 86400000 #1일
+  secret: ${JWT_SECRET}
+
+google:
+  client:
+    id: ${GOOGLE_CLIENT_ID}
+    secret: ${GOOGLE_CLIENT_SECRET}
+  redirect:
+    uri: ${GOOGLE_REDIRECT_URI}
+firebase:
+  config:
+    path: src/main/resources/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*' # 모든 엔드포인트를 노출
+  endpoint:
+    prometheus:
+      enabled: true # Prometheus 엔드포인트 활성화

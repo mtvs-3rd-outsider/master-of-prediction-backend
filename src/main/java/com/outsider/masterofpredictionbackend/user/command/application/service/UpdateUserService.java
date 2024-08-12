@@ -25,8 +25,8 @@ public class UpdateUserService {
         if (userUpdateRequestDTO.getPassword() != null) {
             user.setPassword(userUpdateRequestDTO.getPassword());
         }
-        if (userUpdateRequestDTO.getNickName() != null) {
-            user.setNickName(userUpdateRequestDTO.getNickName());
+        if (userUpdateRequestDTO.getUserName() != null) {
+            user.setUsername(userUpdateRequestDTO.getUserName());
         }
         if (userUpdateRequestDTO.getAge() != null) {
             user.setAge(userUpdateRequestDTO.getAge());
