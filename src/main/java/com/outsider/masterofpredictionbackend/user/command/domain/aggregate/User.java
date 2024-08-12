@@ -1,10 +1,10 @@
 package com.outsider.masterofpredictionbackend.user.command.domain.aggregate;
 
-import com.outsider.masterofpredictionbackend.user.command.domain.embeded.Gender;
-import com.outsider.masterofpredictionbackend.user.command.domain.embeded.Location;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.*;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "tbl_user")
@@ -20,8 +20,8 @@ public class User {
     @Column(name = "user_password")
     private String password;
 
-    @Column(name = "user_nickname")
-    private String nickName;
+    @Column(name = "user_name")
+    private String userName;
 
     @Column(name = "user_age")
     private int age;
@@ -36,6 +36,51 @@ public class User {
     private Location location;
     @Column(name = "user_withdrawal")
     private Boolean isWithdrawal;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_authority")
+    private Authority authority;
+    @Embedded
+    private Tier tier;
+    @Embedded
+    private ProviderInfo provider; //어떤 OAuth인지(google, naver 등)
+    private String provideId; // 해당 OAuth 의 key(id)
+    @Column(name = "user_img")
+    private String userImg ;
+
+    public String getUserImg() {
+        return userImg;
+    }
+
+    public void setUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+
+    public LocalDate getJoinDate() {
+        return joinDate;
+    }
+
+    public  Tier getTier() {
+        return tier;
+    }
+
+    public void setTier(Tier tier) {
+        this.tier = tier;
+    }
+
+    public void setJoinDate(LocalDate joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    @Column(name = "join_date")
+    private LocalDate joinDate;
+
+    public String getAuthority() {
+        return authority.name();
+    }
+
+    public void setAuthority(Authority authority) {
+        this.authority = authority;
+    }
 
     public void setWithdrawal(Boolean withdrawal) {
         isWithdrawal = withdrawal;
@@ -51,16 +96,31 @@ public class User {
 
     public User() {
     }
-
-    public User(String email, String password, String nickName, int age, Gender gender, Location lcation) {
+    public User(String email, String password, String userName,Authority authority,ProviderInfo provider ) {
         this.email = email;
         this.password = password;
-        this.nickName = nickName;
-        this.age = age;
+        this.userName = userName;
+        this.tier = new Tier();
         this.points = new BigDecimal(0);
+        this.isWithdrawal = false;
+        this.authority =authority;
+        this.joinDate = LocalDate.now();
+        this.provider = provider;
+    }
+    public User(String email, String password, String userName, int age, Gender gender, Location lcation,Authority authority) {
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+        this.age = age;
         this.gender = gender;
         this.location = lcation;
+        this.tier = new Tier();
+        this.points = new BigDecimal(0);
         this.isWithdrawal = false;
+        this.joinDate = LocalDate.now();
+        this.authority = authority;
+
+
     }
 
     public Long getId() {
@@ -79,8 +139,8 @@ public class User {
         return password;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getUserName() {
+        return userName;
     }
 
     public int getAge() {
@@ -103,8 +163,8 @@ public class User {
         this.password = password;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setUsername(String userName) {
+        this.userName = userName;
     }
 
     public void setAge(int age) {
@@ -128,7 +188,7 @@ public class User {
         return "User{" +
                 "id='" + id + '\'' +
                 ", password='" + password + '\'' +
-                ", nickName='" + nickName + '\'' +
+                ", userName='" + userName + '\'' +
                 ", age=" + age +
                 ", points=" + points +
                 ", gender=" + gender +

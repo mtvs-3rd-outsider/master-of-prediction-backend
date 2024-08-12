@@ -2,8 +2,9 @@ package com.outsider.masterofpredictionbackend.user.command.application.service;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserInfoRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
-import com.outsider.masterofpredictionbackend.user.command.domain.embeded.Gender;
-import com.outsider.masterofpredictionbackend.user.command.domain.embeded.Location;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Gender;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Location;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +33,11 @@ public class DeleteUserServiceTest {
         UserInfoRequestDTO dto = new UserInfoRequestDTO(
                 "test@example.com",
                 "password123",
-                "TestNickName",
+                "TestuserName",
                 25,
                 Gender.MALE,
-                Location.KOREA
+                Location.KOREA,
+                Authority.ROLE_USER
         );
 
         // when

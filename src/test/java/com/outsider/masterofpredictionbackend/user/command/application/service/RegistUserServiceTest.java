@@ -4,8 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserInfoRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
-import com.outsider.masterofpredictionbackend.user.command.domain.embeded.Gender;
-import com.outsider.masterofpredictionbackend.user.command.domain.embeded.Location;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Gender;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Location;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,10 +36,11 @@ class RegistUserServiceTest {
         UserInfoRequestDTO dto = new UserInfoRequestDTO(
                 "test@example.com",
                 "password123",
-                "TestNickName",
+                "TestuserName",
                 25,
                 Gender.MALE,
-                Location.KOREA
+                Location.KOREA,
+                Authority.ROLE_USER
         );
 
         // when
@@ -48,7 +50,7 @@ class RegistUserServiceTest {
         Optional<User> savedUser = userRepository.findByEmail(dto.getEmail());
         assertTrue(savedUser.isPresent());
         assertEquals(dto.getEmail(), savedUser.get().getEmail());
-        assertEquals(dto.getNickName(), savedUser.get().getNickName());
+        assertEquals(dto.getUserName(), savedUser.get().getUserName());
     }
 
     @Test
@@ -57,20 +59,23 @@ class RegistUserServiceTest {
         UserInfoRequestDTO dto1 = new UserInfoRequestDTO(
                 "duplicate@example.com",
                 "password123",
-                "NickName1",
+                "userName1",
                 30,
                 Gender.FEMALE,
-                Location.KOREA
+                Location.KOREA,
+                Authority.ROLE_USER
         );
         registUserService.registUser(dto1);
 
         UserInfoRequestDTO dto2 = new UserInfoRequestDTO(
                 "duplicate@example.com",
                 "password456",
-                "NickName2",
+                "userName2",
                 28,
                 Gender.MALE,
-                Location.USA
+                Location.USA,
+                Authority.ROLE_USER
+
         );
 
         // when & then

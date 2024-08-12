@@ -1,5 +1,6 @@
-package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
+package com.outsider.mop.mychannel.command.application.service;
 
+import com.outsider.masterofpredictionbackend.MasterOfPredictionBackendApplication;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelRegistRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.service.MyChannelRegistService;
 import jakarta.transaction.Transactional;
@@ -12,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.stream.Stream;
 
-@SpringBootTest
+@SpringBootTest(classes = MasterOfPredictionBackendApplication.class)
 @Transactional
 public class MyChannelRegistServiceTest {
 
