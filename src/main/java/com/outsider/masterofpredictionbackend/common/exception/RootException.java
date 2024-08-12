@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Getter
 @Slf4j
-public class RootException extends RuntimeException{
-    private final ErrorCode errorCode;
+public class RootException extends Exception{
+    private ErrorCode errorCode;
     private final String logMessage;
     private final String clientMessage;
     private final Exception cause;
