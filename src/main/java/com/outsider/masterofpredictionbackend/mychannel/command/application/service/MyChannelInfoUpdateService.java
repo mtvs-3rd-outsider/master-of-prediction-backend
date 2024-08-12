@@ -1,11 +1,11 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
-import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelUpdateRequestDTO;
+import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelInfoUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Bio;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.DisplayName;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Website;
-import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelRepository;
+import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
  * 서비스 클래스는 채널의 정보를 업데이트하는 기능을 제공합니다.
  */
 @Service
-public class MyChannelUpdateService {
+public class MyChannelInfoUpdateService {
 
-    private final MyChannelRepository myChannelRepository;
+    private final MyChannelCommandRepository myChannelRepository;
 
     /**
      * MyChannelUpdateService의 생성자입니다.
@@ -24,7 +24,7 @@ public class MyChannelUpdateService {
      * @param myChannelRepository 채널 정보를 관리하는 리포지토리
      */
     @Autowired
-    public MyChannelUpdateService(MyChannelRepository myChannelRepository) {
+    public MyChannelInfoUpdateService(MyChannelCommandRepository myChannelRepository) {
         this.myChannelRepository = myChannelRepository;
     }
 
@@ -38,7 +38,7 @@ public class MyChannelUpdateService {
      * @throws RuntimeException 채널이 존재하지 않는 경우 발생
      */
     @Transactional
-    public void updateMyChannel(MyChannelUpdateRequestDTO dto) {
+    public void updateMyChannel(MyChannelInfoUpdateRequestDTO dto) {
         MyChannel myChannel = myChannelRepository.findById(dto.getChannelId())
                 .orElseThrow(() -> new RuntimeException("Channel not found"));
 

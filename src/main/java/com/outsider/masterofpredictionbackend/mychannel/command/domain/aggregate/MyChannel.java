@@ -31,11 +31,11 @@ public class MyChannel {
     public MyChannel() {
     }
 
-    public MyChannel(DisplayName displayName, Bio bio, Website website, UserCounts userCounts, User user) {
+    public MyChannel(DisplayName displayName, Bio bio, Website website,  User user) {
         this.displayName = displayName;
         this.bio = bio;
         this.website = website;
-        this.userCounts = userCounts;
+        this.userCounts = new UserCounts(0,0);
         this.user = user;
     }
 

@@ -1,4 +1,5 @@
-package com.outsider.masterofpredictionbackend.mychannel.command.application.dto;
+package com.outsider.masterofpredictionbackend.mychannel.query.dto;
+
 
 import lombok.Data;
 
@@ -15,6 +16,10 @@ public class MyChannelRegistRequestDTO {
     private LocalDate joinDate;
 
     private String website;
+
+    private Integer followersCount;
+
+    private Integer followingCount;
 
     private Long user;
 
