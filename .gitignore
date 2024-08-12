@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/src/main/resources/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json
+/src/main/resources/keystore.p12
+/.env
