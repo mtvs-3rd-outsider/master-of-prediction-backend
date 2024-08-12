@@ -27,13 +27,27 @@ public class User {
     private int age;
 
     @Column(name = "user_point")
-    private BigDecimal point;
+    private BigDecimal points;
 
     @Column(name = "user_gender")
     private Gender gender;
 
     @Column(name = "user_location")
     private Location location;
+    @Column(name = "user_withdrawal")
+    private Boolean isWithdrawal;
+
+    public void setWithdrawal(Boolean withdrawal) {
+        isWithdrawal = withdrawal;
+    }
+
+    public Boolean getWithdrawal() {
+        return isWithdrawal;
+    }
+
+    public User(Boolean isWithdrawal) {
+        this.isWithdrawal = isWithdrawal;
+    }
 
     public User() {
     }
@@ -43,9 +57,10 @@ public class User {
         this.password = password;
         this.nickName = nickName;
         this.age = age;
-        this.point = new BigDecimal(0);
+        this.points = new BigDecimal(0);
         this.gender = gender;
         this.location = lcation;
+        this.isWithdrawal = false;
     }
 
     public Long getId() {
@@ -72,8 +87,8 @@ public class User {
         return age;
     }
 
-    public BigDecimal getPoint() {
-        return point;
+    public BigDecimal getPoints() {
+        return points;
     }
 
     public Gender getGender() {
@@ -96,8 +111,8 @@ public class User {
         this.age = age;
     }
 
-    public void setPoint(BigDecimal point) {
-        this.point = point;
+    public void setPoints(BigDecimal point) {
+        this.points = point;
     }
 
     public void setGender(Gender gender) {
@@ -115,7 +130,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", nickName='" + nickName + '\'' +
                 ", age=" + age +
-                ", point=" + point +
+                ", points=" + points +
                 ", gender=" + gender +
                 ", lcation=" + location +
                 '}';
