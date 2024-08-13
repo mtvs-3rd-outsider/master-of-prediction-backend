@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate;
 
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CategoryChannelUserCounts;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CommunityRule;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import jakarta.persistence.*;
 
@@ -25,9 +26,8 @@ public class CategoryChannel {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Lob
-    @Column(name = "COMMUNITY_RULE")
-    private String communityRule;
+    @Embedded
+    private CommunityRule communityRule;
 
     @Embedded
     private CategoryChannelUserCounts categoryChannelUserCounts;
@@ -38,7 +38,7 @@ public class CategoryChannel {
 
     public CategoryChannel() {}
 
-    public CategoryChannel(String displayName, long ownerUserId, String imageUrl, String description, String communityRule, CategoryChannelUserCounts categoryChannelUserCounts, CategoryChannelStatus categoryChannelStatus) {
+    public CategoryChannel(String displayName, long ownerUserId, String imageUrl, String description, CommunityRule communityRule, CategoryChannelUserCounts categoryChannelUserCounts, CategoryChannelStatus categoryChannelStatus) {
         this.displayName = displayName;
         this.ownerUserId = ownerUserId;
         this.imageUrl = imageUrl;
@@ -72,7 +72,7 @@ public class CategoryChannel {
         return description;
     }
 
-    public String getCommunityRule() {
+    public CommunityRule getCommunityRule() {
         return communityRule;
     }
 

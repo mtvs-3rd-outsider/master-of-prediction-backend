@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.categorychannel.command.applicati
 import com.outsider.masterofpredictionbackend.categorychannel.command.application.dto.CategoryChannelRegistRequestDTO;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -24,7 +25,7 @@ class CategoryChannelRegistServiceTest {
                         new CategoryChannelRegistRequestDTO(
                                 "카테고리 채널 이름",
                                 "간단한 설명",
-                                "커뮤니티 룰",
+                                "\"{\\n  \\\"rules\\\": [\\n    {\\n      \\\"number\\\": 1,\\n      \\\"rule\\\": \\\"규칙 1\\\"\\n    },\\n    {\\n      \\\"number\\\": 2,\\n      \\\"rule\\\": \\\"규칙 2\\\"\\n    }\\n  ]\\n}\"",
                                 CategoryChannelStatus.APPLY
                         ),
                         new MockMultipartFile(
@@ -43,6 +44,10 @@ class CategoryChannelRegistServiceTest {
     @Transactional
     void newCategoryChannel(CategoryChannelRegistRequestDTO registRequestDTO, MockMultipartFile file) {
 
-        categoryChannelRegistService.registerCategoryChannel(registRequestDTO, file);
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    categoryChannelRegistService.registerCategoryChannel(registRequestDTO, file);
+                }
+        );
     }
 }

@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.categorychannel.command.domain.se
 
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.CategoryChannel;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CategoryChannelUserCounts;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CommunityRule;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.repository.CategoryChannelRepository;
 import jakarta.transaction.Transactional;
@@ -41,7 +42,7 @@ public class CategoryChannelServiceTests {
                                 99,
                                 "url",
                                 "간단한 설명",
-                                "json 형식 채널 룰",
+                                new CommunityRule("\"\\\"{\\\\n  \\\\\\\"rules\\\\\\\": [\\\\n    {\\\\n      \\\\\\\"number\\\\\\\": 1,\\\\n      \\\\\\\"rule\\\\\\\": \\\\\\\"규칙 1\\\\\\\"\\\\n    },\\\\n    {\\\\n      \\\\\\\"number\\\\\\\": 2,\\\\n      \\\\\\\"rule\\\\\\\": \\\\\\\"규칙 2\\\\\\\"\\\\n    }\\\\n  ]\\\\n}\\\"\","),
                                 new CategoryChannelUserCounts(1),
                                 CategoryChannelStatus.APPLY
                         ), new MockMultipartFile(

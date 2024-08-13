@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.categorychannel.command.applicati
 import com.outsider.masterofpredictionbackend.categorychannel.command.application.dto.CategoryChannelRegistRequestDTO;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.CategoryChannel;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CategoryChannelUserCounts;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CommunityRule;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.service.CategoryChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class CategoryChannelRegistService {
                 99, // ownerUserId
                 "", // image upload 는 도메인 서비스에서 진행
                 registRequestDTO.getDescription(),
-                registRequestDTO.getCommunityRule(),
+                new CommunityRule(registRequestDTO.getCommunityRule()),
                 new CategoryChannelUserCounts(1),
                 CategoryChannelStatus.APPLY
         );
