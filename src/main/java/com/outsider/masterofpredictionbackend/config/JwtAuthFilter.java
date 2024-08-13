@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.config;
 
+import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserService;
 import com.outsider.masterofpredictionbackend.util.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -35,7 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
                 Long userId = jwtUtil.getUserId(token);
 
                 //유저와 토큰 일치 시 userDetails 생성
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId.toString());
+                CustomUserDetail userDetails = (CustomUserDetail) customUserDetailsService.loadUserByUsername(userId.toString());
 
                 if (userDetails != null) {
                     //UserDetsils, Password, Role -> 접근권한 인증 Token 생성

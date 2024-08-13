@@ -83,9 +83,15 @@ public class PrincipalOauthUserService extends DefaultOAuth2UserService {
             {
                 existUser.setUserImg(pictureUrl);
             }
+            return  new CustomUserDetail(existUser, oAuth2User.getAttributes());
+
+        }
+        else
+        {
+            return user.map(value -> new CustomUserDetail(value, oAuth2User.getAttributes())).orElse(null);
+
         }
 
-        return user.map(value -> new CustomUserDetail(value, oAuth2User.getAttributes())).orElse(null);
 
     }
 }

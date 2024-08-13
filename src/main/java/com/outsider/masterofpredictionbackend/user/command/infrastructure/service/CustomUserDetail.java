@@ -40,6 +40,10 @@ public class CustomUserDetail implements UserDetails , OAuth2User {
         return collection;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public String getPassword() {
         return this.user.getPassword();
