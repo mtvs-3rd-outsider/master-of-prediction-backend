@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +25,10 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final UserCommandRepository userCommandRepository;
-    private final PasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder;
 
 
-    public AuthService(JwtUtil jwtUtil, UserCommandRepository userCommandRepository, PasswordEncoder encoder, RedisTemplate<String, Object> redisTemplate) {
+    public AuthService(JwtUtil jwtUtil, UserCommandRepository userCommandRepository, BCryptPasswordEncoder encoder, RedisTemplate<String, Object> redisTemplate) {
         this.jwtUtil = jwtUtil;
         this.userCommandRepository = userCommandRepository;
         this.encoder = encoder;
@@ -40,8 +41,10 @@ public class AuthService {
         Optional<User> user = userCommandRepository.findByEmail(email);
         if(user.isEmpty()) {
             throw new UsernameNotFoundException("이메일이 존재하지 않습니다.");
+        }else
+        {
+            checkWithdrawalStatus(user.get());
         }
-
         // 암호화된 password를 디코딩한 값과 입력한 패스워드 값이 다르면 null 반환
         if(!encoder.matches(password, user.get().getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
@@ -58,5 +61,10 @@ public class AuthService {
     public EmailAuthDTO getEmailAuth(String email) {
         ValueOperations<String, Object> valOperations = redisTemplate.opsForValue();
         return (EmailAuthDTO) valOperations.get(email);
+    }
+    public void checkWithdrawalStatus(User user) {
+        if (user.getWithdrawal()) {
+            user.setWithdrawal(false);
+        }
     }
 }

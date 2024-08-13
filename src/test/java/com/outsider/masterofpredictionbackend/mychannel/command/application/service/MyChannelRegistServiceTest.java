@@ -1,4 +1,4 @@
-package com.outsider.mop.mychannel.command.application.service;
+package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
 import com.outsider.masterofpredictionbackend.MasterOfPredictionBackendApplication;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelRegistRequestDTO;
