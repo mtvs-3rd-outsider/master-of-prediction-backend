@@ -56,6 +56,7 @@ public class Peed {
         this.updatedAt = updatedAt;
         this.viewCount = viewCount;
         this.channelType = channelType;
+
     }
 
     // Constructor using DTO

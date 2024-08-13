@@ -45,5 +45,4 @@ public class PeedDTO {
         return channelType;
     }
 
-
 }
