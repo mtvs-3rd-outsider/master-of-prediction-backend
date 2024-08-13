@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.betting.command.application.contr
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductAndOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
 import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/betting-products")
+@RequestMapping("/api/v1/betting-products")
 @Validated
 public class BettingProductController {
 
@@ -31,7 +32,7 @@ public class BettingProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> save(@Valid @RequestBody BettingProductAndOptionDTO bettingProductAndOptionDTO, BindingResult bindingResult){
+    public ResponseEntity<?> save(@Valid @RequestBody BettingProductAndOptionDTO bettingProductAndOptionDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             bindingResult.getAllErrors().forEach(error -> {
@@ -41,6 +42,12 @@ public class BettingProductController {
             });
             return ResponseEntity.badRequest().build();
         }
-        return new ResponseEntity<>(productCommandService.save(bettingProductAndOptionDTO), HttpStatus.CREATED);
+        Long productId = null;
+        try {
+            productId = productCommandService.save(bettingProductAndOptionDTO);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(productId, HttpStatus.CREATED);
     }
 }

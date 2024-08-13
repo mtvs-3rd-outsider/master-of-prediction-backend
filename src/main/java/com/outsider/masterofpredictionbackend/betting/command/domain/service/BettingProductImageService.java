@@ -22,6 +22,9 @@ public class BettingProductImageService {
     }
 
     public void saveAll(List<BettingProductImage> images) {
+        if (images.isEmpty()) {
+            return;
+        }
         imageRepository.saveAll(images);
     }
 }
