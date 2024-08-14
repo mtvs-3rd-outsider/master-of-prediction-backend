@@ -25,8 +25,8 @@ services:
     container_name: "my-redis"
     ports:
       - "6379:6379"
-    profiles:
-      - cache
+    profiles: ["cache", "required"]
+#      - cache
 
   prometheus:
     image: prom/prometheus:latest
@@ -103,8 +103,8 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio-data:/data
-    profiles:
-      - storage
+    profiles: ["storage", "required"]
+#      - storage
 
   master:
     image: locustio/locust
