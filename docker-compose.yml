@@ -1,0 +1,85 @@
+services:
+  db:
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: forcasthub
+      MYSQL_USER: ohgiraffers
+      MYSQL_PASSWORD: ohgiraffers
+      MYSQL_SSL_CA: ""
+      MYSQL_SSL_CERT: ""
+      MYSQL_SSL_KEY: ""
+      TZ: "Asia/Seoul"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+  redis:
+    restart: always
+    image: "redis:latest"
+    container_name: "my-redis"
+    ports:
+      - "6379:6379"
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./cert:/etc/prometheus/cert
+      - ./prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+  rainloop:
+    container_name: rainloop
+    image: hardware/rainloop:latest
+    ports:
+      - "8020:8888"
+    volumes:
+      - ./data:/rainloop/data
+  mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    hostname: email
+    domainname: master-of-prediction.shop
+    container_name: mailserver
+    env_file:
+      - ./email-server-config/mailserver.env
+
+    ports:
+      - "25:25"    # SMTP  (explicit TLS => STARTTLS)
+      - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
+      - "465:465"  # ESMTP (implicit TLS)
+      - "587:587"  # ESMTP (explicit TLS => STARTTLS)
+      - "993:993"  # IMAP4 (implicit TLS)
+    volumes:
+      - maildata:/var/mail
+      - mailstate:/var/mail-state
+      - maillogs:/var/log/mail
+      - /etc/localtime:/etc/localtime:ro
+      - ./email-server-config/setup.sh:/usr/local/bin/setup.sh
+      - ./email-server-config/config/:/tmp/docker-mailserver/${SELINUX_LABEL}
+      - ./email-server-config/custom-certs:/tmp/dms/custom-certs/
+    restart: always
+    stop_grace_period: 1m
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+
+
+
+volumes:
+  grafana-storage:
+  maildata:
+  mailstate:
+  maillogs:
