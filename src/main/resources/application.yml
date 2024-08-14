@@ -21,6 +21,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
+
       ddl-auto: create
   data:
     redis:
@@ -47,9 +48,11 @@ spring:
             trust: email.master-of-prediction.shop
   profiles:
     active: dev
+
 jwt:
   expiration_time: 86400000 #1일
   secret: ${JWT_SECRET}
+
 management:
   endpoints:
     web:
