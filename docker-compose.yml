@@ -75,6 +75,29 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_PTRACE
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: MY-USER
+      MINIO_ROOT_PASSWORD: MY-PASSWORD
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+  minio-client:
+    image: minio/mc
+    container_name: minio-client
+    entrypoint: /bin/bash
+    depends_on:
+      - minio
+    volumes:
+      - ./mc-script.sh:/mc-script.sh
+    tty: true
+    stdin_open: true
+
 
 
 
@@ -83,3 +106,5 @@ volumes:
   maildata:
   mailstate:
   maillogs:
+  minio-data:
+  mc-config:
