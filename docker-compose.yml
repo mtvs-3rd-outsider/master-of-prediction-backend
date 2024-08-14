@@ -16,12 +16,18 @@ services:
     volumes:
       - ./mysql_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
+    profiles:
+      - database
+
   redis:
     restart: always
     image: "redis:latest"
     container_name: "my-redis"
     ports:
       - "6379:6379"
+    profiles:
+      - cache
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -31,6 +37,8 @@ services:
       - ./prometheus-data:/prometheus
     ports:
       - "9090:9090"
+    profiles:
+      - monitoring
 
   grafana:
     image: grafana/grafana:latest
@@ -41,6 +49,9 @@ services:
       - "3000:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
+    profiles:
+      - monitoring
+
   rainloop:
     container_name: rainloop
     image: hardware/rainloop:latest
@@ -48,6 +59,9 @@ services:
       - "8020:8888"
     volumes:
       - ./data:/rainloop/data
+    profiles:
+      - email
+
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
     hostname: email
@@ -55,7 +69,6 @@ services:
     container_name: mailserver
     env_file:
       - ./email-server-config/mailserver.env
-
     ports:
       - "25:25"    # SMTP  (explicit TLS => STARTTLS)
       - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
@@ -75,6 +88,9 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_PTRACE
+    profiles:
+      - email
+
   minio:
     image: minio/minio:latest
     container_name: minio
@@ -87,19 +103,32 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio-data:/data
-  minio-client:
-    image: minio/mc
-    container_name: minio-client
-    entrypoint: /bin/bash
-    depends_on:
-      - minio
+    profiles:
+      - storage
+
+  master:
+    image: locustio/locust
+    command: ["-f", "/mnt/locustfile.py", "--master"]
+    ports:
+      - "8089:8089"
     volumes:
-      - ./mc-script.sh:/mc-script.sh
-    tty: true
-    stdin_open: true
+      - ./locustfile.py:/mnt/locustfile.py
+    environment:
+      - LOCUST_MODE=master
+    profiles:
+      - testing
 
-
-
+  worker:
+    image: locustio/locust
+    command: ["-f", "/mnt/locustfile.py", "--worker", "--master-host", "master"]
+    volumes:
+      - ./locustfile.py:/mnt/locustfile.py
+    depends_on:
+      - master
+    environment:
+      - LOCUST_MODE=worker
+    profiles:
+      - testing
 
 volumes:
   grafana-storage:
