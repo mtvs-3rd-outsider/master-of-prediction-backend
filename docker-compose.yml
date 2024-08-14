@@ -58,7 +58,7 @@ services:
     ports:
       - "8020:8888"
     volumes:
-      - ./data:/rainloop/data
+      - ./email-server-config/data:/rainloop/data
     profiles:
       - email
 
