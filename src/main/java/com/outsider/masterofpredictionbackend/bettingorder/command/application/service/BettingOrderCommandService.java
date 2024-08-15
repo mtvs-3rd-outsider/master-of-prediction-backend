@@ -3,8 +3,8 @@ package com.outsider.masterofpredictionbackend.bettingorder.command.application.
 import com.outsider.masterofpredictionbackend.bettingorder.command.application.dto.request.BettingOrderDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.BettingOrderService;
+import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.BettingProductValidator;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.UserPoint;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,40 +18,30 @@ public class BettingOrderCommandService {
 
     private final UserPoint userPoint;
     private final BettingOrderService bettingOrderService;
+    private final BettingProductValidator bettingProductValidator;
 
     @Autowired
-    public BettingOrderCommandService(UserPoint userPoint, BettingOrderService bettingOrderService) {
+    public BettingOrderCommandService(UserPoint userPoint, BettingOrderService bettingOrderService, BettingProductValidator bettingProductValidator) {
         this.userPoint = userPoint;
         this.bettingOrderService = bettingOrderService;
+        this.bettingProductValidator = bettingProductValidator;
     }
-
 
     @Transactional
     public void buyBettingProduct(BettingOrderDTO bettingOrderDTO) {
         validatePoint(bettingOrderDTO.getPoint(), bettingOrderDTO.getUserId());
+        validateBettingProductStatus(bettingOrderDTO.getBettingId());
+
         userPoint.pointUpdate(bettingOrderDTO.getUserId(), bettingOrderDTO.getPoint().negate());
-        bettingOrderService.save(new BettingOrder(
-                bettingOrderDTO.getUserId(),
-                bettingOrderDTO.getBettingId(),
-                bettingOrderDTO.getPoint(),
-                bettingOrderDTO.getBettingOptionId(),
-                LocalDate.now(),
-                LocalTime.now()
-        ));
+        bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
     }
 
     @Transactional
     public void sellBettingProduct(BettingOrderDTO bettingOrderDTO) {
         validatePoint(bettingOrderDTO.getPoint(), bettingOrderDTO.getUserId());
+        validateBettingProductStatus(bettingOrderDTO.getBettingId());
         userPoint.pointUpdate(bettingOrderDTO.getUserId(), bettingOrderDTO.getPoint());
-        bettingOrderService.save(new BettingOrder(
-                bettingOrderDTO.getUserId(),
-                bettingOrderDTO.getBettingId(),
-                bettingOrderDTO.getPoint(),
-                bettingOrderDTO.getBettingOptionId(),
-                LocalDate.now(),
-                LocalTime.now()
-        ));
+        bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
     }
 
     private void validatePoint(BigDecimal point, Long UserId) {
@@ -61,5 +51,22 @@ public class BettingOrderCommandService {
         if (userPoint.find(UserId).compareTo(point) < 0) {
             throw new IllegalArgumentException("point is not enough");
         }
+    }
+
+    private void validateBettingProductStatus(Long bettingId) {
+        if (!bettingProductValidator.validateProductExistenceAndStatus(bettingId)) {
+            throw new IllegalArgumentException("betting product is not exist or deadline is passed");
+        }
+    }
+
+    private BettingOrder dtoConvertToEntity(BettingOrderDTO bettingOrderDTO) {
+        return new BettingOrder(
+                bettingOrderDTO.getUserId(),
+                bettingOrderDTO.getBettingId(),
+                bettingOrderDTO.getPoint(),
+                bettingOrderDTO.getBettingOptionId(),
+                LocalDate.now(),
+                LocalTime.now()
+        );
     }
 }

@@ -1,9 +1,6 @@
 package com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -16,6 +13,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @ToString
+@Entity
 public class BettingOrder {
 
     @Id
