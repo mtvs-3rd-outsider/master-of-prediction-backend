@@ -2,8 +2,12 @@ package com.outsider.masterofpredictionbackend.categorychannel.command.domain.ag
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.ToString;
 
 @Embeddable
+@Getter
+@ToString
 public class CategoryChannelUserCounts {
 
     @Column(name = "JOIN_COUNT")
@@ -20,16 +24,5 @@ public class CategoryChannelUserCounts {
         if (joinCount < 0) {
             throw new IllegalArgumentException("Join count cannot be negative");
         }
-    }
-
-    public int getJoinCount() {
-        return joinCount;
-    }
-
-    @Override
-    public String toString() {
-        return "CategoryChannelUserCounts{" +
-                "joinCount=" + joinCount +
-                '}';
     }
 }

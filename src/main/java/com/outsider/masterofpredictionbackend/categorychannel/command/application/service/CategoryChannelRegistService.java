@@ -15,8 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class CategoryChannelRegistService {
 
-    private CategoryChannelRepository categoryChannelRepository;
-    private CategoryChannelUploadImage categoryChannelUploadImage;
+    private final CategoryChannelRepository categoryChannelRepository;
+    private final CategoryChannelUploadImage categoryChannelUploadImage;
 
     @Autowired
     public CategoryChannelRegistService(CategoryChannelRepository categoryChannelRepository, CategoryChannelUploadImage categoryChannelUploadImage) {
