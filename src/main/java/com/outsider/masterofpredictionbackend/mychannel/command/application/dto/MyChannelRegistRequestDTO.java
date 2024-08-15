@@ -16,10 +16,6 @@ public class MyChannelRegistRequestDTO {
 
     private String website;
 
-    private Integer followersCount;
-
-    private Integer followingCount;
-
     private Long user;
 
 }

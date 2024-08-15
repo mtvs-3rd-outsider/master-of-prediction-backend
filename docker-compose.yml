@@ -1,0 +1,139 @@
+services:
+  db:
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: forcasthub
+      MYSQL_USER: ohgiraffers
+      MYSQL_PASSWORD: ohgiraffers
+      MYSQL_SSL_CA: ""
+      MYSQL_SSL_CERT: ""
+      MYSQL_SSL_KEY: ""
+      TZ: "Asia/Seoul"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+    profiles:
+      - database
+
+  redis:
+    restart: always
+    image: "redis:latest"
+    container_name: "my-redis"
+    ports:
+      - "6379:6379"
+    profiles: ["cache", "required"]
+#      - cache
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./cert:/etc/prometheus/cert
+      - ./prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    profiles:
+      - monitoring
+
+  rainloop:
+    container_name: rainloop
+    image: hardware/rainloop:latest
+    ports:
+      - "8020:8888"
+    volumes:
+      - ./email-server-config/data:/rainloop/data
+    profiles:
+      - email
+
+  mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    hostname: email
+    domainname: master-of-prediction.shop
+    container_name: mailserver
+    env_file:
+      - ./email-server-config/mailserver.env
+    ports:
+      - "25:25"    # SMTP  (explicit TLS => STARTTLS)
+      - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
+      - "465:465"  # ESMTP (implicit TLS)
+      - "587:587"  # ESMTP (explicit TLS => STARTTLS)
+      - "993:993"  # IMAP4 (implicit TLS)
+    volumes:
+      - maildata:/var/mail
+      - mailstate:/var/mail-state
+      - maillogs:/var/log/mail
+      - /etc/localtime:/etc/localtime:ro
+      - ./email-server-config/setup.sh:/usr/local/bin/setup.sh
+      - ./email-server-config/config/:/tmp/docker-mailserver/${SELINUX_LABEL}
+      - ./email-server-config/custom-certs:/tmp/dms/custom-certs/
+    restart: always
+    stop_grace_period: 1m
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    profiles:
+      - email
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: MY-USER
+      MINIO_ROOT_PASSWORD: MY-PASSWORD
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    profiles: ["storage", "required"]
+#      - storage
+
+  master:
+    image: locustio/locust
+    command: ["-f", "/mnt/locustfile.py", "--master"]
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./locustfile.py:/mnt/locustfile.py
+    environment:
+      - LOCUST_MODE=master
+    profiles:
+      - testing
+
+  worker:
+    image: locustio/locust
+    command: ["-f", "/mnt/locustfile.py", "--worker", "--master-host", "master"]
+    volumes:
+      - ./locustfile.py:/mnt/locustfile.py
+    depends_on:
+      - master
+    environment:
+      - LOCUST_MODE=worker
+    profiles:
+      - testing
+
+volumes:
+  grafana-storage:
+  maildata:
+  mailstate:
+  maillogs:
+  minio-data:
+  mc-config:
