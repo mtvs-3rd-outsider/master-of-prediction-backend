@@ -37,12 +37,6 @@ public class BettingOrderCommandServiceTest {
     @InjectMocks
     private UserPointImpl userPointImpl;
 
-    /*
-        BettingOrderCommandService 테스트 코드 작성
-        1. point 음수 넣기
-        2. 더미 유저를 불러와서 point 비교
-     */
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);  // Mockito 객체 초기화
