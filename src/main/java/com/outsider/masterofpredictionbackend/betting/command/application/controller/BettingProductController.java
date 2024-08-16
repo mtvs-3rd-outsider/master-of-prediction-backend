@@ -2,11 +2,13 @@ package com.outsider.masterofpredictionbackend.betting.command.application.contr
 
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductAndOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
+import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.validation.BindingResult;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +34,12 @@ public class BettingProductController {
         this.productCommandService = productCommandService;
     }
 
-    @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody BettingProductAndOptionDTO bettingProductAndOptionDTO, BindingResult bindingResult){
+    @PostMapping("/users/{userId}")
+    public ResponseEntity<?> save(
+            @Valid @RequestBody BettingProductAndOptionDTO bettingProductAndOptionDTO,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal CustomUserDetail customUserDetail
+            ){
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             bindingResult.getAllErrors().forEach(error -> {
@@ -42,7 +49,9 @@ public class BettingProductController {
             });
             return ResponseEntity.badRequest().build();
         }
+
         Long productId = null;
+
         try {
             productId = productCommandService.save(bettingProductAndOptionDTO);
         } catch (BadRequestException e) {

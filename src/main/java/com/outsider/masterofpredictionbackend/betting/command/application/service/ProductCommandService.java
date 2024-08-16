@@ -22,21 +22,17 @@ import java.util.List;
 public class ProductCommandService {
 
     private final BettingProductService bettingProductService;
-    private final BettingProductImageService bettingProductImageService;
-    private final BettingProductOptionService bettingProductOptionService;
     private final ImageRollbackHelper imageRollbackHelper;
     private final UserService userService;
     private final CategoryService categoryService;
 
-    @Autowired
-    public ProductCommandService(BettingProductService bettingProductService, BettingProductImageService bettingProductImageService, BettingProductOptionService bettingProductOptionService, ImageRollbackHelper imageRollbackHelper, UserService userService, CategoryService categoryService) {
+    public ProductCommandService(BettingProductService bettingProductService, ImageRollbackHelper imageRollbackHelper, UserService userService, CategoryService categoryService) {
         this.bettingProductService = bettingProductService;
-        this.bettingProductImageService = bettingProductImageService;
-        this.bettingProductOptionService = bettingProductOptionService;
         this.imageRollbackHelper = imageRollbackHelper;
         this.userService = userService;
         this.categoryService = categoryService;
     }
+
 
     @Transactional
     public Long save(BettingProductAndOptionDTO bettingProductAndOptionDTO) throws BadRequestException {
@@ -60,16 +56,16 @@ public class ProductCommandService {
         optionImgUrls.forEach(imageRollbackHelper::addImageToDelete);
         imageRollbackHelper.registerForRollback();
 
-
         BettingProduct bettingProduct = BettingDTOConverter.convertToBettingProduct(bettingProductAndOptionDTO);
-        bettingProductService.save(bettingProduct);
         List<BettingProductImage> bettingProductImages = BettingDTOConverter.convertToBettingProductImage(bettingProduct.getId(), mainImgUrls);
-        bettingProductImageService.saveAll(bettingProductImages);
         List<BettingProductOption> bettingProductOptions = BettingDTOConverter.convertToBettingProductOption(bettingProduct.getId(), bettingProductAndOptionDTO.getOption(), optionImgUrls);
-        bettingProductOptionService.saveAll(bettingProductOptions);
+        try{
+            bettingProductService.save(bettingProduct, bettingProductImages, bettingProductOptions);
+        }catch (IllegalArgumentException e){
+            throw new BadRequestException(e.getMessage());
+        }
+
         return bettingProduct.getId();
-        // List<BettingProductOptionResponseDTO> bettingProductOptionResponseDTOS = optionEntityConvertToDTO(bettingProductOptions);
-        // return bettingEntityConvertToDTO(bettingProduct, bettingProductImages, bettingProductOptionResponseDTOS);
     }
 
     private List<String> saveAndReturnImageNames(List<MultipartFile> files){
