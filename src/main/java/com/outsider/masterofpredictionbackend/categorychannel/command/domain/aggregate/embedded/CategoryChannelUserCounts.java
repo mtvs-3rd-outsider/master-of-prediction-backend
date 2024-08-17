@@ -25,4 +25,14 @@ public class CategoryChannelUserCounts {
             throw new IllegalArgumentException("Join count cannot be negative");
         }
     }
+
+    public void incrementJoinCount() {
+        joinCount++;
+    }
+
+    public void decrementJoinCount() {
+        if (joinCount > 0) {
+            joinCount--;
+        }
+    }
 }

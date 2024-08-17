@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate;
 
+import com.outsider.masterofpredictionbackend.categorychannel.command.application.dto.CategoryChannelUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CategoryChannelUserCounts;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CommunityRule;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
@@ -48,6 +49,20 @@ public class CategoryChannel {
         this.categoryChannelStatus = categoryChannelStatus;
     }
 
+    public void updateCategoryChannelBasedOnDTO(CategoryChannelUpdateRequestDTO updateRequestDTO) {
+        if (updateRequestDTO.getDisplayName() != null) {
+            this.displayName = updateRequestDTO.getDisplayName();
+        }
+
+        if (updateRequestDTO.getDescription() != null) {
+            this.description = updateRequestDTO.getDescription();
+        }
+
+        if (updateRequestDTO.getCommunityRule() != null) {
+            this.communityRule = new CommunityRule(updateRequestDTO.getCommunityRule());
+        }
+    }
+
     public long getCategoryChannelId() {
         return categoryChannelId;
     }
@@ -82,6 +97,10 @@ public class CategoryChannel {
 
     public CategoryChannelStatus getCategoryChannelStatus() {
         return categoryChannelStatus;
+    }
+
+    public void setCategoryChannelStatus(CategoryChannelStatus categoryChannelStatus) {
+        this.categoryChannelStatus = categoryChannelStatus;
     }
 
     @Override

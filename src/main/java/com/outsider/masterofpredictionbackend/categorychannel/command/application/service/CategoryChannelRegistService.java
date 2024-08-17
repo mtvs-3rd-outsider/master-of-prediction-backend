@@ -24,6 +24,16 @@ public class CategoryChannelRegistService {
         this.categoryChannelUploadImage = categoryChannelUploadImage;
     }
 
+    /**
+     * 카테고리 채널 생성.
+     *
+     * DTO 에서 displayName, description, communityRule(JSON 형식 문자열) 정보를 받고, 이미지 파일을 받음.
+     * 유저 인증 로직은 토큰을 통해 유저 정보 가져오고, 이미지 업로드는 MinIO 사용할 예정.
+     *
+     * @param registRequestDTO 카테고리 채널 등록 신청시 정보가 담긴 DTO
+     * @param imageFile 대표 이미지 1개
+     * @exception RuntimeException 이미지 업로드 실패 시 발생
+     */
     @Transactional
     public void registerCategoryChannel(
             CategoryChannelRegistRequestDTO registRequestDTO,
@@ -46,7 +56,7 @@ public class CategoryChannelRegistService {
             categoryChannelRepository.save(categoryChannel);
         } catch (Exception e) {
             // TODO: 예외처리 통일되면 추가 예정
-            e.printStackTrace();
+            throw new RuntimeException("Error while uploading image", e);
         }
     }
 }
