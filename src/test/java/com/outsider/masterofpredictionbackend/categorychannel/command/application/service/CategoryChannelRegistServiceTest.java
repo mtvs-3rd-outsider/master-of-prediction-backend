@@ -25,8 +25,7 @@ class CategoryChannelRegistServiceTest {
                         new CategoryChannelRegistRequestDTO(
                                 "카테고리 채널 이름",
                                 "간단한 설명",
-                                "\"{\\n  \\\"rules\\\": [\\n    {\\n      \\\"number\\\": 1,\\n      \\\"rule\\\": \\\"규칙 1\\\"\\n    },\\n    {\\n      \\\"number\\\": 2,\\n      \\\"rule\\\": \\\"규칙 2\\\"\\n    }\\n  ]\\n}\"",
-                                CategoryChannelStatus.APPLY
+                                "\"{\\n  \\\"rules\\\": [\\n    {\\n      \\\"number\\\": 1,\\n      \\\"rule\\\": \\\"규칙 1\\\"\\n    },\\n    {\\n      \\\"number\\\": 2,\\n      \\\"rule\\\": \\\"규칙 2\\\"\\n    }\\n  ]\\n}\""
                         ),
                         new MockMultipartFile(
                                 "file",                       // 파라미터 이름
