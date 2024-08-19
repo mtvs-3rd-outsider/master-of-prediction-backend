@@ -53,9 +53,9 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final CustomUserService customUserService;
     private final UserCommandRepository userCommandRepository;
-    private final FullAuthorizationManager customAuthorizationManager;
+    private final GetOrFullAuthorizationManager customAuthorizationManager;
 
-    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, FullAuthorizationManager customAuthorizationManager) {
+    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtUtil = jwtUtil;
         this.customUserService = customUserService;
@@ -78,7 +78,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll()
-                        .requestMatchers("/users/{userid}/**").access(customAuthorizationManager)
+                        .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(

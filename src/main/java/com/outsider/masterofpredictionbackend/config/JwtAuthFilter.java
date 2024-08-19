@@ -34,9 +34,9 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
             //JWT 유효성 검증
             if (jwtUtil.validateToken(token)) {
                 Long userId = jwtUtil.getUserId(token);
-
+                String email = jwtUtil.getUserEmail(token);
                 //유저와 토큰 일치 시 userDetails 생성
-                CustomUserDetail userDetails = (CustomUserDetail) customUserDetailsService.loadUserByUsername(userId.toString());
+                CustomUserDetail userDetails = (CustomUserDetail) customUserDetailsService.loadUserByUsername(email);
 
                 if (userDetails != null) {
                     //UserDetsils, Password, Role -> 접근권한 인증 Token 생성
@@ -45,6 +45,8 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
 
                     //현재 Request의 Security Context에 접근권한 설정
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    // Add userId to the request header
+                    request.setAttribute("userId", userId); // Setting as request attribute
                 }
             }
         }

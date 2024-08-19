@@ -61,3 +61,8 @@ management:
   endpoint:
     prometheus:
       enabled: true # Prometheus 엔드포인트 활성화
+minio:
+  url: http://localhost:9000
+  accessKey: MY-USER
+  secretKey: MY-PASSWORD
+  bucketName: sns-files
