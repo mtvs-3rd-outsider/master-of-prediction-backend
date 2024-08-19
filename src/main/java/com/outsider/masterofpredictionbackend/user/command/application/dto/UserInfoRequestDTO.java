@@ -15,6 +15,7 @@ public class UserInfoRequestDTO {
     private Gender gender;
     private Location location;
     private Authority authority;
+    private String token;
 
     public UserInfoRequestDTO(String email, String password, String userName, int age, Gender gender, Location location, Authority authority) {
         this.email = email;
