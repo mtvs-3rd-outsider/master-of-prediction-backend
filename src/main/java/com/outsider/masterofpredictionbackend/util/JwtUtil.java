@@ -75,7 +75,9 @@ public class JwtUtil {
         return parseClaims(token).get("userId", Long.class);
     }
 
-
+    public String getUserEmail(String token) {
+        return parseClaims(token).get("email", String.class);
+    }
     /**
      * JWT 검증
      * @param token

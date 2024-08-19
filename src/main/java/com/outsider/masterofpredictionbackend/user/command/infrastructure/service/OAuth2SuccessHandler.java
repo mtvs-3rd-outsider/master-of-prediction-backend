@@ -31,18 +31,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // accessToken, refreshToken 발급
         CustomUserDetail customUserDetail=  (CustomUserDetail) authentication.getPrincipal();
         String accessToken = tokenProvider.createAccessToken(new CustomUserInfoDTO(customUserDetail.getUser()));
-//        tokenProvider.generateRefreshToken(authentication, accessToken);
 
         // 토큰 전달을 위한 redirect
         String redirectUrl = UriComponentsBuilder.fromUriString(successfulUri)
                 .build().toUriString();
         Cookie authCookie = new Cookie("accessToken", accessToken);
         authCookie.setMaxAge(60 * 60 * 24 * 7);
-        authCookie.setHttpOnly(false);
+        authCookie.setHttpOnly(false);  // Authorization Header 에 넣을려면 false로 가져와야됨
         authCookie.setSecure(true);
         authCookie.setDomain("master-of-prediction.shop"); // 쿠키가 유효한 경로 설정
         authCookie.setPath("/"); // 쿠키가 유효한 경로 설정
-        authCookie.setAttribute("SameSite", "None");
+        authCookie.setAttribute("SameSite", "None"); // 크로스 오리진시 필요
         response.addCookie(authCookie);
         response.sendRedirect(redirectUrl);
     }

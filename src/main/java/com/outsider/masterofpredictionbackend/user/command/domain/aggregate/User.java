@@ -74,8 +74,8 @@ public class User {
     @Column(name = "join_date")
     private LocalDate joinDate;
 
-    public String getAuthority() {
-        return authority.name();
+    public Authority getAuthority() {
+        return authority;
     }
 
     public void setAuthority(Authority authority) {

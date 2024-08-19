@@ -1,7 +1,6 @@
 package com.outsider.masterofpredictionbackend.config;
 
 
-
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserService;
@@ -30,11 +29,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -55,13 +52,15 @@ public class SecurityConfig {
     private String successfulUri;
     private final JwtUtil jwtUtil;
     private final CustomUserService customUserService;
-    UserCommandRepository userCommandRepository;
+    private final UserCommandRepository userCommandRepository;
+    private final GetOrFullAuthorizationManager customAuthorizationManager;
 
-    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper) {
+    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtUtil = jwtUtil;
         this.customUserService = customUserService;
         this.userCommandRepository = userMapper;
+        this.customAuthorizationManager = customAuthorizationManager;
     }
 
     @Bean
@@ -78,36 +77,25 @@ public class SecurityConfig {
                         .anyRequest().requiresSecure()
                 )
                 .authorizeHttpRequests(auth -> auth
-
-//                        .requestMatchers("/css/**", "/images/**").permitAll()
-//                        .requestMatchers("/", "/login", "/register", "/loginProc").permitAll()
                         .requestMatchers("/**").permitAll()
+                        .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
-
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
-                .formLogin(auth -> auth.disable()
-//                        .loginPage("/login")
-//                        .loginProcessingUrl("/loginProc")
-//                        .usernameParameter("email")// 로그인 처리를 위한 URL 설정
-//                        .passwordParameter("password")// 로그인 처리를 위한 URL 설정
-//                        .defaultSuccessUrl("/", true)
-//                        .permitAll()
-
-                ).httpBasic(auth -> auth.disable())
+                .formLogin(AbstractHttpConfigurer::disable
+                ).
+                httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtAuthFilter(customUserService, jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
-//                                .loginPage("/login")
 
-                                .authorizationEndpoint(authorization -> authorization
-                                        .baseUri("/oauth2/authorization"))
-                                .redirectionEndpoint(redirection -> redirection
-                                        .baseUri("/login/oauth2/code/*"))
-                                .userInfoEndpoint(userInfo -> userInfo
-                                        .userService(this.oauth2UserService()))
-                                .successHandler(oAuth2SuccessHandler)
-//                                .defaultSuccessUrl(successfulUri, true)
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(redirection -> redirection
+                                .baseUri("/login/oauth2/code/*"))
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(this.oauth2UserService()))
+                        .successHandler(oAuth2SuccessHandler)
                 )
                 .logout(logout -> {
                     logout.logoutUrl("/logout");
@@ -115,21 +103,11 @@ public class SecurityConfig {
                     logout.invalidateHttpSession(true);// 세션을 소멸하도록 허용하는 것
                     logout.logoutSuccessUrl(successfulUri); // 로그아웃시 이동할 페이지 설정
                 });
-//                .sessionManagement(session -> {
-//                    session.maximumSessions(1)
-//                            .maxSessionsPreventsLogin(true);// session의 허용 개수를 제한
-//                    session.invalidSessionUrl("/");
-//                    session.sessionFixation().changeSessionId();
-//                })
-//                .csrf(auth -> auth.disable())
-//                .sessionManagement(auth -> auth
-//                        .maximumSessions(1)
-//                        .maxSessionsPreventsLogin(true)
-//                );
 
         return http.build();
     }
-    private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService( ) {
+
+    private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
         final PrincipalOauthUserService delegate = new PrincipalOauthUserService(passwordEncoder(), userCommandRepository);
         return (userRequest) -> {
 
@@ -138,6 +116,7 @@ public class SecurityConfig {
         };
 
     }
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -167,7 +146,7 @@ public class SecurityConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("https://master-of-prediction.shop:8081/login/oauth2/code/google")
-                .scope( "profile", "email")
+                .scope("profile", "email")
                 .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
                 .tokenUri("https://www.googleapis.com/oauth2/v4/token")
                 .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")

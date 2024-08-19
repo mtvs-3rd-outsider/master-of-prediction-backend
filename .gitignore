@@ -48,3 +48,6 @@ mysql_data/
 **/certificate.*
 **/private.key
 
+
+
+**/email-server-config/

@@ -36,7 +36,7 @@ public class CustomUserDetail implements UserDetails , OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 유저 권한 추가해주고 전달
         Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(new SimpleGrantedAuthority(this.user.getAuthority()));
+        collection.add(new SimpleGrantedAuthority(this.user.getAuthority().name()));
         return collection;
     }
 

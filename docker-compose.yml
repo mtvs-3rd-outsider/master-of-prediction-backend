@@ -64,8 +64,7 @@ services:
 
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
-    hostname: email
-    domainname: master-of-prediction.shop
+    hostname: email.master-of-prediction.shop
     container_name: mailserver
     env_file:
       - ./email-server-config/mailserver.env
