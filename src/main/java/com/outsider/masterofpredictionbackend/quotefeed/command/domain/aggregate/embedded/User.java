@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded;
+package com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate.embedded;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class User {
 
-    @Column(name = "feed_user_id")
+    @Column(name = "quotefeed_user_id")
     private Long userId;
 
     @Override
