@@ -1,7 +1,10 @@
-package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
+package com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate;
 
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.ImageFile;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
+import com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate.embedded.FeedType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,32 +15,32 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "tbl_feed")
-public class Feed {
+@Table(name = "tbl_quotefeed")
+public class QuoteFeed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "feed_id")
+    @Column(name = "quotefeed_id")
     private long id;
 
-    @Column(name = "feed_author_type", nullable = false)
+    @Column(name = "quotefeed_author_type", nullable = false)
     private String authorType;
 
-    @Column(name = "feed_title", nullable = false)
+    @Column(name = "quotefeed_title", nullable = false)
     private String title;
 
-    @Column(name ="feed_content", columnDefinition = "TEXT")
+    @Column(name ="quotefeed_content", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "feed_created_at", nullable = false)
+    @Column(name = "quotefeed_created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "feed_updated_at")
+    @Column(name = "quotefeed_updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "feed_view_count", nullable = false)
+    @Column(name = "quotefeed_view_count", nullable = false)
     private int viewCount;
 
-    @Column(name = "feed_channel_type", nullable = false)
+    @Column(name = "quotefeed_channel_type", nullable = false)
     private String channelType; // mychannel 또는 categorychannel
 
     @Embedded
@@ -46,13 +49,16 @@ public class Feed {
     @Embedded
     private Guest guest;
 
-    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Embedded
+    private FeedType feedType;
+
+    @OneToMany(mappedBy = "quotefeed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageFile> imageFiles;
 
-    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quotefeed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<YouTubeVideo> youtubeVideos;
 
-    public Feed(String authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, String channelType, User user, Guest guest, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
+    public QuoteFeed(String authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, String channelType, User user, Guest guest, FeedType feedType, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
         this.authorType = authorType;
         this.title = title;
         this.content = content;
@@ -62,13 +68,14 @@ public class Feed {
         this.channelType = channelType;
         this.user = user;
         this.guest = guest;
+        this.feedType = feedType;
         this.imageFiles = imageFiles;
         this.youtubeVideos = youtubeVideos;
     }
 
     @Override
     public String toString() {
-        return "Feed{" +
+        return "QuoteFeed{" +
                 "id=" + id +
                 ", authorType='" + authorType + '\'' +
                 ", title='" + title + '\'' +
@@ -79,6 +86,7 @@ public class Feed {
                 ", channelType='" + channelType + '\'' +
                 ", user=" + user +
                 ", guest=" + guest +
+                ", feedType=" + feedType +
                 ", imageFiles=" + imageFiles +
                 ", youtubeVideos=" + youtubeVideos +
                 '}';

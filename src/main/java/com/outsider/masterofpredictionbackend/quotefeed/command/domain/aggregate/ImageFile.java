@@ -1,4 +1,5 @@
-package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
+package com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -6,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "tbl_feed_image_file")
+@Table(name = "tbl_quotefeed_image_file")
 public class ImageFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,12 +18,12 @@ public class ImageFile {
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feed_id", nullable = false)
-    private Feed feed;
+    @JoinColumn(name = "quotefeed_id", nullable = false)
+    private QuoteFeed quoteFeed;
 
-    public ImageFile(String imageUrl, Feed feed) {
+    public ImageFile(String imageUrl, QuoteFeed quoteFeed) {
         this.imageUrl = imageUrl;
-        this.feed = feed;
+        this.quoteFeed = quoteFeed;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class ImageFile {
         return "ImageFile{" +
                 "id=" + id +
                 ", imageUrl='" + imageUrl + '\'' +
-                ", feed=" + feed +
+                ", quoteFeed=" + quoteFeed +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded;
+package com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate.embedded;
 
 
 import jakarta.persistence.Column;
@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Guest {
 
-    @Column(name = "feed_guest_id")
+    @Column(name = "quotefeed_guest_id")
     private String guestId;
 
-    @Column(name = "feed_guest_password")
+    @Column(name = "quotefeed_guest_password")
     private String guestPassword;
 
     @Override
