@@ -47,7 +47,7 @@ spring:
           ssl:
             trust: email.master-of-prediction.shop
   profiles:
-    active: prod
+    active: dev
 
 jwt:
   expiration_time: 86400000 #1일
