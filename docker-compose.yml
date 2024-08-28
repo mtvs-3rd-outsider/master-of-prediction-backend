@@ -12,12 +12,11 @@ services:
       MYSQL_SSL_KEY: ""
       TZ: "Asia/Seoul"
     ports:
-      - "3306:3306"
+      - "9876:3306"
     volumes:
       - ./mysql_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
-    profiles:
-      - database
+    profiles: ["database", "required"]
 
   redis:
     restart: always
