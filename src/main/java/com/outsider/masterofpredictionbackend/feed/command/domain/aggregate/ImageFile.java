@@ -2,8 +2,9 @@ package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
+@Entity(name = "feed_image_file")
 @Getter
 @NoArgsConstructor
 @Table(name = "tbl_feed_image_file")
@@ -25,6 +26,9 @@ public class ImageFile {
         this.feed = feed;
     }
 
+    public ImageFile(String url) {
+    }
+
     @Override
     public String toString() {
         return "ImageFile{" +
@@ -33,4 +37,5 @@ public class ImageFile {
                 ", feed=" + feed +
                 '}';
     }
+
 }

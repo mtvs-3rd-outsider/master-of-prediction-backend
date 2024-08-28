@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name ="quotefeed_image_file")
 @Getter
 @NoArgsConstructor
 @Table(name = "tbl_quotefeed_image_file")

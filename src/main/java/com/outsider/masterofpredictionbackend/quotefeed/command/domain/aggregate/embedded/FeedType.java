@@ -14,13 +14,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class FeedType implements Serializable {
 
-    private Long id;
+    private Long feeddTypeId;
     private FeedTypeEnum feedType; // "FEED" or "QUOTEFEED"
 
     @Override
     public String toString() {
         return "FeedType{" +
-                "id=" + id +
+                "feeddTypeId=" + feeddTypeId +
                 ", feedType='" + feedType + '\'' +
                 '}';
     }

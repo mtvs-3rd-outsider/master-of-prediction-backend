@@ -2,17 +2,22 @@ package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
 
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@NoArgsConstructor
+
 @Entity
 @Table(name = "tbl_feed")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Feed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +25,7 @@ public class Feed {
     private long id;
 
     @Column(name = "feed_author_type", nullable = false)
-    private String authorType;
+    private AuthorType authorType;
 
     @Column(name = "feed_title", nullable = false)
     private String title;
@@ -34,11 +39,17 @@ public class Feed {
     @Column(name = "feed_updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "feed_view_count", nullable = false)
-    private int viewCount;
-
     @Column(name = "feed_channel_type", nullable = false)
-    private String channelType; // mychannel 또는 categorychannel
+    private ChannelType channelType; // mychannel 또는 categorychannel
+
+    @Column(name = "feed_view_count", nullable = false)
+    private int viewCount = 0;
+
+    @Column(name = "feed_likes_count", nullable = false)
+    private int likesCount = 0;
+
+    @Column(name = "feed_comments_count", nullable = false)
+    private int commentsCount = 0;
 
     @Embedded
     private User user;
@@ -47,23 +58,41 @@ public class Feed {
     private Guest guest;
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> like;
+
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageFile> imageFiles;
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<YouTubeVideo> youtubeVideos;
 
-    public Feed(String authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, String channelType, User user, Guest guest, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
+    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, ChannelType channelType, int viewCount, int likesCount, int commentsCount, User user, Guest guest, List<Like> like, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
         this.authorType = authorType;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.viewCount = viewCount;
         this.channelType = channelType;
+        this.viewCount = viewCount;
+        this.likesCount = likesCount;
+        this.commentsCount = commentsCount;
         this.user = user;
         this.guest = guest;
+        this.like = like;
         this.imageFiles = imageFiles;
         this.youtubeVideos = youtubeVideos;
+    }
+
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
+
+    public void decrementLikesCount() {
+        this.likesCount--;
+    }
+
+    public void incrementLikesCount() {
+        this.likesCount++;
     }
 
     @Override
@@ -77,6 +106,8 @@ public class Feed {
                 ", updatedAt=" + updatedAt +
                 ", viewCount=" + viewCount +
                 ", channelType='" + channelType + '\'' +
+                ", likesCount=" + likesCount +
+                ", commentsCount=" + commentsCount +
                 ", user=" + user +
                 ", guest=" + guest +
                 ", imageFiles=" + imageFiles +

@@ -3,8 +3,9 @@ package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
+@Entity(name = "youtube_video")
 @Getter
 @NoArgsConstructor
 @Table(name = "tbl_youtube_video")
@@ -26,6 +27,10 @@ public class YouTubeVideo {
         this.feed = feed;
     }
 
+    public YouTubeVideo(String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
+    }
+
     @Override
     public String toString() {
         return "YouTubeVideo{" +
@@ -34,4 +39,5 @@ public class YouTubeVideo {
                 ", feed=" + feed +
                 '}';
     }
+
 }
