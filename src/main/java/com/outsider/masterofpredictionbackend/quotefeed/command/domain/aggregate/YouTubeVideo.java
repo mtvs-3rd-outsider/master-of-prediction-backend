@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "quotepeed_youtube_video")
 @Getter
 @NoArgsConstructor
 @Table(name = "tbl_quotepeed_youtube_video")

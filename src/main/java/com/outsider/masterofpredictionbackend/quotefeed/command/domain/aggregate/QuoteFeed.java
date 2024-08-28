@@ -1,9 +1,9 @@
 package com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate;
 
-import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.ImageFile;
-import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
-import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
-import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
+import com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate.embedded.Comment;
+import com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate.embedded.Guest;
+import com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate.embedded.Reply;
+import com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate.embedded.User;
 import com.outsider.masterofpredictionbackend.quotefeed.command.domain.aggregate.embedded.FeedType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -50,15 +50,21 @@ public class QuoteFeed {
     private Guest guest;
 
     @Embedded
+    private Comment comment;
+
+    @Embedded
+    private Reply reply;
+
+    @Embedded
     private FeedType feedType;
 
-    @OneToMany(mappedBy = "quotefeed", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quoteFeed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageFile> imageFiles;
 
-    @OneToMany(mappedBy = "quotefeed", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quoteFeed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<YouTubeVideo> youtubeVideos;
 
-    public QuoteFeed(String authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, String channelType, User user, Guest guest, FeedType feedType, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
+    public QuoteFeed(String authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, String channelType, User user, Guest guest, Comment comment, Reply reply, FeedType feedType, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
         this.authorType = authorType;
         this.title = title;
         this.content = content;
@@ -68,6 +74,8 @@ public class QuoteFeed {
         this.channelType = channelType;
         this.user = user;
         this.guest = guest;
+        this.comment = comment;
+        this.reply = reply;
         this.feedType = feedType;
         this.imageFiles = imageFiles;
         this.youtubeVideos = youtubeVideos;
@@ -86,6 +94,8 @@ public class QuoteFeed {
                 ", channelType='" + channelType + '\'' +
                 ", user=" + user +
                 ", guest=" + guest +
+                ", comment=" + comment +
+                ", reply=" + reply +
                 ", feedType=" + feedType +
                 ", imageFiles=" + imageFiles +
                 ", youtubeVideos=" + youtubeVideos +
