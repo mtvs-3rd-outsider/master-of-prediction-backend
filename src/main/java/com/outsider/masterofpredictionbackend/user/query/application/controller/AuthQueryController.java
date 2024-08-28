@@ -1,16 +1,14 @@
 package com.outsider.masterofpredictionbackend.user.query.application.controller;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.LoginRequestDTO;
-import com.outsider.masterofpredictionbackend.user.command.application.dto.UserInfoRequestDTO;
+import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.service.AuthService;
-import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.masterofpredictionbackend.user.query.application.service.UserInfoService;
 import com.outsider.masterofpredictionbackend.util.UserId;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -66,12 +64,7 @@ public class AuthQueryController {
     ) throws IOException {
         System.out.println(userId);
         Optional<UserInfoRequestDTO> userInfo = userService.getUserInfoById(userId);
-        if (userInfo.isPresent()) {
-            return ResponseEntity.ok(userInfo.get());
-        }else
-        {
-            return ResponseEntity.notFound().build();
-        }
+        return userInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
 

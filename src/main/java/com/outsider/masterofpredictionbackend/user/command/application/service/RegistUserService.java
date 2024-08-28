@@ -1,7 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.command.application.service;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.SignUpRequestDTO;
-import com.outsider.masterofpredictionbackend.user.command.application.dto.UserInfoRequestDTO;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.ProviderInfo;
@@ -9,7 +9,6 @@ import com.outsider.masterofpredictionbackend.user.command.domain.repository.Use
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,7 +24,7 @@ public class RegistUserService {
     }
 
     @Transactional
-    public Long registUser(UserInfoRequestDTO userRegistRequestDTO) {
+    public Long registUser(UserRegistDTO userRegistRequestDTO) {
         // 중복된 사용자가 있는지 확인
         if (userRepository.findByEmail(userRegistRequestDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("User with this ID already exists");

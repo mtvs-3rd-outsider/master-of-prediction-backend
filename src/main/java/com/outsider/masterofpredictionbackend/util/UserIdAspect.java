@@ -37,7 +37,7 @@ public class UserIdAspect {
         Long userId = (Long) request.getAttribute("userId");
 
         if (userId == null) {
-            throw new HttpStatusCodeException(HttpStatus.UNAUTHORIZED, "유효한 사용자 ID를 찾을 수 없습니다.") {};
+            userId= 0L;
         }
 
         // 메서드와 매개변수 정보 가져오기

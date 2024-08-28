@@ -1,11 +1,9 @@
 package com.outsider.masterofpredictionbackend.user.command.application.service;
 
-import com.outsider.masterofpredictionbackend.user.command.application.dto.UserInfoRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserPointUpdateDTO;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Gender;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Location;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,13 +31,10 @@ public class UserPointUpdateServiceTest {
     @BeforeEach
     public void setUp() {
         // 기존 사용자 생성 및 저장
-        UserInfoRequestDTO dto = new UserInfoRequestDTO(
+        UserRegistDTO dto = new UserRegistDTO(
                 "test@example.com",
                 "password123",
                 "TestuserName",
-                25,
-                Gender.MALE,
-                Location.KOREA,
                 Authority.ROLE_USER
         );
 
