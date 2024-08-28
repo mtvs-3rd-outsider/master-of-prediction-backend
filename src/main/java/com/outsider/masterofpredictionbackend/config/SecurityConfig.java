@@ -1,6 +1,10 @@
 package com.outsider.masterofpredictionbackend.config;
 
 
+import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
+import com.outsider.masterofpredictionbackend.user.command.application.service.DeleteUserService;
+import com.outsider.masterofpredictionbackend.user.command.application.service.RegistUserService;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserService;
@@ -8,6 +12,7 @@ import com.outsider.masterofpredictionbackend.user.command.infrastructure.servic
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.PrincipalOauthUserService;
 import com.outsider.masterofpredictionbackend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -28,21 +33,27 @@ import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.*;
+
 @Configuration
 @EnableWebSecurity
 @Profile("prod")
 public class SecurityConfig {
 
-
+    private RegistUserService registUserService;
+    private DeleteUserService deleteUserService;
     @Value("${google.client.id}")
     private String clientId;
-
+    private final String email= DEFAULT_USER_EMAIL;
+    private final String userName= DEFAULT_USER_NAME;
+    private final String password = DEFAULT_USER_PASSWORD;
     @Value("${google.client.secret}")
     private String clientSecret;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
@@ -54,8 +65,11 @@ public class SecurityConfig {
     private final CustomUserService customUserService;
     private final UserCommandRepository userCommandRepository;
     private final GetOrFullAuthorizationManager customAuthorizationManager;
+    private Long id ;
 
-    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+    public SecurityConfig(RegistUserService registUserService, DeleteUserService deleteUserService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+        this.registUserService = registUserService;
+        this.deleteUserService = deleteUserService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtUtil = jwtUtil;
         this.customUserService = customUserService;
@@ -155,5 +169,27 @@ public class SecurityConfig {
                 .clientName("Google")
                 .build();
     }
+    @Bean
+    @Transactional
+    public ApplicationRunner init() {
+        return args -> {
+            if (userCommandRepository.findByEmail(email).isEmpty()) {
 
+                UserRegistDTO dto = new UserRegistDTO(
+                        email,
+                        password,
+                        userName,
+                        Authority.ROLE_USER
+                );
+
+                // when
+                id= registUserService.registUser(dto);
+
+
+            }
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                deleteUserService.deleteUser(id);
+            }));
+        };
+    }
 }

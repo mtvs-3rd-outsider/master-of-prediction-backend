@@ -1,7 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.query.application.service;
 
 
-import com.outsider.masterofpredictionbackend.user.command.application.dto.UserInfoRequestDTO;
+import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,6 @@ public class UserInfoService {
     private UserInfoRequestDTO convertToDTO(User user) {
         return new UserInfoRequestDTO(
                 user.getEmail(),
-                user.getPassword(),
                 user.getUserName(),
                 user.getAge(),
                 user.getGender(),

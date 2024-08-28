@@ -2,11 +2,9 @@ package com.outsider.masterofpredictionbackend.user.command.application.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.outsider.masterofpredictionbackend.user.command.application.dto.UserInfoRequestDTO;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Gender;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Location;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,13 +31,11 @@ class RegistUserServiceTest {
     @Test
     public void testRegistUser_Success() {
         // given
-        UserInfoRequestDTO dto = new UserInfoRequestDTO(
+        UserRegistDTO dto = new UserRegistDTO(
                 "test@example.com",
                 "password123",
                 "TestuserName",
-                25,
-                Gender.MALE,
-                Location.KOREA,
+
                 Authority.ROLE_USER
         );
 
@@ -56,24 +52,20 @@ class RegistUserServiceTest {
     @Test
     public void testRegistUser_DuplicateEmail() {
         // given
-        UserInfoRequestDTO dto1 = new UserInfoRequestDTO(
+        UserRegistDTO dto1 = new UserRegistDTO(
                 "duplicate@example.com",
                 "password123",
                 "userName1",
-                30,
-                Gender.FEMALE,
-                Location.KOREA,
+
                 Authority.ROLE_USER
         );
         registUserService.registUser(dto1);
 
-        UserInfoRequestDTO dto2 = new UserInfoRequestDTO(
+        UserRegistDTO dto2 = new UserRegistDTO(
                 "duplicate@example.com",
                 "password456",
                 "userName2",
-                28,
-                Gender.MALE,
-                Location.USA,
+
                 Authority.ROLE_USER
 
         );

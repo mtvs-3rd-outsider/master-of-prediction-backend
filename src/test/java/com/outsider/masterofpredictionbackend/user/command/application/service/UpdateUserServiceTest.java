@@ -1,13 +1,8 @@
 package com.outsider.masterofpredictionbackend.user.command.application.service;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.SignUpRequestDTO;
-import com.outsider.masterofpredictionbackend.user.command.application.dto.UserInfoRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Gender;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Location;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.ProviderInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
