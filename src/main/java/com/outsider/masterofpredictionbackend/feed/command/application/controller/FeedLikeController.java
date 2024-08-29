@@ -24,7 +24,7 @@ public class FeedLikeController {
 
     // Feed 좋아요 엔드포인트
     @PostMapping("/{feedId}/{userId}")
-    public ResponseEntity<ResponseMessage> likeFeed(@PathVariable long feedId, @PathVariable long userId){
+    public ResponseEntity<ResponseMessage> likeFeed(@PathVariable long feedId, @PathVariable String userId){
         try {
             feedLikeService.toggleLike(feedId, userId);
             return ResponseEntity.ok(new ResponseMessage("피드가 성공적으로 수정되었습니다."));

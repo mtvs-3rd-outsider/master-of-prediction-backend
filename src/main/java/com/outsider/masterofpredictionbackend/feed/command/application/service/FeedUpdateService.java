@@ -37,10 +37,15 @@ public class FeedUpdateService {
         feed=feedUpdateDTO.updateFeed(feed);
 
         // 이미지 파일 업데이트
-        updateImageFiles(feed, feedUpdateDTO.getImageFiles());
+        if (feedUpdateDTO.getImageFiles() != null && !feedUpdateDTO.getImageFiles().isEmpty()) {
+            updateImageFiles(feed, feedUpdateDTO.getImageFiles());
+        }
+
 
         // YouTube 비디오 업데이트
-        updateYouTubeVideos(feed, feedUpdateDTO.getYouTubeVideos());
+        if (feedUpdateDTO.getYouTubeVideos() != null && !feedUpdateDTO.getYouTubeVideos().isEmpty()) {
+            updateYouTubeVideos(feed, feedUpdateDTO.getYouTubeVideos());
+        }
 
         feedRepository.save(feed);
     }

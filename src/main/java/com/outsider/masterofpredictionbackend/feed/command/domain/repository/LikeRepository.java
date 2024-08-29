@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface LikeRepository extends CrudRepository<Like, Long> {
-    Optional<Like> findByFeedIdAndUserId(Long feedId, Long userId);
+    Optional<Like> findByFeedIdAndUserId(Long feedId, String userId);
 }

@@ -27,12 +27,12 @@ public class Like {
     private Feed feed;
 
     @Column(name = "user_id",nullable = false)
-    private Long userId;
+    private String userId;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public Like(Feed feed,Long userId) {
+    public Like(Feed feed,String userId) {
         this.feed = feed;
         this.userId=userId;
     }
@@ -43,7 +43,7 @@ public class Like {
     }
 
     // 좋아요 생성을 위한 정적 팩토리 메서드
-    public static Like createLike(Feed feed, Long userId) {
+    public static Like createLike(Feed feed, String userId) {
         return Like.builder()
                 .feed(feed)
                 .userId(userId)
