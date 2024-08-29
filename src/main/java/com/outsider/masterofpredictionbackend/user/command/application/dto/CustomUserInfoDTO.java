@@ -10,10 +10,15 @@ public class CustomUserInfoDTO {
     private Long userId;
     private String email;
     private Authority role;
+    private String username;
+
+    public CustomUserInfoDTO() {
+    }
 
     public CustomUserInfoDTO(User user) {
         this.userId = user.getId();
         this.email = user.getEmail();
         this.role = user.getAuthority();
+        this.username= user.getUserName();
     }
 }
