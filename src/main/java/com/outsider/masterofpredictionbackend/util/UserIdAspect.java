@@ -1,6 +1,8 @@
 package com.outsider.masterofpredictionbackend.util;
 
 
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserService;
 import com.outsider.masterofpredictionbackend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +37,9 @@ public class UserIdAspect {
 
         // JwtAuthFilter에서 설정된 userId 가져오기
         Long userId = (Long) request.getAttribute("userId");
+        Authority role = (Authority) request.getAttribute("role");
+        String email = (String) request.getAttribute("email");
+        String userName = (String) request.getAttribute("userName");
 
         if (userId == null) {
             userId= 0L;
@@ -50,7 +55,12 @@ public class UserIdAspect {
         for (int i = 0; i < args.length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof UserId) {
-                    args[i] = userId;
+                    CustomUserInfoDTO customUserInfoDTO= new CustomUserInfoDTO();
+                    customUserInfoDTO.setUserId(userId);
+                    customUserInfoDTO.setRole(role);
+                    customUserInfoDTO.setEmail(email);
+                    customUserInfoDTO.setUsername(userName);
+                    args[i] = customUserInfoDTO ;
                 }
             }
         }

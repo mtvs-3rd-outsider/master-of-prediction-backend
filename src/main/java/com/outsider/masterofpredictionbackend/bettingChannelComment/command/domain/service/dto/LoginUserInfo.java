@@ -7,4 +7,6 @@ public class LoginUserInfo {
     private Long userNo;
     private String userName;
     private String nickName;
+    private Boolean isAdmin;
+    private String role;
 }
