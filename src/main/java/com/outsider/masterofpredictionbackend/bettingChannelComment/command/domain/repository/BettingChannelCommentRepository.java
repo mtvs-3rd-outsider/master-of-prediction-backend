@@ -4,6 +4,9 @@ import com.outsider.masterofpredictionbackend.bettingChannelComment.command.doma
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface BettingChannelCommentRepository extends JpaRepository<BettingChannelComment, Long> {
+    Optional<BettingChannelComment> findByIdAndDeletedAtIsNull(Long id);
 }
