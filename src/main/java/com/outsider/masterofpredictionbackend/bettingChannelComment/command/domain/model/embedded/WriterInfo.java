@@ -2,13 +2,14 @@ package com.outsider.masterofpredictionbackend.bettingChannelComment.command.dom
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 베팅 채널 게시글에 댓글을 작성하는 사용자 정보를 나타내는 필드
  */
 @Embeddable
 @Getter
+@ToString
 public class WriterInfo {
 
     /**
@@ -16,21 +17,15 @@ public class WriterInfo {
      * */
     private Long writerNo;
 
-    /**
-     * 댓글 작성자 이름 혹은 닉네임
-     * */
-    private String writerName;
 
     protected WriterInfo() {}
 
     /**
      * 배팅댓글 사용자 정보
      *
-     * @param writerNo  댓글 작성자 번호
-     * @param writerName 작성자 이름
+     * @param writerNo  댓글 작성자 고유 번호
      */
-    public WriterInfo(Long writerNo, String writerName) {
+    public WriterInfo(Long writerNo) {
         this.writerNo = writerNo;
-        this.writerName = writerName;
     }
 }
