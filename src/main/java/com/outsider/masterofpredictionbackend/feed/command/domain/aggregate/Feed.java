@@ -24,6 +24,7 @@ public class Feed {
     @Column(name = "feed_id")
     private long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "feed_author_type", nullable = false)
     private AuthorType authorType;
 
@@ -39,6 +40,7 @@ public class Feed {
     @Column(name = "feed_updated_at")
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "feed_channel_type", nullable = false)
     private ChannelType channelType; // mychannel 또는 categorychannel
 

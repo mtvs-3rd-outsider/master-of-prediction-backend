@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Column(name = "quotefeed_user_id")
-    private Long userId;
+    private String userId;
 
     @Override
     public String toString() {

@@ -21,7 +21,7 @@ public class FeedLikeService {
         this.likeRepository = likeRepository;
         this.feedRepository = feedRepository;
     }
-    public void toggleLike(Long feedId, Long userId) {
+    public void toggleLike(Long feedId, String userId) {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new EntityNotFoundException("Feed not found with id: " + feedId));
 

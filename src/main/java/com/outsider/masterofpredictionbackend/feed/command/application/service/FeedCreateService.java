@@ -7,6 +7,8 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.repository.You
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLOutput;
+
 
 @Service
 public class FeedCreateService {
@@ -34,11 +36,14 @@ public class FeedCreateService {
         feedRepository.save(feed);
 
         // 이미지 파일 저장
-        assert feedCreateDTO.getImageFiles() != null;
-        imageFileRepository.saveAll(feedCreateDTO.getImageFiles());
+        if (feedCreateDTO.getImageFiles() != null && !feedCreateDTO.getImageFiles().isEmpty()) {
+            imageFileRepository.saveAll(feedCreateDTO.getImageFiles());
+        }
 
         // YouTube 비디오 저장
-        assert feedCreateDTO.getYouTubeVideos() != null;
-        youtubeVideoRepository.saveAll(feedCreateDTO.getYouTubeVideos());
+        if (feedCreateDTO.getYouTubeVideos() != null && !feedCreateDTO.getYouTubeVideos().isEmpty()) {
+            youtubeVideoRepository.saveAll(feedCreateDTO.getYouTubeVideos());
+        }
+
     }
 }
