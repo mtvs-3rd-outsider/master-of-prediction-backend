@@ -17,10 +17,9 @@ public class RegistUserService {
     private final UserCommandRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    public RegistUserService(UserCommandRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public RegistUserService(UserCommandRepository userRepository, BCryptPasswordEncoder passwordEncoder, BCryptPasswordEncoder passwordEncoder1) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder1;
     }
 
     @Transactional
@@ -32,7 +31,7 @@ public class RegistUserService {
         // 새로운 사용자 생성
         User newUser = new User(
                 userRegistRequestDTO.getEmail(),
-                userRegistRequestDTO.getPassword(),
+                passwordEncoder.encode(userRegistRequestDTO.getPassword()),
                 userRegistRequestDTO.getUserName(),
                 Authority.ROLE_USER,
                 new ProviderInfo()

@@ -47,8 +47,8 @@ import static com.outsider.masterofpredictionbackend.common.constant.StringConst
 @Profile("prod")
 public class SecurityConfig {
 
-    private RegistUserService registUserService;
-    private DeleteUserService deleteUserService;
+    private final RegistUserService registUserService;
+    private final DeleteUserService deleteUserService;
     @Value("${google.client.id}")
     private String clientId;
     private final String email= DEFAULT_USER_EMAIL;
@@ -110,13 +110,8 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(this.oauth2UserService()))
                         .successHandler(oAuth2SuccessHandler)
-                )
-                .logout(logout -> {
-                    logout.logoutUrl("/logout");
-                    logout.deleteCookies("JSESSIONID"); // 로그아웃 시 사용자의 JSESSIONID 삭제
-                    logout.invalidateHttpSession(true);// 세션을 소멸하도록 허용하는 것
-                    logout.logoutSuccessUrl(successfulUri); // 로그아웃시 이동할 페이지 설정
-                });
+                );
+
 
         return http.build();
     }
@@ -141,7 +136,8 @@ public class SecurityConfig {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.addAllowedOrigin("https://master-of-prediction.shop");
+        config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
         source.registerCorsConfiguration("/**", config);
