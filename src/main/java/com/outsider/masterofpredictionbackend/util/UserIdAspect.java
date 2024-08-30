@@ -30,14 +30,15 @@ public class UserIdAspect {
 
 
 
-    @Around("execution(* com.outsider.masterofpredictionbackend..*Controller.*(.., @UserId (*), ..))")
+    @Around("execution(* com.outsider.masterofpredictionbackend..*Controller.*(.., @UserId (*), ..)) || execution(* com.outsider.masterofpredictionbackend..*Service.*(.., @UserId (*), ..))")
     public Object injectUserId(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
         // JwtAuthFilter에서 설정된 userId 가져오기
         Long userId = (Long) request.getAttribute("userId");
-        Authority role = (Authority) request.getAttribute("role");
+        String roleStr = (String) request.getAttribute("role");
+        Authority role = Authority.valueOf(roleStr.toUpperCase());
         String email = (String) request.getAttribute("email");
         String userName = (String) request.getAttribute("userName");
 
@@ -55,12 +56,15 @@ public class UserIdAspect {
         for (int i = 0; i < args.length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof UserId) {
-                    CustomUserInfoDTO customUserInfoDTO= new CustomUserInfoDTO();
-                    customUserInfoDTO.setUserId(userId);
-                    customUserInfoDTO.setRole(role);
-                    customUserInfoDTO.setEmail(email);
-                    customUserInfoDTO.setUsername(userName);
-                    args[i] = customUserInfoDTO ;
+                    if (args[i] instanceof CustomUserInfoDTO) {  // 타입 검증
+                        CustomUserInfoDTO customUserInfoDTO = (CustomUserInfoDTO) args[i];
+                        customUserInfoDTO.setUserId(userId);
+                        customUserInfoDTO.setRole(role);
+                        customUserInfoDTO.setEmail(email);
+                        customUserInfoDTO.setUsername(userName);
+                    } else {
+                        throw new IllegalArgumentException("Expected CustomUserInfoDTO, but found " + args[i].getClass().getName());
+                    }
                 }
             }
         }

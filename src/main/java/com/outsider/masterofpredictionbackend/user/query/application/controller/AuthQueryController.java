@@ -24,13 +24,13 @@ public class AuthQueryController {
         this.authService = authService;
         this.userService = userService;
     }
-    @CrossOrigin(origins = "https://monitor.master-of-prediction.shop:3001", allowedHeaders = "*",allowCredentials = "true")
     @PostMapping("login")
     public  ResponseEntity<UserInfoRequestDTO> postMemberProfile(
             @Valid @RequestBody LoginRequestDTO request,
             HttpServletResponse response
-    ) throws IOException {
+    ) {
 
+        System.out.println(request);
         String token = this.authService.login(request);
 
         // 쿠키 생성

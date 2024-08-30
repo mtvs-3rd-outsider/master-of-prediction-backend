@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.user.query.application.controller;
 
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoRequestDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.service.UserInfoService;
 import com.outsider.masterofpredictionbackend.util.UserId;
@@ -21,7 +22,7 @@ public class UserInfoController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserInfoRequestDTO> getUserInfo(@UserId Long id, @PathVariable Long userId) {
+    public ResponseEntity<UserInfoRequestDTO> getUserInfo(@UserId CustomUserInfoDTO id, @PathVariable Long userId) {
         //TODO: 권한에 따른 정보 조회 결과 변경
          Optional<UserInfoRequestDTO> userInfoRequestDTO= userService.getUserInfoById(userId);
         return userInfoRequestDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
