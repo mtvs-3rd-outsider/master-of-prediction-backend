@@ -5,6 +5,7 @@ server:
     key-store-password: ${SSL_KEY_STORE_PASSWORD}
     key-store-type: PKCS12
     key-alias: tomcat
+    enabled: false
 spring:
   config:
     import: optional:file:.env[.properties]
