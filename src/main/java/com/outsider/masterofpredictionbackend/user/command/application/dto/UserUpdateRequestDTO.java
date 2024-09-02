@@ -4,6 +4,8 @@ import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embe
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Location;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 public class UserUpdateRequestDTO {
     private Long userId;
@@ -13,4 +15,7 @@ public class UserUpdateRequestDTO {
     private Integer age;
     private Gender gender;
     private Location location;
+    private LocalDate birthday;
+    private String AvatarUrl;
+
 }

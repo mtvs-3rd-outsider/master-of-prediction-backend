@@ -1,7 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.query.application.service;
 
 
-import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoRequestDTO;
+import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,27 +19,31 @@ public class UserInfoService {
         this.userRepository = userRepository;
     }
 
-    // Method to retrieve user by ID and map to UserInfoRequestDTO
-    public Optional<UserInfoRequestDTO> getUserInfoById(Long id) {
+    // Method to retrieve user by ID and map to UserInfoResponseDTO
+    public Optional<UserInfoResponseDTO> getUserInfoById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         return userOptional.map(this::convertToDTO);
     }
 
-    // Method to retrieve user by email and map to UserInfoRequestDTO
-    public Optional<UserInfoRequestDTO> getUserInfoByEmail(String email) {
+    // Method to retrieve user by email and map to UserInfoResponseDTO
+    public Optional<UserInfoResponseDTO> getUserInfoByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         return userOptional.map(this::convertToDTO);
     }
 
-    // Private method to convert User entity to UserInfoRequestDTO
-    private UserInfoRequestDTO convertToDTO(User user) {
-        return new UserInfoRequestDTO(
+    // Private method to convert User entity to UserInfoResponseDTO
+    private UserInfoResponseDTO convertToDTO(User user) {
+        return new UserInfoResponseDTO(
+                user.getId(),
                 user.getEmail(),
                 user.getUserName(),
                 user.getAge(),
                 user.getGender(),
                 user.getLocation(),
-                user.getAuthority()
+                user.getAuthority(),
+                user.getBirthday(),
+                user.getAvatarUrl()
+
         );
     }
 }
