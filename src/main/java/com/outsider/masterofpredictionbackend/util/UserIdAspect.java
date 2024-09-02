@@ -1,21 +1,14 @@
 package com.outsider.masterofpredictionbackend.util;
 
-
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
-import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserService;
-import com.outsider.masterofpredictionbackend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -27,24 +20,19 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor
 public class UserIdAspect {
 
-
-
-
     @Around("execution(* com.outsider.masterofpredictionbackend..*Controller.*(.., @UserId (*), ..)) || execution(* com.outsider.masterofpredictionbackend..*Service.*(.., @UserId (*), ..))")
     public Object injectUserId(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        // JwtAuthFilter에서 설정된 userId 가져오기
-        Long userId = (Long) request.getAttribute("userId");
-        String roleStr = (String) request.getAttribute("role");
-        Authority role = Authority.valueOf(roleStr.toUpperCase());
-        String email = (String) request.getAttribute("email");
-        String userName = (String) request.getAttribute("userName");
+        // HTTP 헤더에서 사용자 정보 가져오기
+        String userIdHeader = request.getHeader("X-User-Id");
+        String roleStr = request.getHeader("X-User-Role");
+        String email = request.getHeader("X-User-Email");
+        String userName = request.getHeader("X-User-Name");
 
-        if (userId == null) {
-            userId= 0L;
-        }
+        Long userId = userIdHeader != null ? Long.parseLong(userIdHeader) : 0L;
+        Authority role = roleStr != null ? Authority.valueOf(roleStr.toUpperCase()) : Authority.ROLE_USER; // 기본 값 USER로 설정
 
         // 메서드와 매개변수 정보 가져오기
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
@@ -72,5 +60,4 @@ public class UserIdAspect {
         // 수정된 인자들로 메서드 실행
         return proceedingJoinPoint.proceed(args);
     }
-
 }
