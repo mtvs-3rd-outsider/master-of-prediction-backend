@@ -1,7 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.query.application.controller;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.LoginRequestDTO;
-import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoRequestDTO;
+import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.service.AuthService;
 import com.outsider.masterofpredictionbackend.user.query.application.service.UserInfoService;
 import com.outsider.masterofpredictionbackend.util.UserId;
@@ -25,7 +25,7 @@ public class AuthQueryController {
         this.userService = userService;
     }
     @PostMapping("login")
-    public  ResponseEntity<UserInfoRequestDTO> postMemberProfile(
+    public  ResponseEntity<UserInfoResponseDTO> postMemberProfile(
             @Valid @RequestBody LoginRequestDTO request,
             HttpServletResponse response
     ) {
@@ -49,7 +49,7 @@ public class AuthQueryController {
         // HTTP 200 OK 상태 코드 설정
 //        response.setStatus(HttpServletResponse.SC_OK);
         String email = request.getEmail();
-        Optional<UserInfoRequestDTO> userInfo = userService.getUserInfoByEmail(email);
+        Optional<UserInfoResponseDTO> userInfo = userService.getUserInfoByEmail(email);
         if (userInfo.isPresent()) {
             userInfo.get().setToken(token);
             return ResponseEntity.ok(userInfo.get());
@@ -60,10 +60,10 @@ public class AuthQueryController {
 
     }
     @GetMapping("users")
-    public  ResponseEntity<UserInfoRequestDTO> getMemberProfile(@UserId Long userId
+    public  ResponseEntity<UserInfoResponseDTO> getMemberProfile(@UserId Long userId
     ) throws IOException {
         System.out.println(userId);
-        Optional<UserInfoRequestDTO> userInfo = userService.getUserInfoById(userId);
+        Optional<UserInfoResponseDTO> userInfo = userService.getUserInfoById(userId);
         return userInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }

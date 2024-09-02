@@ -2,6 +2,10 @@ package com.outsider.masterofpredictionbackend.config;
 
 
 
+import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
+import com.outsider.masterofpredictionbackend.user.command.application.service.DeleteUserService;
+import com.outsider.masterofpredictionbackend.user.command.application.service.RegistUserService;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserService;
@@ -9,6 +13,7 @@ import com.outsider.masterofpredictionbackend.user.command.infrastructure.servic
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.PrincipalOauthUserService;
 import com.outsider.masterofpredictionbackend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -29,24 +34,33 @@ import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.*;
+
 @Configuration
 @EnableWebSecurity
 @Profile("dev")
 public class DevSecurityConfig {
+    private final RegistUserService registUserService;
+    private final DeleteUserService deleteUserService;
+    private Long id ;
 
-
-
+    private final String email= DEFAULT_USER_EMAIL;
+    private final String userName= DEFAULT_USER_NAME;
+    private final String password = DEFAULT_USER_PASSWORD;
     private final JwtUtil jwtUtil;
     private final CustomUserService customUserService;
     UserCommandRepository userCommandRepository;
 
-    public DevSecurityConfig( JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper) {
+    public DevSecurityConfig(RegistUserService registUserService, DeleteUserService deleteUserService, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper) {
+        this.registUserService = registUserService;
+        this.deleteUserService = deleteUserService;
         this.jwtUtil = jwtUtil;
         this.customUserService = customUserService;
         this.userCommandRepository = userMapper;
@@ -61,10 +75,7 @@ public class DevSecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults()).
-                requiresChannel(channel -> channel
-                        .anyRequest().requiresSecure()
-                )
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
@@ -73,7 +84,7 @@ public class DevSecurityConfig {
                         SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable
                 ).httpBasic(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new JwtAuthFilter(customUserService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthFilter( jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 
 
@@ -106,5 +117,27 @@ public class DevSecurityConfig {
     }
 
 
+    @Bean
+    @Transactional
+    public ApplicationRunner init() {
+        return args -> {
+            if (userCommandRepository.findByEmail(email).isEmpty()) {
 
+                UserRegistDTO dto = new UserRegistDTO(
+                        email,
+                        password,
+                        userName,
+                        Authority.ROLE_USER
+                );
+
+                // when
+                id= registUserService.registUser(dto);
+
+
+            }
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                deleteUserService.deleteUser(id);
+            }));
+        };
+    }
 }
