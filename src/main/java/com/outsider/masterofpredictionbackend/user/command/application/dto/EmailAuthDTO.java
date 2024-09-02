@@ -6,4 +6,9 @@ import lombok.*;
 public class EmailAuthDTO {
     private String code;
     private Boolean flag;
+
+    public EmailAuthDTO(String code, Boolean flag) {
+        this.code = code;
+        this.flag = flag;
+    }
 }

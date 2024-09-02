@@ -2,18 +2,15 @@ package com.outsider.masterofpredictionbackend.user.command.application.service;
 
 
 import com.outsider.masterofpredictionbackend.config.RedisConfig;
-import com.outsider.masterofpredictionbackend.user.command.application.dto.EmailAuthDto;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.EmailAuthDTO;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -43,21 +40,21 @@ public class EmailSendService {
 
         return Integer.parseInt(randomNumber);
     }
-    public void setData(String key, EmailAuthDto data) {
+    public void setData(String key, EmailAuthDTO data) {
         ValueOperations<String, Object> ops = redisConfig.redisTemplate().opsForValue();
         ops.set(key, data , 180, TimeUnit.SECONDS);
     }
-    public void updateData(String key, EmailAuthDto data) {
+    public void updateData(String key, EmailAuthDTO data) {
         ValueOperations<String, Object> ops = redisConfig.redisTemplate().opsForValue();
         ops.set(key, data);
     }
-    public EmailAuthDto getData(String key) {
+    public EmailAuthDTO getData(String key) {
         ValueOperations<String, Object> ops = redisConfig.redisTemplate().opsForValue();
-        return (EmailAuthDto) ops.get(key);
+        return (EmailAuthDTO) ops.get(key);
     }
     /* 인증번호 확인 */
     public Boolean checkAuthNum(String email, String authNum) {
-        EmailAuthDto emailAuthDto = getData(email);
+        EmailAuthDTO emailAuthDto = getData(email);
         if (emailAuthDto.getCode().equals(authNum)) {
             emailAuthDto.setFlag(true);
             updateData(email,emailAuthDto);
@@ -79,7 +76,7 @@ public class EmailSendService {
         }
         // redis에 3분 동안 이메일과 인증 코드 저장
         ValueOperations<String, Object> valOperations = redisConfig.redisTemplate().opsForValue();
-        setData(toMail, new EmailAuthDto(false ,Integer.toString(authNumber)));
+        setData(toMail, new EmailAuthDTO( Integer.toString(authNumber),false));
     }
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[A-Za-z0-9+_.-]+@(.+)$"
