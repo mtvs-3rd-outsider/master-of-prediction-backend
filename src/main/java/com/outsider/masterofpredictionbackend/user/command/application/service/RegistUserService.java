@@ -21,7 +21,9 @@ public class RegistUserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder1;
     }
-
+    /*
+     사용자 등록
+     */
     @Transactional
     public Long registUser(UserRegistDTO userRegistRequestDTO) {
         // 중복된 사용자가 있는지 확인
@@ -33,27 +35,17 @@ public class RegistUserService {
                 userRegistRequestDTO.getEmail(),
                 passwordEncoder.encode(userRegistRequestDTO.getPassword()),
                 userRegistRequestDTO.getUserName(),
-                Authority.ROLE_USER,
+               userRegistRequestDTO.getAuthority(),
                 new ProviderInfo()
         );
         // 사용자 저장
         return userRepository.save(newUser).getId();
     }
+    /*
+     사용자 등록
+     */
     @Transactional
     public Long registUser(SignUpRequestDTO userRegistRequestDTO) {
-        // 중복된 사용자가 있는지 확인
-        if (userRepository.findByEmail(userRegistRequestDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User with this ID already exists");
-        }
-        // 새로운 사용자 생성
-        User newUser = new User(
-                userRegistRequestDTO.getEmail(),
-                passwordEncoder.encode(userRegistRequestDTO.getPassword()),
-                userRegistRequestDTO.getUserName(),
-                Authority.ROLE_USER,
-                new ProviderInfo()
-        );
-        // 사용자 저장
-        return userRepository.save(newUser).getId();
+       return registUser(new UserRegistDTO(userRegistRequestDTO,Authority.ROLE_USER));
     }
 }

@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.user.command.domain.aggregate;
 
+import com.outsider.masterofpredictionbackend.common.BaseEntity;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.*;
 import jakarta.persistence.*;
 
@@ -7,8 +8,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "tbl_user")
-public class User {
+@Table(name = "USER")
+public class User extends BaseEntity  {
 
     @Id
     @Column(name = "user_id")
@@ -39,6 +40,27 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_authority")
     private Authority authority;
+    @Column(name = "birthday")
+    private LocalDate birthday;
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
     @Embedded
     private Tier tier;
     @Embedded
@@ -46,6 +68,9 @@ public class User {
     private String provideId; // 해당 OAuth 의 key(id)
     @Column(name = "user_img")
     private String userImg ;
+
+    @Column(name = "join_date")
+    private LocalDate joinDate;
 
     public String getUserImg() {
         return userImg;
@@ -71,8 +96,6 @@ public class User {
         this.joinDate = joinDate;
     }
 
-    @Column(name = "join_date")
-    private LocalDate joinDate;
 
     public Authority getAuthority() {
         return authority;
@@ -80,6 +103,9 @@ public class User {
 
     public void setAuthority(Authority authority) {
         this.authority = authority;
+    }
+    public void setAuthority(String authority) {
+        this.authority = Authority.fromString(authority);
     }
 
     public void setWithdrawal(Boolean withdrawal) {

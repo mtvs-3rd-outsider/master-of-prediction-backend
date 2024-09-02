@@ -37,6 +37,12 @@ public class UpdateUserService {
         if (userUpdateRequestDTO.getLocation() != null) {
             user.setLocation(userUpdateRequestDTO.getLocation());
         }
+        if (userUpdateRequestDTO.getBirthday() != null) {
+            user.setBirthday(userUpdateRequestDTO.getBirthday());
+        }
+        if (userUpdateRequestDTO.getAvatarUrl() != null) {
+            user.setAvatarUrl(userUpdateRequestDTO.getAvatarUrl());
+        }
         // 사용자 저장
         return userRepository.save(user);
     }

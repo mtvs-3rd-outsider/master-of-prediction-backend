@@ -1,14 +1,11 @@
 package com.outsider.masterofpredictionbackend.user.query.application.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Gender;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Location;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
-import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoRequestDTO;
-import com.outsider.masterofpredictionbackend.user.query.application.service.UserInfoService;
+import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,11 +47,11 @@ public class UserInfoServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
 
         // When
-        Optional<UserInfoRequestDTO> result = userInfoService.getUserInfoById(userId);
+        Optional<UserInfoResponseDTO> result = userInfoService.getUserInfoById(userId);
 
         // Then
         assertTrue(result.isPresent());
-        UserInfoRequestDTO dto = result.get();
+        UserInfoResponseDTO dto = result.get();
         assertEquals("user@example.com", dto.getEmail());
         assertEquals("John Doe", dto.getUserName());
         assertEquals(30, dto.getAge());
@@ -70,7 +67,7 @@ public class UserInfoServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         // When
-        Optional<UserInfoRequestDTO> result = userInfoService.getUserInfoById(userId);
+        Optional<UserInfoResponseDTO> result = userInfoService.getUserInfoById(userId);
 
         // Then
         assertTrue(result.isEmpty());
@@ -91,11 +88,11 @@ public class UserInfoServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockUser));
 
         // When
-        Optional<UserInfoRequestDTO> result = userInfoService.getUserInfoByEmail(email);
+        Optional<UserInfoResponseDTO> result = userInfoService.getUserInfoByEmail(email);
 
         // Then
         assertTrue(result.isPresent());
-        UserInfoRequestDTO dto = result.get();
+        UserInfoResponseDTO dto = result.get();
         assertEquals(email, dto.getEmail());
         assertEquals("John Doe", dto.getUserName());
         assertEquals(30, dto.getAge());
@@ -111,7 +108,7 @@ public class UserInfoServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         // When
-        Optional<UserInfoRequestDTO> result = userInfoService.getUserInfoByEmail(email);
+        Optional<UserInfoResponseDTO> result = userInfoService.getUserInfoByEmail(email);
 
         // Then
         assertTrue(result.isEmpty());

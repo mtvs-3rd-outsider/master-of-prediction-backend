@@ -100,7 +100,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable
                 ).
                 httpBasic(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new JwtAuthFilter(customUserService, jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
 
                         .authorizationEndpoint(authorization -> authorization

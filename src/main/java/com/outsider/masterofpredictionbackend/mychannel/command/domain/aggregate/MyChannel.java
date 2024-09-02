@@ -3,8 +3,6 @@ package com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregat
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.*;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name="MY_CHANNEL")
 public class MyChannel {
@@ -65,7 +63,7 @@ public class MyChannel {
 
 
     public String getWebsite() {
-        return website.getUrl();
+        return website.getWebsite();
     }
 
     public UserCounts getUserCounts() {

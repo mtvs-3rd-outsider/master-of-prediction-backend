@@ -58,6 +58,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 	implementation 'io.minio:minio:8.2.0'
+
+	implementation 'org.apache.kafka:kafka-clients'
+	implementation 'org.springframework.kafka:spring-kafka'
 }
 
 tasks.named('test') {

@@ -4,22 +4,22 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Website {
-    private String url;
+    private String website;
 
     protected Website() {}
 
     public Website(String url) {
         validate(url);
-        this.url = url;
+        this.website = url;
     }
 
-    public String getUrl() {
-        return url;
+    public String getWebsite() {
+        return website;
     }
 
-    public void setUrl(String url) {
-        validate(url);
-        this.url = url;
+    public void setWebsite(String website) {
+        validate(website);
+        this.website = website;
     }
 
     private void validate(String url) {
@@ -38,7 +38,7 @@ public class Website {
     @Override
     public String toString() {
         return "Website{" +
-                "url='" + url + '\'' +
+                "website='" + website + '\'' +
                 '}';
     }
 }

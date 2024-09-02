@@ -17,4 +17,10 @@ public class UserRegistDTO {
         this.userName = userName;
         this.authority = authority;
     }
+    public UserRegistDTO(SignUpRequestDTO signUpRequestDTO, Authority authority) {
+        this.email = signUpRequestDTO.getEmail();
+        this.password = signUpRequestDTO.getPassword();
+        this.userName = signUpRequestDTO.getUserName();
+        this.authority = authority;
+    }
 }
