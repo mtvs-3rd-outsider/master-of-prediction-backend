@@ -1,8 +1,10 @@
 package com.outsider.masterofpredictionbackend.user.command.application.service;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.SignUpRequestDTO;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +30,11 @@ public class UpdateUserServiceTest {
     @BeforeEach
     public void setUp() {
         // 기존 사용자 생성 및 저장
-        SignUpRequestDTO dto = new SignUpRequestDTO(
+        UserRegistDTO dto = new UserRegistDTO(
                 "test@example.com",
                 "password123",
-                "TestuserName"
+                "TestuserName",
+                Authority.ROLE_USER
         );
 
         // when
