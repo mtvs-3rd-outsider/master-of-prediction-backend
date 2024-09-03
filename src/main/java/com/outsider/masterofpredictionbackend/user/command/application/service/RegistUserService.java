@@ -7,10 +7,11 @@ import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embe
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.ProviderInfo;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+@Slf4j
 @Service
 public class RegistUserService {
 
@@ -39,6 +40,8 @@ public class RegistUserService {
                 new ProviderInfo()
         );
         // 사용자 저장
+
+        log.info("사용자 등록됨. id: {}", newUser.getId());
         return userRepository.save(newUser).getId();
     }
     /*
