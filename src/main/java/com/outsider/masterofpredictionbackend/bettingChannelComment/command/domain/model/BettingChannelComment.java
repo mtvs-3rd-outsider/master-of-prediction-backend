@@ -6,12 +6,10 @@ import com.outsider.masterofpredictionbackend.bettingChannelComment.command.doma
 import com.outsider.masterofpredictionbackend.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "betting_channel_comment")
 @ToString
 public class BettingChannelComment extends BaseEntity {
