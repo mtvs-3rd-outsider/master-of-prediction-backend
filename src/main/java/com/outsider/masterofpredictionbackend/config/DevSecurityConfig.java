@@ -57,13 +57,15 @@ public class DevSecurityConfig {
     private final JwtUtil jwtUtil;
     private final CustomUserService customUserService;
     UserCommandRepository userCommandRepository;
+    private final GetOrFullAuthorizationManager customAuthorizationManager;
 
-    public DevSecurityConfig(RegistUserService registUserService, DeleteUserService deleteUserService, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper) {
+    public DevSecurityConfig(RegistUserService registUserService, DeleteUserService deleteUserService, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
         this.registUserService = registUserService;
         this.deleteUserService = deleteUserService;
         this.jwtUtil = jwtUtil;
         this.customUserService = customUserService;
         this.userCommandRepository = userMapper;
+        this.customAuthorizationManager = customAuthorizationManager;
     }
 
     @Bean
@@ -78,6 +80,7 @@ public class DevSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll()
+                        .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
