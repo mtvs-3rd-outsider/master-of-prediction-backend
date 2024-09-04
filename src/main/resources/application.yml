@@ -7,6 +7,29 @@ server:
     key-alias: tomcat
     enabled: false
 spring:
+  kafka:
+    bootstrap-servers: localhost:9093
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: test
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: after_route
+            uri: https://httpbin.org/get
+            predicates:
+              - Path=/test
+            filters:
+              - RewritePath=/test, /get
+  threads:
+    virtual:
+      enabled: true
   config:
     import: optional:file:.env[.properties]
   datasource:
@@ -22,9 +45,10 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-
       ddl-auto: create
   data:
+    mongodb:
+      uri: mongodb://ohgiraffers:ohgiraffers@localhost:10001/forecasthub?authSource=admin
     redis:
       host: localhost
       port: 6379
