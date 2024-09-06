@@ -2,18 +2,19 @@ package com.outsider.masterofpredictionbackend.util;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.persistence.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
+
+import java.time.LocalDate;
+
 
 public class ReflectionUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtil.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 포맷 정의
+    private static final LocalDate EPOCH_DATE = LocalDate.of(1970, 1, 1); // 1970-01-01 기준 날짜
 
     public static <S, T> T mapJsonNodeToEntity(JsonNode node, T targetEntity, Class<S> sourceClass) {
         Field[] targetFields = targetEntity.getClass().getDeclaredFields();
@@ -23,16 +24,23 @@ public class ReflectionUtil {
             targetField.setAccessible(true); // private 필드 접근 가능하게 설정
 
             try {
-                String jsonFieldName = getJsonFieldName(targetField); // JSON 필드 이름 가져오기
+                String jsonFieldName = getJsonFieldName(targetField); // 타겟 JSON 필드 이름 가져오기
+                logger.info("Mapping field: {} to JSON field: {}", targetField.getName(), jsonFieldName); // 디버깅용 로그
 
-                if (node.has(jsonFieldName)) {
-                    Field sourceField = getSourceFieldByName(sourceFields, targetField.getName());
-                    if (sourceField != null) {
-                        sourceField.setAccessible(true);
-                        Object sourceValue = getValueForField(node, sourceField, jsonFieldName);
-                        Object convertedValue = convertValue(sourceValue, targetField.getType());
+                Field sourceField = getSourceFieldByColumn(sourceFields, jsonFieldName); // 원본 소스의 @Column과 매칭
+                if (sourceField != null) {
+                    sourceField.setAccessible(true);
+                    Object sourceValue = getValueForField(node, sourceField, jsonFieldName);
+                    logger.info("Source value for field {}: {}", jsonFieldName, sourceValue); // 디버깅용 로그
+
+                    Object convertedValue = convertValue(sourceValue, targetField.getType());
+                    logger.info("Converted value for field {}: {}", targetField.getName(), convertedValue); // 디버깅용 로그
+
+                    if (convertedValue != null) {
                         targetField.set(targetEntity, convertedValue);
                     }
+                } else {
+                    logger.warn("JSON does not contain field: {}", jsonFieldName); // 필드가 없는 경우 경고 로그
                 }
             } catch (IllegalAccessException e) {
                 logger.error("Failed to set field value for field: {}", targetField.getName(), e);
@@ -50,11 +58,12 @@ public class ReflectionUtil {
         return field.getName(); // 없으면 필드 이름을 그대로 사용
     }
 
-    // Source 필드 이름을 기반으로 Source 클래스에서 해당 필드 찾기
-    private static Field getSourceFieldByName(Field[] sourceFields, String fieldName) {
+    // 원본 소스 클래스에서 @Column을 기반으로 필드 찾기
+    private static Field getSourceFieldByColumn(Field[] sourceFields, String jsonFieldName) {
         for (Field field : sourceFields) {
-            if (field.getName().equalsIgnoreCase(fieldName)) {
-                return field;
+            Column column = field.getAnnotation(Column.class); // @Column 어노테이션 확인
+            if (column != null && column.name().equalsIgnoreCase(jsonFieldName)) {
+                return field; // @Column 이름과 jsonFieldName이 일치하면 필드를 반환
             }
         }
         return null; // 필드가 없으면 null 반환
@@ -79,15 +88,20 @@ public class ReflectionUtil {
             return new BigDecimal(jsonValue.asText());
         } else if (fieldType == Boolean.class || fieldType == boolean.class) {
             return jsonValue.asBoolean();
-        } else if (fieldType == Date.class) {
+        } else if (fieldType == LocalDate.class) {
             try {
-                return new Date(jsonValue.asLong()); // Timestamp 값을 Date로 변환
+                return convertDaysToDate(jsonValue.asInt()); // 숫자를 LocalDate로 변환
             } catch (Exception e) {
-                logger.error("Failed to parse date from JSON field: {}", jsonFieldName, e);
+                logger.error("Failed to parse LocalDate from JSON field: {}", jsonFieldName, e);
             }
         }
         // 더 많은 타입에 대한 처리가 필요하다면 여기서 추가
         return null;
+    }
+
+    // 숫자를 LocalDate로 변환하는 로직
+    private static LocalDate convertDaysToDate(int days) {
+        return EPOCH_DATE.plusDays(days); // 1970-01-01에서 days만큼 더한 날짜 반환
     }
 
     // Source 값과 Target 필드 타입 간의 변환 처리
@@ -104,14 +118,14 @@ public class ReflectionUtil {
 
         try {
             if (targetType == String.class) {
-                if (sourceType == Date.class) {
-                    return dateFormat.format((Date) sourceValue); // Date -> String 변환
+                if (sourceType == LocalDate.class) {
+                    return ((LocalDate) sourceValue).toString(); // LocalDate -> String 변환
                 } else {
                     return sourceValue.toString(); // 기본적으로 toString() 사용
                 }
-            } else if (targetType == Date.class) {
+            } else if (targetType == LocalDate.class) {
                 if (sourceType == String.class) {
-                    return dateFormat.parse((String) sourceValue); // String -> Date 변환
+                    return LocalDate.parse((String) sourceValue); // String -> LocalDate 변환
                 }
             } else if (targetType == Integer.class || targetType == int.class) {
                 return Integer.parseInt(sourceValue.toString());
