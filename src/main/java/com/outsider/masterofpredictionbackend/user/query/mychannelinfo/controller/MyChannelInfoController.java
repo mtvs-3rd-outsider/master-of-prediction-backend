@@ -25,7 +25,6 @@ public class MyChannelInfoController {
     public ResponseEntity<MyChannelInfoViewModel> getUserData(@PathVariable Long userId) {
         // 레포지토리를 사용하여 데이터베이스에서 사용자 데이터를 가져옵니다.
         Optional<MyChannelInfoViewModel> myChannelInfoViewModel= myChannelInfoRepository.findById(userId);
-        System.out.println(myChannelInfoViewModel.get());
         return myChannelInfoRepository.findById(userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

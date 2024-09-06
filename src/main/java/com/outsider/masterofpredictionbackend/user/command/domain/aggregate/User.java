@@ -69,7 +69,7 @@ public class User extends BaseEntity  {
     @Column(name = "user_img")
     private String userImg ;
 
-    @Column(name = "join_date")
+    @Column(name = "joined_date")
     private LocalDate joinDate;
 
     public String getUserImg() {

@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,7 +44,7 @@ public class MyChannelInfoViewModel {
     @JsonProperty("website")
     private String website;
 
-    @JsonProperty("birthdate")
+    @JsonProperty("birthday")
     private String birthdate;
 
     @JsonProperty("joined_date")
@@ -54,6 +55,9 @@ public class MyChannelInfoViewModel {
 
     @JsonProperty("points")
     private BigDecimal points;
+
+    @JsonProperty( "user_img")
+    private String userImg ;
 
     @JsonProperty("tier_level")
     private int tierLevel;
