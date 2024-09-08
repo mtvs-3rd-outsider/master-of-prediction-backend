@@ -3,7 +3,7 @@ package com.outsider.masterofpredictionbackend.config;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.service.DeleteUserService;
-import com.outsider.masterofpredictionbackend.user.command.application.service.RegistUserService;
+import com.outsider.masterofpredictionbackend.user.command.application.service.UserRegistService;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
@@ -47,7 +47,7 @@ import static com.outsider.masterofpredictionbackend.common.constant.StringConst
 @Profile("prod")
 public class SecurityConfig {
 
-    private final RegistUserService registUserService;
+    private final UserRegistService registUserService;
     private final DeleteUserService deleteUserService;
     @Value("${google.client.id}")
     private String clientId;
@@ -67,7 +67,7 @@ public class SecurityConfig {
     private final GetOrFullAuthorizationManager customAuthorizationManager;
     private Long id ;
 
-    public SecurityConfig(RegistUserService registUserService, DeleteUserService deleteUserService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+    public SecurityConfig(UserRegistService registUserService, DeleteUserService deleteUserService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
         this.registUserService = registUserService;
         this.deleteUserService = deleteUserService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;

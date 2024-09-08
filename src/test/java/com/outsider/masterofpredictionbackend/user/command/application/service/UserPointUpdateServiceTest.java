@@ -24,7 +24,7 @@ public class UserPointUpdateServiceTest {
     @Autowired
     private UserCommandRepository userCommandRepository;
     @Autowired
-    private RegistUserService registUserService;
+    private UserRegistService registUserService;
 
     private Long existingUser;
 

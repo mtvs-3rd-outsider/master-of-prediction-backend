@@ -1,20 +1,25 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
-import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelRegistRequestDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelInfoUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Bio;
-import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.DisplayName;
-import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.User;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.Website;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.MY_CHANNEL_CREATE_TOPIC;
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.MY_CHANNEL_UPDATE_TOPIC;
 
 /**
  * 서비스 클래스는 새로운 채널을 등록하는 기능을 제공합니다.
  */
 @Service
+@Slf4j
 public class MyChannelRegistService {
 
     private final MyChannelCommandRepository myChannelRepository;
@@ -34,21 +39,24 @@ public class MyChannelRegistService {
      *
      * 주어진 정보에 따라 새로운 채널을 생성하고, 데이터베이스에 저장합니다.
      *
-     * @param myChannelRegistRequestDTO 등록할 채널의 정보가 담긴 DTO
+     * @param Long 등록할 채널의 userId
      * @return 등록된 채널의 ID
      */
     @Transactional
-    public Long registMyChannel(MyChannelRegistRequestDTO myChannelRegistRequestDTO) {
+    public Long registMyChannel(Long userId) {
 
         MyChannel myChannel = new MyChannel(
-                new DisplayName(myChannelRegistRequestDTO.getDisplayName()),
-                new Bio(myChannelRegistRequestDTO.getBio()),
-                new Website(myChannelRegistRequestDTO.getWebsite()),
-                new User(myChannelRegistRequestDTO.getUser())
+                userId
         );
 
         MyChannel savedChannel = myChannelRepository.save(myChannel);
 
         return savedChannel.getId(); // 등록된 채널의 ID 반환
+    }
+    @KafkaListener(topics = MY_CHANNEL_CREATE_TOPIC)
+    @Transactional
+    public void consume(String message)  {
+        registMyChannel(Long.parseLong(message));
+        log.info("Updated channel from Kafka message: {}", message);
     }
 }

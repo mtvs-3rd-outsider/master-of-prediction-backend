@@ -1,6 +1,5 @@
 package com.outsider.masterofpredictionbackend.user.command.application.service;
 
-import com.outsider.masterofpredictionbackend.user.command.application.dto.SignUpRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
@@ -19,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UpdateUserServiceTest {
 
     @Autowired
-    private UpdateUserService updateUserService;
+    private UserProfileUpdateService updateUserService;
     @Autowired
-    private RegistUserService registUserService;
+    private UserRegistService registUserService;
     @Autowired
     private  BCryptPasswordEncoder passwordEncoder;
 
@@ -48,7 +47,6 @@ public class UpdateUserServiceTest {
         // 업데이트할 데이터 준비
         UserUpdateRequestDTO updateDTO = new UserUpdateRequestDTO();
         updateDTO.setUserId(existingUser);
-        updateDTO.setPassword("newPassword");
         updateDTO.setUserName("newuserName");
 
 
