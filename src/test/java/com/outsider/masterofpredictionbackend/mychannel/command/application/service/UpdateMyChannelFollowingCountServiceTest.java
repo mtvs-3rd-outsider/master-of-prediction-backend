@@ -1,6 +1,5 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
-import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelRegistRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.UpdateChannelUserCountDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
@@ -34,15 +33,9 @@ public class UpdateMyChannelFollowingCountServiceTest {
 
     @BeforeEach
     void setUp() {
-        // 테스트용 MyChannel 객체를 저장합니다.
-        MyChannelRegistRequestDTO registDTO = new MyChannelRegistRequestDTO();
-        registDTO.setDisplayName("Original Name");
-        registDTO.setBio("Original Bio");
-        registDTO.setWebsite("https://original-website.com");
-        registDTO.setUser(1L);
 
         // Repository를 통해 채널을 저장하고, 이후에 사용할 수 있도록 설정합니다.
-        createdChannelId = myChannelRegistService.registMyChannel(registDTO);
+        createdChannelId = myChannelRegistService.registMyChannel(1L);
     }
     private static Stream<Arguments> getChannelFollowingUpdateInfo() {
         return Stream.of(

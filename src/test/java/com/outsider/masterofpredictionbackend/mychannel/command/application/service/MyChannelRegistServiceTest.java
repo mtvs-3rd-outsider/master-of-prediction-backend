@@ -1,8 +1,6 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
 import com.outsider.masterofpredictionbackend.MasterOfPredictionBackendApplication;
-import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelRegistRequestDTO;
-import com.outsider.masterofpredictionbackend.mychannel.command.application.service.MyChannelRegistService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,12 +30,8 @@ public class MyChannelRegistServiceTest {
     @ParameterizedTest(name = "Test registration of channel for {0}")
     @MethodSource("getChannelInfos")
     void testRegistMyChannel(String displayName, String bio, String website,  Long user) {
-        MyChannelRegistRequestDTO dto = new MyChannelRegistRequestDTO();
-        dto.setDisplayName(displayName);
-        dto.setBio(bio);
-        dto.setWebsite(website);
-        dto.setUser(user);
-        Assertions.assertDoesNotThrow(() -> myChannelRegistService.registMyChannel(dto));
+
+        Assertions.assertDoesNotThrow(() -> myChannelRegistService.registMyChannel(user));
     }
 
 

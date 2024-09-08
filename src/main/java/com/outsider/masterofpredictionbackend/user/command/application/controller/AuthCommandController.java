@@ -1,9 +1,8 @@
 package com.outsider.masterofpredictionbackend.user.command.application.controller;
 
-import com.outsider.masterofpredictionbackend.user.command.application.dto.EmailAuthDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.SignUpRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.service.AuthService;
-import com.outsider.masterofpredictionbackend.user.command.application.service.RegistUserService;
+import com.outsider.masterofpredictionbackend.user.command.application.service.UserRegistService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 public class AuthCommandController {
 
-    private final RegistUserService registUserService;
+    private final UserRegistService registUserService;
     private AuthService authService;
-    public AuthCommandController(RegistUserService registUserService, AuthService authService) {
+    public AuthCommandController(UserRegistService registUserService, AuthService authService) {
         this.registUserService = registUserService;
         this.authService = authService;
     }
@@ -25,8 +24,8 @@ public class AuthCommandController {
 //        if (emailAuthDto == null || !emailAuthDto.getFlag()) {
 //            return ResponseEntity.badRequest().body("Invalid email address");
 //        }
-        registUserService.registUser(user);
-        return ResponseEntity.ok().build();
+       Long userId =registUserService.registUser(user);
+        return ResponseEntity.ok().body(userId.toString());
     }
 
 }

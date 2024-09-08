@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional
 class RegistUserServiceTest {
     @Autowired
-    private RegistUserService registUserService;
+    private UserRegistService registUserService;
 
     @Autowired
     private UserCommandRepository userRepository;

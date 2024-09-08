@@ -8,11 +8,8 @@ import jakarta.persistence.*;
 public class MyChannel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="channel_id")
     private Long id;
-
-    @Embedded
-    private DisplayName displayName;
 
     @Embedded
     private Bio bio;
@@ -23,38 +20,36 @@ public class MyChannel {
     @Embedded
     private UserCounts userCounts;
 
-    @Embedded
-    private User user;
+
+    @Lob
+    @Column(name="banner_img",length = 1000)
+    private String bannerImg;
+
 
     public MyChannel() {
     }
-
-    public MyChannel(DisplayName displayName, Bio bio, Website website,  User user) {
-        this.displayName = displayName;
+    public MyChannel(Long userId) {
+        this.id = userId;
+    }
+    public MyChannel(Long userId, Bio bio, Website website) {
+        this.id = userId;
         this.bio = bio;
         this.website = website;
         this.userCounts = new UserCounts(0,0);
-        this.user = user;
     }
 
     @Override
     public String toString() {
         return "MyChannel{" +
                 "id=" + id +
-                ", displayName=" + displayName +
                 ", bio=" + bio +
                 ", website=" + website +
                 ", userCounts=" + userCounts +
-                ", user=" + user +
                 '}';
     }
 
     public Long getId() {
         return id;
-    }
-
-    public String getDisplayName() {
-        return displayName.getValue();
     }
 
     public String getBio() {
@@ -70,9 +65,7 @@ public class MyChannel {
         return userCounts;
     }
 
-    public User getUser() {
-        return user;
-    }
+
     public void setFollowers(int userCounts) {
         this.userCounts.setFollowersCount(userCounts);
     }
@@ -80,9 +73,6 @@ public class MyChannel {
         this.userCounts.setFollowingCount(userCounts);
     }
 
-    public void setDisplayName(DisplayName displayName) {
-        this.displayName = displayName;
-    }
 
     public void setBio(Bio bio) {
         this.bio = bio;
@@ -90,5 +80,13 @@ public class MyChannel {
 
     public void setWebsite(Website website) {
         this.website = website;
+    }
+
+    public String getBannerImg() {
+        return bannerImg;
+    }
+
+    public void setBannerImg(String bannerImg) {
+        this.bannerImg = bannerImg;
     }
 }

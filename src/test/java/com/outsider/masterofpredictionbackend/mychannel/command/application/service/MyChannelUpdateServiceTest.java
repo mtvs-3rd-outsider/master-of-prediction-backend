@@ -1,6 +1,5 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.application.service;
 
-import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelRegistRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelInfoUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
@@ -33,14 +32,9 @@ public class MyChannelUpdateServiceTest {
 
     @BeforeEach
     void setUp() {
-        // 채널을 미리 등록해두고 ID를 저장합니다.
-        MyChannelRegistRequestDTO registDTO = new MyChannelRegistRequestDTO();
-        registDTO.setDisplayName("Original Name");
-        registDTO.setBio("Original Bio");
-        registDTO.setWebsite("https://original-website.com");
-        registDTO.setUser(1L);
 
-        createdChannelId = myChannelRegistService.registMyChannel(registDTO);
+
+        createdChannelId = myChannelRegistService.registMyChannel(1L);
     }
 
     private static Stream<Arguments> getUpdatedChannelInfos() {
@@ -59,13 +53,11 @@ public class MyChannelUpdateServiceTest {
         Assertions.assertTrue(originalChannel.isPresent());
         MyChannel original = originalChannel.get();
 
-        String originalDisplayName = original.getDisplayName();
         String originalBio = original.getBio();
         String originalWebsite = original.getWebsite();
 
         MyChannelInfoUpdateRequestDTO updateDTO = new MyChannelInfoUpdateRequestDTO();
-        updateDTO.setChannelId(createdChannelId);
-        updateDTO.setDisplayName(displayName);
+        updateDTO.setUserId(createdChannelId);
         updateDTO.setBio(bio);
         updateDTO.setWebsite(website);
 
@@ -78,7 +70,6 @@ public class MyChannelUpdateServiceTest {
         MyChannel myChannel = updatedChannel.get();
 
         // null이 아닌 필드만 업데이트되었는지 확인
-        Assertions.assertEquals(displayName != null ? displayName : originalDisplayName, myChannel.getDisplayName());
         Assertions.assertEquals(bio != null ? bio : originalBio, myChannel.getBio());
         Assertions.assertEquals(website != null ? website : originalWebsite, myChannel.getWebsite());
     }

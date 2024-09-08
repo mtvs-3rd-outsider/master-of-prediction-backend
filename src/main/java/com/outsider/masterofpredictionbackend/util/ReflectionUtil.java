@@ -66,6 +66,14 @@ public class ReflectionUtil {
                 return field; // @Column 이름과 jsonFieldName이 일치하면 필드를 반환
             }
         }
+
+        // @Column 어노테이션이 없을 경우 필드 이름으로 찾기
+        for (Field field : sourceFields) {
+            if (field.getName().equalsIgnoreCase(jsonFieldName)) {
+                return field; // 필드 이름이 jsonFieldName과 일치하면 필드를 반환
+            }
+        }
+
         return null; // 필드가 없으면 null 반환
     }
 
@@ -94,6 +102,9 @@ public class ReflectionUtil {
             } catch (Exception e) {
                 logger.error("Failed to parse LocalDate from JSON field: {}", jsonFieldName, e);
             }
+        }else
+        {
+            return jsonValue.asText();
         }
         // 더 많은 타입에 대한 처리가 필요하다면 여기서 추가
         return null;
@@ -133,6 +144,9 @@ public class ReflectionUtil {
                 return Long.parseLong(sourceValue.toString());
             } else if (targetType == BigDecimal.class) {
                 return new BigDecimal(sourceValue.toString());
+            }else
+            {
+                return sourceValue.toString();
             }
             // 필요에 따라 더 많은 변환 로직 추가
         } catch (Exception e) {

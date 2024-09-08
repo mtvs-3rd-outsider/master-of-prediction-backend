@@ -12,6 +12,7 @@ public class UserInfoResponseDTO {
 
     private Long id;
     private String email;
+    private String displayName;
     private String userName;
     private Integer age;
     private Gender gender;
@@ -20,7 +21,7 @@ public class UserInfoResponseDTO {
     private  String token;
     private LocalDate birthday;
     private String avatarUrl;
-    public UserInfoResponseDTO(Long id, String email, String userName, int age, Gender gender, Location location, Authority authority,LocalDate birthday, String avatarUrl ) {
+    public UserInfoResponseDTO(Long id, String email, String userName, int age, Gender gender, Location location, Authority authority,LocalDate birthday, String avatarUrl ,String displayName) {
         this.id = id;
         this.email = email;
         this.userName = userName;
@@ -30,5 +31,6 @@ public class UserInfoResponseDTO {
         this.authority = authority;
         this.birthday = birthday;
         this.avatarUrl= avatarUrl;
+        this.displayName = displayName;
     }
 }

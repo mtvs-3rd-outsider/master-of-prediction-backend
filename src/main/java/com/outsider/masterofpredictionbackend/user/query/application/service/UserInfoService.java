@@ -42,7 +42,8 @@ public class UserInfoService {
                 user.getLocation(),
                 user.getAuthority(),
                 user.getBirthday(),
-                user.getAvatarUrl()
+                user.getUserImg(),
+                user.getDisplayName()
 
         );
     }

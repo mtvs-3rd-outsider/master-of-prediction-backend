@@ -1,4 +1,9 @@
 server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+    include-exception: true
   port: 8080
   ssl:
     key-store: classpath:keystore.p12
@@ -18,6 +23,12 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   cloud:
+    openfeign:
+      httpclient:
+        enabled: true
+        connection-timeout: 5000 # 통신 요청 후 서버 연결 시간이 5초 경과 시 connection-time out 처리
+        ok-http:
+          read-timeout: 5000 # 응답 데이터를 읽는 시간이 5초 경과 시 read-time out 처리
     gateway:
       mvc:
         routes:
@@ -91,3 +102,7 @@ minio:
   accessKey: MY-USER
   secretKey: MY-PASSWORD
   bucketName: sns-files
+logging:
+  level:
+    com:
+      com.outsider: DEBUG

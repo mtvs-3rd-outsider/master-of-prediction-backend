@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable

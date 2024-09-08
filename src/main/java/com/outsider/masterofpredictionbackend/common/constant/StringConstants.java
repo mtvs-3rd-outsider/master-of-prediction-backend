@@ -12,4 +12,6 @@ public class StringConstants {
 
     public static final String BASIC_IMAGE = "logo2.png";
     public static final String USER_DEFAULT_TIER = "Nostradamus";
+    public static final String MY_CHANNEL_UPDATE_TOPIC = "my-channel.update";
+    public static final String MY_CHANNEL_CREATE_TOPIC = "my-channel.create";
 }

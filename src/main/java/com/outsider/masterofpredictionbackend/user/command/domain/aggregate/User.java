@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "USER")
-public class User extends BaseEntity  {
+public class User extends BaseEntity {
 
     @Id
     @Column(name = "user_id")
@@ -20,6 +20,9 @@ public class User extends BaseEntity  {
 
     @Column(name = "user_password")
     private String password;
+    @Column(name = "display_name")
+    private String displayName;
+
 
     @Column(name = "user_name")
     private String userName;
@@ -31,8 +34,9 @@ public class User extends BaseEntity  {
     private BigDecimal points;
 
     @Column(name = "user_gender")
+    @Enumerated(EnumType.STRING)
     private Gender gender;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_location")
     private Location location;
     @Column(name = "user_withdrawal")
@@ -42,16 +46,9 @@ public class User extends BaseEntity  {
     private Authority authority;
     @Column(name = "birthday")
     private LocalDate birthday;
-    @Column(name = "avatar_url")
-    private String avatarUrl;
 
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
+
 
     public LocalDate getBirthday() {
         return birthday;
@@ -66,8 +63,8 @@ public class User extends BaseEntity  {
     @Embedded
     private ProviderInfo provider; //어떤 OAuth인지(google, naver 등)
     private String provideId; // 해당 OAuth 의 key(id)
-    @Column(name = "user_img")
-    private String userImg ;
+    @Column(name = "user_img",length = 1000)
+    private String userImg;
 
     @Column(name = "joined_date")
     private LocalDate joinDate;
@@ -84,7 +81,7 @@ public class User extends BaseEntity  {
         return joinDate;
     }
 
-    public  Tier getTier() {
+    public Tier getTier() {
         return tier;
     }
 
@@ -104,6 +101,7 @@ public class User extends BaseEntity  {
     public void setAuthority(Authority authority) {
         this.authority = authority;
     }
+
     public void setAuthority(String authority) {
         this.authority = Authority.fromString(authority);
     }
@@ -122,18 +120,20 @@ public class User extends BaseEntity  {
 
     public User() {
     }
-    public User(String email, String password, String userName,Authority authority,ProviderInfo provider ) {
+
+    public User(String email, String password, String userName, Authority authority, ProviderInfo provider) {
         this.email = email;
         this.password = password;
         this.userName = userName;
         this.tier = new Tier();
         this.points = new BigDecimal(0);
         this.isWithdrawal = false;
-        this.authority =authority;
+        this.authority = authority;
         this.joinDate = LocalDate.now();
         this.provider = provider;
     }
-    public User(String email, String password, String userName, int age, Gender gender, Location lcation,Authority authority) {
+
+    public User(String email, String password, String userName, int age, Gender gender, Location lcation, Authority authority) {
         this.email = email;
         this.password = password;
         this.userName = userName;
@@ -215,6 +215,14 @@ public class User extends BaseEntity  {
 
     public void setLocation(Location lcation) {
         this.location = lcation;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     @Override

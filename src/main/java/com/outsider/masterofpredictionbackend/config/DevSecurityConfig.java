@@ -4,15 +4,13 @@ package com.outsider.masterofpredictionbackend.config;
 
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.service.DeleteUserService;
-import com.outsider.masterofpredictionbackend.user.command.application.service.RegistUserService;
+import com.outsider.masterofpredictionbackend.user.command.application.service.UserRegistService;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserService;
-import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.OAuth2SuccessHandler;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.PrincipalOauthUserService;
 import com.outsider.masterofpredictionbackend.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,14 +21,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -47,7 +39,7 @@ import static com.outsider.masterofpredictionbackend.common.constant.StringConst
 @EnableWebSecurity
 @Profile("dev")
 public class DevSecurityConfig {
-    private final RegistUserService registUserService;
+    private final UserRegistService registUserService;
     private final DeleteUserService deleteUserService;
     private Long id ;
 
@@ -59,7 +51,7 @@ public class DevSecurityConfig {
     UserCommandRepository userCommandRepository;
     private final GetOrFullAuthorizationManager customAuthorizationManager;
 
-    public DevSecurityConfig(RegistUserService registUserService, DeleteUserService deleteUserService, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+    public DevSecurityConfig(UserRegistService registUserService, DeleteUserService deleteUserService, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
         this.registUserService = registUserService;
         this.deleteUserService = deleteUserService;
         this.jwtUtil = jwtUtil;

@@ -3,8 +3,7 @@ package com.outsider.masterofpredictionbackend.user.query.mychannelinfo.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
-import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
-import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto.MyChannelInfoViewModel;
+import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto.MyChannelInfoQueryModel;
 import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.repository.MyChannelInfoRepository;
 import com.outsider.masterofpredictionbackend.util.GenericService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class MyChannelInfoChannelPartService extends GenericService<MyChannelInfoViewModel, Long, MyChannel> {
+public class MyChannelInfoChannelPartService extends GenericService<MyChannelInfoQueryModel, Long, MyChannel> {
 
     private static final Logger logger = LoggerFactory.getLogger(MyChannelInfoChannelPartService.class);
     private final ObjectMapper mapper;
@@ -59,12 +58,12 @@ public class MyChannelInfoChannelPartService extends GenericService<MyChannelInf
     }
 
     public void handleCreateOrUpdate(JsonNode jsonNode) {
-        Long channelId = jsonNode.get("id").asLong();
-        saveOrUpdate(jsonNode, channelId, MyChannelInfoViewModel.class);
+        Long channelId = jsonNode.get("channel_id").asLong();
+        saveOrUpdate(jsonNode, channelId, MyChannelInfoQueryModel.class);
     }
 
     public void handleDelete(JsonNode jsonNode) {
-        Long channelId = jsonNode.get("id").asLong();
+        Long channelId = jsonNode.get("channel_id").asLong();
         deleteById(channelId);
     }
 }

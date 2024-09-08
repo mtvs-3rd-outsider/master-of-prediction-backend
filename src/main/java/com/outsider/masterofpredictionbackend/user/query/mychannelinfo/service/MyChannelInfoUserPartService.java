@@ -2,7 +2,7 @@ package com.outsider.masterofpredictionbackend.user.query.mychannelinfo.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
-import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto.MyChannelInfoViewModel;
+import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto.MyChannelInfoQueryModel;
 import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.repository.MyChannelInfoRepository;
 import com.outsider.masterofpredictionbackend.util.GenericService;
 import com.outsider.masterofpredictionbackend.util.IDs;
@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 //TODO: 카프카 listener 변경하고, 상속 받고 생성자 만들고 아래 TODO쪽도 변경하면 끝
 @Service
-public class MyChannelInfoUserPartService extends GenericService<MyChannelInfoViewModel, Long, User> {
+public class MyChannelInfoUserPartService extends GenericService<MyChannelInfoQueryModel, Long, User> {
 
     private static final Logger logger = LoggerFactory.getLogger(MyChannelInfoUserPartService.class);
     private final ObjectMapper mapper;
@@ -59,7 +59,7 @@ public class MyChannelInfoUserPartService extends GenericService<MyChannelInfoVi
     public void handleCreateOrUpdate(JsonNode jsonNode) {
         //TODO: 여기에 ID 바꾸면됨
         Long userId = jsonNode.get(IDs.USER_ID).asLong();
-        saveOrUpdate(jsonNode, userId, MyChannelInfoViewModel.class);
+        saveOrUpdate(jsonNode, userId, MyChannelInfoQueryModel.class);
     }
 
     public void handleDelete(JsonNode jsonNode) {

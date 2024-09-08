@@ -1,7 +1,6 @@
 package com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,14 +16,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor  // 기본 생성자 추가
 @AllArgsConstructor // 모든 필드를 사용하는 생성자 추가
 @Document(collection = "my_channel_info")
-public class MyChannelInfoViewModel {
+public class MyChannelInfoQueryModel {
 
     @Id
     @JsonProperty("user_id")
     private Long userId;
-
-    @JsonProperty("name")
-    private String name;
 
     @JsonProperty("user_name")
     private String userName;
@@ -38,23 +34,25 @@ public class MyChannelInfoViewModel {
     @JsonProperty("bio")
     private String bio;
 
-    @JsonProperty("location")
+    @JsonProperty("user_location")
     private String location;
 
     @JsonProperty("website")
     private String website;
 
     @JsonProperty("birthday")
-    private String birthdate;
+    private String birthday;
 
     @JsonProperty("joined_date")
     private String joinedDate;
 
-    @JsonProperty("gender")
+    @JsonProperty("user_gender")
     private String gender;
 
     @JsonProperty("points")
     private BigDecimal points;
+    @JsonProperty( "banner_img")
+    private String bannerImg ;
 
     @JsonProperty( "user_img")
     private String userImg ;
@@ -79,6 +77,5 @@ public class MyChannelInfoViewModel {
 
     @JsonProperty("followers_count")
     private int followersCount;
-
 
 }
