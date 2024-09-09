@@ -93,7 +93,9 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
     public boolean isUpdatable(CategoryChannelCommentUpdateRequestDTO updateRequestDTO){
 
         CategoryChannelComment comment = commentRepository.findById(updateRequestDTO.getCommentId()).orElseThrow( () ->
-                new CategoryChannelCommentNotFoundException("[CategoryChannelComment] 댓글을 찾을 수 없음. id: "+ updateRequestDTO.getCommentId(),
+                new CategoryChannelCommentNotFoundException(
+                        "[CategoryChannelComment] 댓글을 찾을 수 없음. " +
+                                "id: " + updateRequestDTO.getCommentId(),
                         "수정할 댓글이 존재하지 않습니다.")
         );
 

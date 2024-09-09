@@ -59,7 +59,10 @@ public class CategoryChannelCommentService {
         );
         repository.save(saveComment);
 
-        log.info("[CategoryChannelComment] 댓글 작성. 작성자 id: {}, 댓글 id: {}", saveComment.getWriter().getWriterNo(), saveComment.getId());
+        log.info("[CategoryChannelComment] 댓글 작성. 작성자 id: {}, 댓글 id: {}",
+                saveComment.getWriter().getWriterNo(),
+                saveComment.getId()
+        );
 
         return saveComment.getId();
     }
@@ -71,7 +74,8 @@ public class CategoryChannelCommentService {
         CategoryChannelComment comment = policy.getCommentById(updateComment.getCommentId())
                 .orElseThrow( () ->
                 new CategoryChannelCommentNotFoundException(
-                        "[CategoryChannelComment] 수정할 베팅 댓글을 못찾음. id: "+updateComment.getCommentId(),
+                        "[CategoryChannelComment] 수정할 베팅 댓글을 못찾음. " +
+                                "id: " + updateComment.getCommentId(),
                         "수정할 배팅 댓글을 찾지 못했습니다."
                 )
         );
@@ -79,7 +83,10 @@ public class CategoryChannelCommentService {
         /*시큐리티에서 검증함*/
         /*수정하려는 사람과 댓글 작성자가 일치하는지 여부 확인*/
         if(!policy.isMatchUserInfo(comment)){
-            throw new MisMatchUserException("[CategoryChannelComment] 작성자와 수정할 사람이 다름: 작성자: "+comment.getWriter().getWriterNo()+" 수정할 사람: "+policy.getLoginUserInfo().getUserNo(),
+            throw new MisMatchUserException(
+                    "[CategoryChannelComment] 작성자와 수정할 사람이 다름: " +
+                            "작성자: " + comment.getWriter().getWriterNo() +
+                            " 수정할 사람: " + policy.getLoginUserInfo().getUserNo(),
                     "댓글 작성자와 정보가 일치하지 않습니다."
             );
         }
@@ -96,7 +103,11 @@ public class CategoryChannelCommentService {
         /*댓글 내용 업데이트*/
         repository.save(comment);
 
-        log.info("[BettingComment] 베팅 댓글 업데이트됨. id: {}, 업데이트 내용: {}", comment.getId(), comment.getContent() );
+        log.info("[BettingComment] 베팅 댓글 업데이트됨. id: {}, 업데이트 내용: {}",
+                comment.getId(),
+                comment.getContent()
+        );
+
         return true;
     }
 
@@ -105,7 +116,9 @@ public class CategoryChannelCommentService {
         /*삭제할 댓글 객체 가져옴*/
         CategoryChannelComment deleted = policy.getCommentById(deleteRequestDTO.getCommentId())
                 .orElseThrow(() ->
-                new CategoryChannelCommentNotFoundException("[CategoryChannelComment] 삭제할 댓글을 못찾음. 댓글 id: "+ deleteRequestDTO.getCommentId(),
+                new CategoryChannelCommentNotFoundException(
+                        "[CategoryChannelComment] 삭제할 댓글을 못찾음. " +
+                                "댓글 id: " + deleteRequestDTO.getCommentId(),
                         "삭제할 댓글을 찾지 못했습니다.")
                 );
 
@@ -119,9 +132,11 @@ public class CategoryChannelCommentService {
                 repository.save(deleted);
             } else{
                 /*로그인한 사용자와 댓글 작성자가 일치하지 않을때*/
-                throw new MisMatchUserException("[CategoryChannelComment] 삭제할 사용자가 일치하지 않음. 댓글 id: "+ deleted.getId()+
-                        "작성자: "+ deleted.getWriter().getWriterNo() +
-                        "접근한 사람: " +policy.getLoginUserInfo().getUserNo(),
+                throw new MisMatchUserException(
+                        "[CategoryChannelComment] 삭제할 사용자가 일치하지 않음. " +
+                                "댓글 id: "+ deleted.getId()+
+                                "작성자: " + deleted.getWriter().getWriterNo() +
+                                "접근한 사람: " + policy.getLoginUserInfo().getUserNo(),
                         "댓글 작성자와 사용자 정보가 일치하지 않습니다."
                         );
             }
@@ -133,10 +148,13 @@ public class CategoryChannelCommentService {
                 repository.save(deleted);
             } else{
                 /*비밀번호 틀렸을때*/
-                throw new CategoryChannelCommentPasswordMisMatchException("[CategoryChannelComment] 비밀번호가 일치하지 않음. 댓글 id: " + deleted.getId() +
-                        "비밀번호: " + deleted.getContent().getPassword() +
-                        "입력 비밀번호: " + deleteRequestDTO.getPassword(),
-                        "댓글 비밀번호와 일치하지 않습니다.");
+                throw new CategoryChannelCommentPasswordMisMatchException(
+                        "[CategoryChannelComment] 비밀번호가 일치하지 않음. " +
+                                "댓글 id: " + deleted.getId() +
+                                "비밀번호: " + deleted.getContent().getPassword() +
+                                "입력 비밀번호: " + deleteRequestDTO.getPassword(),
+                        "댓글 비밀번호와 일치하지 않습니다."
+                );
             }
         }
 
