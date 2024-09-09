@@ -1,8 +1,8 @@
-package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.model;
+package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate;
 
 
-import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.model.embedded.Content;
-import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.model.embedded.WriterInfo;
+import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.embedded.Content;
+import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.embedded.WriterInfo;
 import com.outsider.masterofpredictionbackend.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;

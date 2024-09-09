@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.model.embedded;
+package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.embedded;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
@@ -11,9 +11,9 @@ import lombok.Getter;
 public class WriterInfo {
 
     /**
-     * 댓글 작성자 id(DB에서 관리하는 고유 id값)
+     * 댓글 작성자 id(비회원의 경우 null)
      * */
-    private Long writerId;
+    private Long writerNo;
 
     /**
      * 댓글 작성자 이름 혹은 닉네임
@@ -27,8 +27,8 @@ public class WriterInfo {
 
     protected WriterInfo() {}
 
-    public WriterInfo(Long writerId, String writerName, Boolean isLoginUser) {
-        this.writerId = writerId;
+    public WriterInfo(Long writerNo, String writerName, Boolean isLoginUser) {
+        this.writerNo = writerNo;
         this.writerName = writerName;
         this.isLoginUser = isLoginUser;
     }

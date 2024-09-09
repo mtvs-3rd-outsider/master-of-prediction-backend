@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.model.embedded;
+package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.embedded;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
