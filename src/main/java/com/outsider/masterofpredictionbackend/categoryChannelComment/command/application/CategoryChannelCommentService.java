@@ -28,7 +28,7 @@ public class CategoryChannelCommentService {
     private final CategoryChannelCommentRepository repository;
 
     public Long addComment(CategoryChannelCommentAddRequestDTO comment) {
-        CategoryChannelComment saveComment;
+        CategoryChannelComment saveComment = null;
 
         /*익명 사용자 댓글*/
         if(!policy.isLogin()){
@@ -43,20 +43,23 @@ public class CategoryChannelCommentService {
         }
         
         /*로그인 사용자 댓글 작성*/
-        LoginUserInfo loginUserInfo = policy.getLoginUserInfo();
+        if(policy.isLogin()){
+            LoginUserInfo loginUserInfo = policy.getLoginUserInfo();
 
-        saveComment = new CategoryChannelComment(
-                new WriterInfo(
-                        loginUserInfo.getUserNo(),
-                        loginUserInfo.getUserName(),
-                        true
-                ),
-                new Content(
-                        comment.getComment(),
-                        comment.getImageUrl(),
-                        comment.getPassword()
-                )
-        );
+            saveComment = new CategoryChannelComment(
+                    new WriterInfo(
+                            loginUserInfo.getUserNo(),
+                            loginUserInfo.getUserName(),
+                            true
+                    ),
+                    new Content(
+                            comment.getComment(),
+                            comment.getImageUrl(),
+                            comment.getPassword()
+                    )
+            );
+        }
+
         repository.save(saveComment);
 
         log.info("[CategoryChannelComment] 댓글 작성. 작성자 id: {}, 댓글 id: {}",
@@ -111,7 +114,7 @@ public class CategoryChannelCommentService {
         return true;
     }
 
-    void deleteComment(CategoryChannelCommentDeleteRequestDTO deleteRequestDTO) {
+    public void deleteComment(CategoryChannelCommentDeleteRequestDTO deleteRequestDTO) {
 
         /*삭제할 댓글 객체 가져옴*/
         CategoryChannelComment deleted = policy.getCommentById(deleteRequestDTO.getCommentId())
@@ -124,14 +127,9 @@ public class CategoryChannelCommentService {
 
         /*로그인시*/
         if(policy.isLogin()){
-            /*삭제하려는 사용자와 로그인 한 사용자가 일치하는지 검증*/
-            if(policy.isMatchUserInfo(deleted)){
+            /*삭제하려는 사용자와 로그인 한 사용자가 일치하지 않을때*/
+            if(!policy.isMatchUserInfo(deleted)){
 
-                /*soft delete 실행*/
-                deleted.setDeletedAt(LocalDateTime.now());
-                repository.save(deleted);
-            } else{
-                /*로그인한 사용자와 댓글 작성자가 일치하지 않을때*/
                 throw new MisMatchUserException(
                         "[CategoryChannelComment] 삭제할 사용자가 일치하지 않음. " +
                                 "댓글 id: "+ deleted.getId()+
@@ -140,14 +138,12 @@ public class CategoryChannelCommentService {
                         "댓글 작성자와 사용자 정보가 일치하지 않습니다."
                         );
             }
-        } else{ /*비 로그인시*/
+        }
 
-            /*비밀번호 일치시*/
-            if(deleteRequestDTO.getPassword().equals(deleted.getContent().getPassword()) ){
-                deleted.setDeletedAt(LocalDateTime.now());
-                repository.save(deleted);
-            } else{
-                /*비밀번호 틀렸을때*/
+        /*비 로그인시*/
+        if(!policy.isLogin()){
+            /*비밀번호가 틀렸을때*/
+            if(!deleteRequestDTO.getPassword().equals(deleted.getContent().getPassword()) ){
                 throw new CategoryChannelCommentPasswordMisMatchException(
                         "[CategoryChannelComment] 비밀번호가 일치하지 않음. " +
                                 "댓글 id: " + deleted.getId() +
@@ -158,5 +154,11 @@ public class CategoryChannelCommentService {
             }
         }
 
+        deleted.setDeletedAt(LocalDateTime.now());
+        repository.save(deleted);
+        log.info("[CategoryChannelComment] 댓글 삭제됨. id: {}, 삭제한 사용자: {}",
+                deleted.getWriter().getWriterNo(),
+                policy.getLoginUserInfo().getUserNo()
+        );
     }
 }
