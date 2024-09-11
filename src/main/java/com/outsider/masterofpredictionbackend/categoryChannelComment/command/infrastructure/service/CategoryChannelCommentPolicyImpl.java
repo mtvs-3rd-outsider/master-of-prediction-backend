@@ -1,24 +1,21 @@
 package com.outsider.masterofpredictionbackend.categoryChannelComment.command.infrastructure.service;
 
-import com.outsider.masterofpredictionbackend.categoryChannelComment.command.application.dto.CategoryChannelCommentUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.CategoryChannelComment;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.embedded.WriterInfo;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.repository.CategoryChannelCommentRepository;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.service.CategoryChannelCommentPolicy;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.service.dto.LoginUserInfo;
-import com.outsider.masterofpredictionbackend.categoryChannelComment.command.exception.CategoryChannelCommentNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/* TODO: 타 도메인과 연결*/
 @Service
+@RequiredArgsConstructor
 public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentPolicy {
+
     private final CategoryChannelCommentRepository commentRepository;
 
-    public CategoryChannelCommentPolicyImpl(CategoryChannelCommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
-    }
 
     @Override
     public boolean isLogin() {
@@ -62,11 +59,12 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
 
         /*관리자 여부*/
         if(loginedUser.getIsAdmin()){
-            return false;
+            return true;
         }
 
         return false;
     }
+
 
     @Override
     public boolean isMatchPassword(CategoryChannelComment comment, String password) {
@@ -80,6 +78,7 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
         }
     }
 
+
     @Override
     public WriterInfo generateAnonymousUser(){
         return new WriterInfo(
@@ -89,41 +88,6 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
         );
     }
 
-    @Override
-    public boolean isUpdatable(CategoryChannelCommentUpdateRequestDTO updateRequestDTO){
-
-        CategoryChannelComment comment = commentRepository.findById(updateRequestDTO.getCommentId()).orElseThrow( () ->
-                new CategoryChannelCommentNotFoundException(
-                        "[CategoryChannelComment] 댓글을 찾을 수 없음. " +
-                                "id: " + updateRequestDTO.getCommentId(),
-                        "수정할 댓글이 존재하지 않습니다.")
-        );
-
-        /*로그인 하지 않은 경우*/
-        if(!isLogin()){
-            if(comment.getContent().getPassword().equals(updateRequestDTO.getPassword())){// 비밀번호가 일치할때
-                return true;
-            }
-
-            /*비밀번호가 일치하지 않을때*/
-            return false;
-        }
-
-        /*로그인 한 경우*/
-
-        /*관리자는 모든 댓글 수정 가능*/
-        if(getLoginUserInfo().getIsAdmin()){
-            return true;
-        }
-
-        /*로그인 한 사용자와 작성자가 일치하면 수정 가능.*/
-        if(getLoginUserInfo().getUserNo().equals(comment.getWriter().getWriterNo()) ){
-            return true;
-        }
-
-        /*그렇지 않으면 false 반환*/
-        return false;
-    }
 
     @Override
     public Optional<CategoryChannelComment> getCommentById(Long id){
@@ -136,7 +100,7 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
             }
         }
 
-        /*관리자가 아니면 값이 있을때만 전달함*/
+        /*관리자가 아니면 soft delete 되지 않은 경우만 댓글을 반환함*/
         if(rawComment.isPresent()){
             if(rawComment.get().getDeletedAt() == null){
                 return rawComment;

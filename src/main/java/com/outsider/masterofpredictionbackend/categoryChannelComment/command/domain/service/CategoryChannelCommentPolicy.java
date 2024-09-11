@@ -1,6 +1,5 @@
 package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.service;
 
-import com.outsider.masterofpredictionbackend.categoryChannelComment.command.application.dto.CategoryChannelCommentUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.CategoryChannelComment;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.embedded.WriterInfo;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.service.dto.LoginUserInfo;
@@ -18,7 +17,6 @@ public interface CategoryChannelCommentPolicy {
 
     WriterInfo generateAnonymousUser();
 
-    boolean isUpdatable(CategoryChannelCommentUpdateRequestDTO updateRequestDTO);
 
     Optional<CategoryChannelComment> getCommentById(Long id);
 }
