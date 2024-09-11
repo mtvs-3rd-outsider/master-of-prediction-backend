@@ -24,10 +24,10 @@ public class FeedDeleteController {
     public ResponseEntity<ResponseMessage> deleteFeed(@PathVariable Long feedId) {
         try {
             feedFacadeService.deleteFeed(feedId);
-            return ResponseEntity.ok(new ResponseMessage("피드가 성공적으로 삭제되었습니다."));
+            return ResponseEntity.ok(new ResponseMessage("피드가 성공적으로 삭제되었습니다.", feedId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseMessage("피드 삭제에 실패했습니다: " + e.getMessage()));
+                    .body(new ResponseMessage("피드 삭제에 실패했습니다: " + e.getMessage(), feedId));
         }
     }
 }

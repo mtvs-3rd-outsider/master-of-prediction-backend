@@ -10,7 +10,9 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enum
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class FeedResponseDTO {
@@ -30,6 +32,7 @@ public class FeedResponseDTO {
     private List<ReplyDTO> replyDTOS;
     private int likesCount;
     private int commentsCount;
+    private int quoteCount;
 
     public static FeedResponseDTO fromFeed(Feed feed) {
         FeedResponseDTO feedResponseDTO = new FeedResponseDTO();
@@ -47,6 +50,19 @@ public class FeedResponseDTO {
         feedResponseDTO.setYouTubeVideos(feed.getYoutubeVideos());
         feedResponseDTO.setLikesCount(feed.getLikesCount());
         feedResponseDTO.setCommentsCount(feed.getCommentsCount());
+        feedResponseDTO.setQuoteCount(feed.getQuoteCount());
         return feedResponseDTO;
+    }
+
+    public void setCommentsWithReplies(Map<Long, List<CommentDTO>> commentsWithReplies) {
+        this.commentDTOS = new ArrayList<>();
+
+        for (Map.Entry<Long, List<CommentDTO>> entry : commentsWithReplies.entrySet()) {
+            CommentDTO parentComment = entry.getValue().get(0); // 첫 번째 요소는 부모 댓글
+            List<CommentDTO> replies = entry.getValue().subList(1, entry.getValue().size()); // 나머지는 답글들
+
+            parentComment.setReplies(replies);
+            this.commentDTOS.add(parentComment);
+        }
     }
 }
