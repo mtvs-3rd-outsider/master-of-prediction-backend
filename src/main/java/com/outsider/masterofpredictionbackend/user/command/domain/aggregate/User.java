@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     private String displayName;
 
 
-    @Column(name = "user_name")
+    @Column(name = "user_name",unique = true)
     private String userName;
 
     @Column(name = "user_age")
@@ -121,9 +121,10 @@ public class User extends BaseEntity {
     public User() {
     }
 
-    public User(String email, String password, String userName, Authority authority, ProviderInfo provider) {
+    public User(String email, String password,String displayName, String userName, Authority authority, ProviderInfo provider) {
         this.email = email;
         this.password = password;
+        this.displayName = displayName;
         this.userName = userName;
         this.tier = new Tier();
         this.points = new BigDecimal(0);
@@ -133,9 +134,10 @@ public class User extends BaseEntity {
         this.provider = provider;
     }
 
-    public User(String email, String password, String userName, int age, Gender gender, Location lcation, Authority authority) {
+    public User(String email, String password,String displayName, String userName, int age, Gender gender, Location lcation, Authority authority) {
         this.email = email;
         this.password = password;
+        this.displayName = displayName;
         this.userName = userName;
         this.age = age;
         this.gender = gender;

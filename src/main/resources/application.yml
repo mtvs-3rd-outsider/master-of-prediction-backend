@@ -12,6 +12,12 @@ server:
     key-alias: tomcat
     enabled: false
 spring:
+  elasticsearch:
+    uris: http://localhost:9200
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
   kafka:
     bootstrap-servers: localhost:9093
     producer:
@@ -20,6 +26,7 @@ spring:
     consumer:
       group-id: test
       auto-offset-reset: earliest
+      enable-auto-commit: false  # 수동 커밋 설정
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   cloud:
@@ -101,7 +108,7 @@ minio:
   url: http://localhost:9000
   accessKey: MY-USER
   secretKey: MY-PASSWORD
-  bucketName: sns-files
+  bucketName: user-files
 logging:
   level:
     com:
