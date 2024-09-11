@@ -10,6 +10,7 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enum
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,27 +21,51 @@ public class FeedCreateDTO {
     private ChannelType channelType;
     private User user;
     private Guest guest;
-    private List<ImageFile> imageFiles;
-    private List<YouTubeVideo> youTubeVideos;
+    private List<String> fileUrls; // 파일 URL 리스트로 변경
 
     // DTO를 Feed 엔티티로 변환하는 메서드
-    public Feed toEntity(FeedCreateDTO feedCreateDTO) {
+    public Feed toEntity() {
+        List<ImageFile> imageFiles = new ArrayList<>();
+        List<YouTubeVideo> youTubeVideos = new ArrayList<>();
+
+        if (fileUrls != null) {
+            for (String url : fileUrls) {
+                if (isImageFile(url)) {
+                    imageFiles.add(new ImageFile(url));
+                } else if (isVideoFile(url)) {
+                    youTubeVideos.add(new YouTubeVideo(url));
+                }
+            }
+        }
+
         return new Feed(
-                feedCreateDTO.authorType,
-                feedCreateDTO.title,
-                feedCreateDTO.content,
+                this.authorType,
+                this.title,
+                this.content,
                 LocalDateTime.now(),
                 null, // createdAt이기 때문에 최초 생성 시 updatedAt은 null로 설정
-                feedCreateDTO.channelType,
+                this.channelType,
                 0, // 초기 조회수
                 0, // 초기 좋아요 수
                 0, // 초기 댓글 수
-                feedCreateDTO.user,
-                feedCreateDTO.guest,
+                0, // 초기 인용수
+                this.user,
+                this.guest,
                 null, // 초기 좋아요 리스트
-                feedCreateDTO.imageFiles,
-                feedCreateDTO.youTubeVideos
+                imageFiles,
+                youTubeVideos
         );
     }
 
+    private boolean isImageFile(String url) {
+        String lowercaseUrl = url.toLowerCase();
+        return lowercaseUrl.endsWith(".jpg") || lowercaseUrl.endsWith(".jpeg")
+                || lowercaseUrl.endsWith(".png") || lowercaseUrl.endsWith(".gif");
+    }
+
+    private boolean isVideoFile(String url) {
+        String lowercaseUrl = url.toLowerCase();
+        return lowercaseUrl.endsWith(".mp4") || lowercaseUrl.endsWith(".avi")
+                || lowercaseUrl.endsWith(".mov");
+    }
 }

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class UserDTO {
     private Long id;
     private String userName;
+    private String displayName;
     private BigDecimal points;
     private Authority authority;
     private Tier tier;

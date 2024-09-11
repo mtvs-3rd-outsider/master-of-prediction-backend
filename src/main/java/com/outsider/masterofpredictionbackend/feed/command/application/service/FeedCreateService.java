@@ -1,49 +1,39 @@
 package com.outsider.masterofpredictionbackend.feed.command.application.service;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedCreateDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.ImageFile;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
 import com.outsider.masterofpredictionbackend.feed.command.domain.repository.FeedRepository;
-import com.outsider.masterofpredictionbackend.feed.command.domain.repository.ImageFileRepository;
-import com.outsider.masterofpredictionbackend.feed.command.domain.repository.YouTubeVideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLOutput;
+import java.util.List;
 
 
 @Service
 public class FeedCreateService {
     private final FeedRepository feedRepository;
-    private final ImageFileRepository imageFileRepository;
-    private final YouTubeVideoRepository youtubeVideoRepository;
-
     @Autowired
-    public FeedCreateService(FeedRepository feedRepository,
-                             ImageFileRepository imageFileRepository,
-                             YouTubeVideoRepository youtubeVideoRepository
-    ) {
+    public FeedCreateService(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
-        this.imageFileRepository = imageFileRepository;
-        this.youtubeVideoRepository = youtubeVideoRepository;
     }
-
     // Feed 생성 메서드
-    public void createFeed(FeedCreateDTO feedCreateDTO) {
+    @Transactional
+    public Long createFeed(FeedCreateDTO feedCreateDTO, List<String> fileUrls) {
+        Feed feed = feedCreateDTO.toEntity();
 
-        // Feed 엔티티 생성
-        Feed feed = feedCreateDTO.toEntity(feedCreateDTO);
-
-        // Feed 저장
-        feedRepository.save(feed);
-
-        // 이미지 파일 저장
-        if (feedCreateDTO.getImageFiles() != null && !feedCreateDTO.getImageFiles().isEmpty()) {
-            imageFileRepository.saveAll(feedCreateDTO.getImageFiles());
+        if (fileUrls != null && !fileUrls.isEmpty()) {
+            for (String url : fileUrls) {
+                if (url.toLowerCase().endsWith(".jpg") || url.toLowerCase().endsWith(".jpeg") || url.toLowerCase().endsWith(".png") || url.toLowerCase().endsWith(".gif")) {
+                    feed.getImageFiles().add(new ImageFile(url));
+                } else if (url.toLowerCase().endsWith(".mp4") || url.toLowerCase().endsWith(".avi") || url.toLowerCase().endsWith(".mov")) {
+                    feed.getYoutubeVideos().add(new YouTubeVideo(url));
+                }
+            }
         }
 
-        // YouTube 비디오 저장
-        if (feedCreateDTO.getYouTubeVideos() != null && !feedCreateDTO.getYouTubeVideos().isEmpty()) {
-            youtubeVideoRepository.saveAll(feedCreateDTO.getYouTubeVideos());
-        }
-
+        Feed savedFeed = feedRepository.save(feed);
+        return savedFeed.getId();
     }
 }

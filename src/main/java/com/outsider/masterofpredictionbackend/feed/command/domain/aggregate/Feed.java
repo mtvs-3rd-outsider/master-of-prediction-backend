@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.checkerframework.checker.units.qual.C;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,6 +54,9 @@ public class Feed {
     @Column(name = "feed_comments_count", nullable = false)
     private int commentsCount = 0;
 
+    @Column(name = "feed_quote_count",nullable = false)
+    private int quoteCount = 0;
+
     @Embedded
     private User user;
 
@@ -68,7 +72,7 @@ public class Feed {
     @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<YouTubeVideo> youtubeVideos;
 
-    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, ChannelType channelType, int viewCount, int likesCount, int commentsCount, User user, Guest guest, List<Like> like, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
+    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, ChannelType channelType, int viewCount, int likesCount, int commentsCount, int quoteCount, User user, Guest guest, List<Like> like, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
         this.authorType = authorType;
         this.title = title;
         this.content = content;
@@ -78,6 +82,7 @@ public class Feed {
         this.viewCount = viewCount;
         this.likesCount = likesCount;
         this.commentsCount = commentsCount;
+        this.quoteCount = quoteCount;
         this.user = user;
         this.guest = guest;
         this.like = like;
@@ -101,17 +106,19 @@ public class Feed {
     public String toString() {
         return "Feed{" +
                 "id=" + id +
-                ", authorType='" + authorType + '\'' +
+                ", authorType=" + authorType +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", channelType=" + channelType +
                 ", viewCount=" + viewCount +
-                ", channelType='" + channelType + '\'' +
                 ", likesCount=" + likesCount +
                 ", commentsCount=" + commentsCount +
+                ", quoteCount=" + quoteCount +
                 ", user=" + user +
                 ", guest=" + guest +
+                ", like=" + like +
                 ", imageFiles=" + imageFiles +
                 ", youtubeVideos=" + youtubeVideos +
                 '}';
