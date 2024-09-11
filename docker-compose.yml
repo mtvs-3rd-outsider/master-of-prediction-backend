@@ -259,7 +259,34 @@ services:
       ME_CONFIG_BASICAUTH_USERNAME: admin  # 기본 관리자 사용자 이름을 필요시 변경
       ME_CONFIG_BASICAUTH_PASSWORD: adminpassword  # 기본 관리자 비밀번호를 강력한 값으로 변경
     profiles: ["mongo"]
-
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: elasticsearch
+    environment:
+      - node.name=es01
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    restart: always
+    profiles: ["elasticsearch", "required"]
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.8.0
+    restart: always
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    profiles: ["elasticsearch" ]
 
 volumes:
   grafana-storage:
@@ -272,4 +299,6 @@ volumes:
   zookeeper_data:
     driver: local
   kafka-data:
+    driver: local
+  es_data:
     driver: local
