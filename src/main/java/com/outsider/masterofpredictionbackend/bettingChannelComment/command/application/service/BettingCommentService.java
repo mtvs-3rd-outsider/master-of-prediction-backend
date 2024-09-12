@@ -8,8 +8,8 @@ import com.outsider.masterofpredictionbackend.bettingChannelComment.command.doma
 import com.outsider.masterofpredictionbackend.bettingChannelComment.command.domain.repository.BettingChannelCommentRepository;
 import com.outsider.masterofpredictionbackend.bettingChannelComment.command.domain.service.BettingChannelCommentPolicy;
 import com.outsider.masterofpredictionbackend.bettingChannelComment.command.exception.BettingCommentNotFoundException;
-import com.outsider.masterofpredictionbackend.bettingChannelComment.command.exception.MisMatchUserException;
 import com.outsider.masterofpredictionbackend.common.exception.LoginRequiredException;
+import com.outsider.masterofpredictionbackend.common.exception.MisMatchUserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

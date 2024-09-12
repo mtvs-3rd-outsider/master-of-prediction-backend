@@ -1,11 +1,11 @@
-package com.outsider.masterofpredictionbackend.bettingChannelComment.command.exception;
+package com.outsider.masterofpredictionbackend.categoryChannelComment.command.exception;
 
 import com.outsider.masterofpredictionbackend.common.exception.ErrorCode;
 import com.outsider.masterofpredictionbackend.common.exception.RootException;
 import lombok.Getter;
 
 @Getter
-public class MisMatchUserException extends RootException {
+public class CategoryChannelCommentNotFoundException extends RootException {
 
     private final String logMessage;
     private final String clientMessage;
@@ -16,9 +16,9 @@ public class MisMatchUserException extends RootException {
      * @param logMessage    시스템에 남길 로그 메시지
      * @param clientMessage 클라이언트에게 보낼 메시지
      */
-    public MisMatchUserException( String logMessage, String clientMessage) {
+    public CategoryChannelCommentNotFoundException(String logMessage, String clientMessage) {
 
-        super(ErrorCode.BETTING_COMMENT_NOT_FOUND, logMessage, clientMessage);
+        super(ErrorCode.CATEGORY_CHANNEL_COMMENT_NOT_FOUND, logMessage, clientMessage);
         this.logMessage = logMessage;
         this.clientMessage = clientMessage;
     }
