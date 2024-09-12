@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.checkerframework.checker.units.qual.C;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -68,12 +67,12 @@ public class Feed {
     private List<Like> like;
 
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private List<ImageFile> imageFiles = new ArrayList<>();
+    private List<MediaFile> mediaFiles = new ArrayList<>();
 
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<YouTubeVideo> youtubeVideos = new ArrayList<>();
 
-    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, ChannelType channelType, int viewCount, int likesCount, int commentsCount, int quoteCount, User user, Guest guest, List<Like> like, List<ImageFile> imageFiles, List<YouTubeVideo> youtubeVideos) {
+    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, ChannelType channelType, int viewCount, int likesCount, int commentsCount, int quoteCount, User user, Guest guest, List<Like> like, List<MediaFile> mediaFiles, List<YouTubeVideo> youtubeVideos) {
         this.authorType = authorType;
         this.title = title;
         this.content = content;
@@ -87,7 +86,7 @@ public class Feed {
         this.user = user;
         this.guest = guest;
         this.like = like;
-        this.imageFiles = imageFiles;
+        this.mediaFiles = mediaFiles;
         this.youtubeVideos = youtubeVideos;
     }
 
@@ -120,7 +119,7 @@ public class Feed {
                 ", user=" + user +
                 ", guest=" + guest +
                 ", like=" + like +
-                ", imageFiles=" + imageFiles +
+                ", imageFiles=" + mediaFiles +
                 ", youtubeVideos=" + youtubeVideos +
                 '}';
     }

@@ -6,10 +6,7 @@ import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedC
 import com.outsider.masterofpredictionbackend.feed.command.application.service.FeedFacadeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -28,10 +25,12 @@ public class FeedCreateController {
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ResponseMessage> createFeed(
             @RequestPart("feedData") String feedDataJson,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestParam(value = "youtubeUrls", required = false) List<String> youtubeUrls) {
         try {
             FeedCreateDTO feedCreateDTO = objectMapper.readValue(feedDataJson, FeedCreateDTO.class);
-            Long feedId = feedFacadeService.createFeed(feedCreateDTO, files);
+            Long feedId = feedFacadeService.createFeed(feedCreateDTO, files, youtubeUrls);
+            System.out.println(youtubeUrls);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ResponseMessage("피드가 성공적으로 생성되었습니다.", feedId));
         } catch (Exception e) {

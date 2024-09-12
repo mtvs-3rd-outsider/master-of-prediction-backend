@@ -23,6 +23,7 @@ public class HotTopicFeedController {
     public ResponseEntity<List<HotTopicFeedResponseDTO>> getInitialHotTopicFeeds(
             @RequestParam(defaultValue = "10") int size) {
         List<HotTopicFeedResponseDTO> hotTopicFeeds = hotTopicFeedService.getInitialHotTopicFeeds(size);
+        System.out.println(hotTopicFeeds);
         return ResponseEntity.ok(hotTopicFeeds);
     }
 

@@ -105,7 +105,7 @@ management:
     prometheus:
       enabled: true # Prometheus 엔드포인트 활성화
 minio:
-  url: http://localhost:9000
+  url: http://125.132.216.190:9000
   accessKey: MY-USER
   secretKey: MY-PASSWORD
   bucketName: user-files

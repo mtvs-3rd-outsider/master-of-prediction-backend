@@ -96,6 +96,8 @@ public class DevSecurityConfig {
         config.addAllowedOrigin("https://*.google.com");
         config.addAllowedOrigin("https://lh3.googleusercontent.com");
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://125.132.216.190:3301");
+        config.addAllowedOrigin("http://125.132.216.190");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));

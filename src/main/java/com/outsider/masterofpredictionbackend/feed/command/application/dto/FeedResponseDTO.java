@@ -1,7 +1,7 @@
 package com.outsider.masterofpredictionbackend.feed.command.application.dto;
 
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
-import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.ImageFile;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.MediaFile;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
@@ -26,7 +26,7 @@ public class FeedResponseDTO {
     private ChannelType channelType;
     private User user;
     private Guest guest;
-    private List<ImageFile> imageFiles;
+    private List<MediaFile> mediaFiles;
     private List<YouTubeVideo> youTubeVideos;
     private List<CommentDTO> commentDTOS;
     private List<ReplyDTO> replyDTOS;
@@ -46,7 +46,7 @@ public class FeedResponseDTO {
         feedResponseDTO.setChannelType(feed.getChannelType());
         feedResponseDTO.setUser(feed.getUser() != null ? feed.getUser() : null);
         feedResponseDTO.setGuest(feed.getGuest() != null ? feed.getGuest() : null);
-        feedResponseDTO.setImageFiles(feed.getImageFiles());
+        feedResponseDTO.setMediaFiles(feed.getMediaFiles());
         feedResponseDTO.setYouTubeVideos(feed.getYoutubeVideos());
         feedResponseDTO.setLikesCount(feed.getLikesCount());
         feedResponseDTO.setCommentsCount(feed.getCommentsCount());

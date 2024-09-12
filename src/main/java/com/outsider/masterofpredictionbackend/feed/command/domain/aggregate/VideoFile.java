@@ -5,10 +5,10 @@ import jakarta.persistence.Entity;
 import lombok.NoArgsConstructor;
 
 @Entity
-@DiscriminatorValue("IMAGE")
+@DiscriminatorValue("VIDEO")
 @NoArgsConstructor
-public class ImageFile extends MediaFile {
-    public ImageFile(String fileUrl, Feed feed) {
+public class VideoFile extends MediaFile {
+    public VideoFile(String fileUrl, Feed feed) {
         super(fileUrl, feed);
     }
 }

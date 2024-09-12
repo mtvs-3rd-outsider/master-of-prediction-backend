@@ -2,10 +2,10 @@ package com.outsider.masterofpredictionbackend.feed.command.application.service;
 
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedUpdateDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
-import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.ImageFile;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.MediaFile;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
 import com.outsider.masterofpredictionbackend.feed.command.domain.repository.FeedRepository;
-import com.outsider.masterofpredictionbackend.feed.command.domain.repository.ImageFileRepository;
+import com.outsider.masterofpredictionbackend.feed.command.domain.repository.MediaFileRepository;
 import com.outsider.masterofpredictionbackend.feed.command.domain.repository.YouTubeVideoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class FeedUpdateService {
     private final FeedRepository feedRepository;
     @Autowired
     public FeedUpdateService(FeedRepository feedRepository,
-                             ImageFileRepository imageFileRepository,
+                             MediaFileRepository mediaFileRepository,
                              YouTubeVideoRepository youtubeVideoRepository) {
         this.feedRepository = feedRepository;
     }
@@ -38,14 +38,14 @@ public class FeedUpdateService {
         feed.setChannelType(feedUpdateDTO.getChannelType());
 
         // Clear existing files
-        feed.getImageFiles().clear();
+        feed.getMediaFiles().clear();
         feed.getYoutubeVideos().clear();
 
         // Add new files
         if (fileUrls != null && !fileUrls.isEmpty()) {
             for (String url : fileUrls) {
                 if (url.toLowerCase().endsWith(".jpg") || url.toLowerCase().endsWith(".jpeg") || url.toLowerCase().endsWith(".png") || url.toLowerCase().endsWith(".gif")) {
-                    feed.getImageFiles().add(new ImageFile(url));
+                    feed.getMediaFiles().add(new MediaFile(url));
                 } else if (url.toLowerCase().endsWith(".mp4") || url.toLowerCase().endsWith(".avi") || url.toLowerCase().endsWith(".mov")) {
                     feed.getYoutubeVideos().add(new YouTubeVideo(url));
                 }
