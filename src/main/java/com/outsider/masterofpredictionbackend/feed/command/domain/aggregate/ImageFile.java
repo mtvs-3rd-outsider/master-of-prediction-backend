@@ -6,6 +6,7 @@ import lombok.Setter;
 
 @Entity(name = "feed_image_file")
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "tbl_feed_image_file")
 public class ImageFile {
