@@ -13,7 +13,6 @@ public class FileService {
     }
 
     public String uploadFile(MultipartFile file) throws Exception {
-        minioService.uploadFile(file);
-        return minioService.getFileUrl(file.getOriginalFilename());
+        return minioService.uploadFile(file);
     }
 }
