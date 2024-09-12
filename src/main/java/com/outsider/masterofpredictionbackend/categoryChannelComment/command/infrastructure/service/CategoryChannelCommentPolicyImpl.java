@@ -47,6 +47,12 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
             return false;
         }
 
+        /*관리자 여부*/
+        if(loginedUser.getIsAdmin()){
+            return true;
+        }
+
+
         /*작성자 정보 존재 여부 확인*/
         if(writerNo == null){
             return false;
@@ -54,11 +60,6 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
 
         /*작성자 일치 여부 확인*/
         if(comment.getWriter().getWriterNo().equals(loginedUser.getUserNo())) {
-            return true;
-        }
-
-        /*관리자 여부*/
-        if(loginedUser.getIsAdmin()){
             return true;
         }
 

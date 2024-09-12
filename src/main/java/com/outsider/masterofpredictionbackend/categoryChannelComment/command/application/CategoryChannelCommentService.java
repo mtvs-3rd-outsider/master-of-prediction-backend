@@ -166,7 +166,7 @@ public class CategoryChannelCommentService {
         /*비 로그인시*/
         if(!policy.isLogin()){
             /*비밀번호가 틀렸을때*/
-            if(!deleteRequestDTO.getPassword().equals(deleted.getContent().getPassword()) ){
+            if(!deleted.getContent().getPassword().equals(deleteRequestDTO.getPassword()) ){
                 throw new CategoryChannelCommentPasswordMisMatchException(
                         "[CategoryChannelComment] 비밀번호가 일치하지 않음. " +
                                 "댓글 id: " + deleted.getId() +
