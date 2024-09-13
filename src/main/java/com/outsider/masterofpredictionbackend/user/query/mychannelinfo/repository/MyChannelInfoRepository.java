@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface MyChannelInfoRepository extends MongoRepository<MyChannelInfoQueryModel, Long> {
     Optional<MyChannelInfoQueryModel> findById(Long id);
+
+
 }

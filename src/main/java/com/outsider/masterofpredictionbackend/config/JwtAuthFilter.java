@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -28,11 +30,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String token = authorizationHeader.substring(7);
 
             // JWT 토큰의 유효성 검증
+            log.info("JWT VALIDATE: {}",jwtUtil.validateToken(token));
             if (jwtUtil.validateToken(token)) {
                 Long userId = jwtUtil.getUserId(token);
                 String email = jwtUtil.getUserEmail(token);
                 String userName = jwtUtil.getUserName(token);
                 String role = jwtUtil.getRole(token);
+                log.info("JWT VALIDATE userId: {}", userId);
 
                 // CustomUserDetail 객체 생성
                 UserDetails userDetails = new CustomUserDetail(userId, email, userName, role);
@@ -45,6 +49,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 // 사용자 정보를 HTTP 헤더에 추가하여 다른 마이크로서비스로 전달
+
+                request.setAttribute("X-User-Id", userId.toString());
+                request.setAttribute("X-User-Email", email);
+                request.setAttribute("X-User-Name", userName);
+                request.setAttribute("X-User-Role", role);
+                //TODO: MSA 헤더 User 정보 전파
                 response.setHeader("X-User-Id", userId.toString());
                 response.setHeader("X-User-Email", email);
                 response.setHeader("X-User-Name", userName);

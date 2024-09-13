@@ -5,6 +5,10 @@ import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.ag
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface ChannelSubscribeCommandRepository extends JpaRepository<ChannelSubscribe, MyChannelSubscribeId> {
+public interface ChannelSubscribeCommandRepository extends JpaRepository<ChannelSubscribe, MyChannelSubscribeId>
+{
+    Optional<ChannelSubscribe> findByIdAndIsActive(MyChannelSubscribeId id, Boolean isActive);
 }

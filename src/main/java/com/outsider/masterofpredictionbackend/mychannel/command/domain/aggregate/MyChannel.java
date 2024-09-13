@@ -27,9 +27,12 @@ public class MyChannel {
 
 
     public MyChannel() {
+
+        this.userCounts = new UserCounts(0,0);
     }
     public MyChannel(Long userId) {
         this.id = userId;
+        this.userCounts = new UserCounts(0,0);
     }
     public MyChannel(Long userId, Bio bio, Website website) {
         this.id = userId;
