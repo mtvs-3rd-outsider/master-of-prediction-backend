@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/feeds")
+@RequestMapping("/api/v1/feeds")
 public class FeedReadController {
     private final FeedFacadeService feedFacadeService;
 
@@ -24,6 +24,7 @@ public class FeedReadController {
     public ResponseEntity<FeedResponseDTO> getFeed(@PathVariable Long feedId) {
         try {
             FeedResponseDTO feed = feedFacadeService.getFeed(feedId);
+            System.out.println(11);
             return ResponseEntity.ok(feed);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
