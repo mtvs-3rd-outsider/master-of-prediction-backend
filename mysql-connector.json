@@ -13,6 +13,7 @@
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
     "schema.history.internal.kafka.topic": "schemahistory.forceasthub",
     "database.serverTimezone": "Asia/Seoul",
+    "include.schema.changes": "true",
     "snapshot.mode": "initial"
   }
 }

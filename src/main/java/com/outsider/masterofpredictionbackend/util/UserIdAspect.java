@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.user.command.application.dto.Custo
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -17,6 +18,7 @@ import java.lang.reflect.Method;
 
 @Aspect
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class UserIdAspect {
 
@@ -25,13 +27,20 @@ public class UserIdAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
+        String userIdHeader = (String) request.getAttribute("X-User-Id");
+        String roleStr = (String) request.getAttribute("X-User-Role");
+        String email = (String) request.getAttribute("X-User-Email");
+        String userName = (String) request.getAttribute("X-User-Name");
         // HTTP 헤더에서 사용자 정보 가져오기
-        String userIdHeader = request.getHeader("X-User-Id");
-        String roleStr = request.getHeader("X-User-Role");
-        String email = request.getHeader("X-User-Email");
-        String userName = request.getHeader("X-User-Name");
+        //TODO: MSA 이면 아래 코드 적용
+//        String userIdHeader = request.getHeader("X-User-Id");
+//        String roleStr = request.getHeader("X-User-Role");
+//        String email = request.getHeader("X-User-Email");
+//        String userName = request.getHeader("X-User-Name");
+        log.info("USER ID LOGIN ASPECT: {}",userIdHeader);
 
         Long userId = userIdHeader != null ? Long.parseLong(userIdHeader) : 0L;
+        log.info("USER ID LOGIN ASPECT: {}",userId);
         Authority role = roleStr != null ? Authority.valueOf(roleStr.toUpperCase()) : Authority.ROLE_USER; // 기본 값 USER로 설정
 
         // 메서드와 매개변수 정보 가져오기

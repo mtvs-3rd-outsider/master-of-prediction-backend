@@ -25,6 +25,9 @@ public class ChannelSubscribe {
         @Column(name = "is_active", nullable = false)
         private Boolean isActive;
 
+        public void setSubscriptionDate(LocalDateTime subscriptionDate) {
+                this.subscriptionDate = subscriptionDate;
+        }
 
         public ChannelSubscribe() {
         }

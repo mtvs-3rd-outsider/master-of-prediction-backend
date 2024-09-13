@@ -34,13 +34,15 @@ public class UpdateMyChannelFollowingCountService {
     @Transactional
     public void updateFollowingsMyChannel(UpdateChannelUserCountDTO dto) {
         MyChannel myChannel = myChannelRepository.findById(dto.getChannelId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("Channel with ID " + dto.getChannelId() + " not found"));  // 예외 메시지 개선
 
         if(dto.getIsPlus()) {
             myChannel.setFollowings(myChannel.getUserCounts().getFollowingCount() + 1);
         } else {
             myChannel.setFollowings(myChannel.getUserCounts().getFollowingCount() - 1);
         }
+
+        myChannelRepository.save(myChannel);  // 상태 업데이트 후 저장
     }
 
 }

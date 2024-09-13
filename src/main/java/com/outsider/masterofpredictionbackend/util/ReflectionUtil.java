@@ -5,76 +5,96 @@ import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-
 import java.time.LocalDate;
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReflectionUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtil.class);
-    private static final LocalDate EPOCH_DATE = LocalDate.of(1970, 1, 1); // 1970-01-01 기준 날짜
+    private static final LocalDate EPOCH_DATE = LocalDate.of(1970, 1, 1); // 기준 날짜
+    private static final Map<Class<?>, Map<String, Field>> fieldCache = new HashMap<>(); // 필드 캐싱을 위한 맵
 
     public static <S, T> T mapJsonNodeToEntity(JsonNode node, T targetEntity, Class<S> sourceClass) {
-        Field[] targetFields = targetEntity.getClass().getDeclaredFields();
-        Field[] sourceFields = sourceClass.getDeclaredFields();
+        // 타겟 및 소스 필드 캐싱
+        Map<String, Field> targetFieldMap = getFieldMapJsonOrField(targetEntity.getClass());
+        Map<String, Field> sourceFieldMap = getFieldMapColumnOrField(sourceClass);
 
-        for (Field targetField : targetFields) {
-            targetField.setAccessible(true); // private 필드 접근 가능하게 설정
+        for (Map.Entry<String, Field> targetEntry : targetFieldMap.entrySet()) {
+            Field targetField = targetEntry.getValue();
+            String jsonFieldName = getJsonFieldName(targetField); // 타겟 JSON 필드 이름 가져오기
+            logger.info("Mapping field: {} to JSON field: {}", targetField.getName(), jsonFieldName);
 
-            try {
-                String jsonFieldName = getJsonFieldName(targetField); // 타겟 JSON 필드 이름 가져오기
-                logger.info("Mapping field: {} to JSON field: {}", targetField.getName(), jsonFieldName); // 디버깅용 로그
-
-                Field sourceField = getSourceFieldByColumn(sourceFields, jsonFieldName); // 원본 소스의 @Column과 매칭
-                if (sourceField != null) {
-                    sourceField.setAccessible(true);
+            Field sourceField = sourceFieldMap.get(jsonFieldName); // 해시맵에서 필드 가져오기
+            if (sourceField != null) {
+                try {
                     Object sourceValue = getValueForField(node, sourceField, jsonFieldName);
-                    logger.info("Source value for field {}: {}", jsonFieldName, sourceValue); // 디버깅용 로그
+                    logger.info("Source value for field {}: {}", jsonFieldName, sourceValue);
 
                     Object convertedValue = convertValue(sourceValue, targetField.getType());
-                    logger.info("Converted value for field {}: {}", targetField.getName(), convertedValue); // 디버깅용 로그
+                    logger.info("Converted value for field {}: {}", targetField.getName(), convertedValue);
 
                     if (convertedValue != null) {
                         targetField.set(targetEntity, convertedValue);
                     }
-                } else {
-                    logger.warn("JSON does not contain field: {}", jsonFieldName); // 필드가 없는 경우 경고 로그
+                } catch (IllegalAccessException e) {
+                    logger.error("Failed to set field value for field: {}", targetField.getName(), e);
                 }
-            } catch (IllegalAccessException e) {
-                logger.error("Failed to set field value for field: {}", targetField.getName(), e);
+            } else {
+                logger.warn("JSON does not contain field: {}", jsonFieldName); // 필드가 없는 경우 경고 로그
             }
         }
+
         return targetEntity;
     }
 
-    // 필드에서 JSON 필드 이름 가져오기 (snake_case 혹은 camelCase와 매핑)
-    private static String getJsonFieldName(Field field) {
-        JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
-        if (jsonProperty != null) {
-            return jsonProperty.value(); // @JsonProperty가 있으면 그 값을 사용
+    // 클래스의 필드를 해시맵으로 변환하여 캐싱
+    private static Map<String, Field> getFieldMapJsonOrField(Class<?> clazz) {
+        if (!fieldCache.containsKey(clazz)) {
+            Field[] fields = clazz.getDeclaredFields();
+            Map<String, Field> fieldMap = new HashMap<>();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                String jsonFieldName = getJsonFieldName(field);
+                fieldMap.put(jsonFieldName, field); // 필드 이름과 Field 객체를 매핑
+            }
+            fieldCache.put(clazz, fieldMap); // 캐싱
+        }
+        return fieldCache.get(clazz);
+    }
+    // 클래스의 필드를 @Column 이름을 기준으로 해시맵에 변환하여 캐싱
+    private static Map<String, Field> getFieldMapColumnOrField(Class<?> clazz) {
+        if (!fieldCache.containsKey(clazz)) {
+            Field[] fields = clazz.getDeclaredFields();
+            Map<String, Field> fieldMap = new HashMap<>();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                String columnName = getColumnName(field); // @Column 어노테이션에서 이름을 가져오기
+                fieldMap.put(columnName, field); // @Column 이름과 Field 객체를 매핑
+            }
+            fieldCache.put(clazz, fieldMap); // 캐싱
+        }
+        return fieldCache.get(clazz);
+    }
+
+    // @Column 어노테이션의 이름을 가져오기
+    private static String getColumnName(Field field) {
+        Column column = field.getAnnotation(Column.class);
+        if (column != null) {
+            return column.name(); // @Column 어노테이션이 있으면 그 값을 사용
         }
         return field.getName(); // 없으면 필드 이름을 그대로 사용
     }
-
-    // 원본 소스 클래스에서 @Column을 기반으로 필드 찾기
-    private static Field getSourceFieldByColumn(Field[] sourceFields, String jsonFieldName) {
-        for (Field field : sourceFields) {
-            Column column = field.getAnnotation(Column.class); // @Column 어노테이션 확인
-            if (column != null && column.name().equalsIgnoreCase(jsonFieldName)) {
-                return field; // @Column 이름과 jsonFieldName이 일치하면 필드를 반환
-            }
+    // 필드에서 JSON 필드 이름 가져오기
+    private static String getJsonFieldName(Field field) {
+        JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
+        if (jsonProperty != null) {
+            return jsonProperty.value();
         }
-
-        // @Column 어노테이션이 없을 경우 필드 이름으로 찾기
-        for (Field field : sourceFields) {
-            if (field.getName().equalsIgnoreCase(jsonFieldName)) {
-                return field; // 필드 이름이 jsonFieldName과 일치하면 필드를 반환
-            }
-        }
-
-        return null; // 필드가 없으면 null 반환
+        return field.getName();
     }
 
     // JSON 노드에서 값 추출 (Source 필드의 타입에 맞게 변환)
@@ -83,7 +103,7 @@ public class ReflectionUtil {
         JsonNode jsonValue = node.get(jsonFieldName);
 
         if (jsonValue == null || jsonValue.isNull()) {
-            return null; // 값이 없으면 null 반환
+            return null;
         }
 
         if (fieldType == Long.class || fieldType == long.class) {
@@ -102,11 +122,9 @@ public class ReflectionUtil {
             } catch (Exception e) {
                 logger.error("Failed to parse LocalDate from JSON field: {}", jsonFieldName, e);
             }
-        }else
-        {
+        } else {
             return jsonValue.asText();
         }
-        // 더 많은 타입에 대한 처리가 필요하다면 여기서 추가
         return null;
     }
 
@@ -124,19 +142,19 @@ public class ReflectionUtil {
         Class<?> sourceType = sourceValue.getClass();
 
         if (targetType == sourceType) {
-            return sourceValue; // 같은 타입이면 변환 필요 없음
+            return sourceValue;
         }
 
         try {
             if (targetType == String.class) {
                 if (sourceType == LocalDate.class) {
-                    return ((LocalDate) sourceValue).toString(); // LocalDate -> String 변환
+                    return ((LocalDate) sourceValue).toString();
                 } else {
-                    return sourceValue.toString(); // 기본적으로 toString() 사용
+                    return sourceValue.toString();
                 }
             } else if (targetType == LocalDate.class) {
                 if (sourceType == String.class) {
-                    return LocalDate.parse((String) sourceValue); // String -> LocalDate 변환
+                    return LocalDate.parse((String) sourceValue);
                 }
             } else if (targetType == Integer.class || targetType == int.class) {
                 return Integer.parseInt(sourceValue.toString());
@@ -144,15 +162,13 @@ public class ReflectionUtil {
                 return Long.parseLong(sourceValue.toString());
             } else if (targetType == BigDecimal.class) {
                 return new BigDecimal(sourceValue.toString());
-            }else
-            {
+            } else {
                 return sourceValue.toString();
             }
-            // 필요에 따라 더 많은 변환 로직 추가
         } catch (Exception e) {
             logger.error("Failed to convert value: {} to target type: {}", sourceValue, targetType, e);
         }
 
-        return null; // 변환 실패 시 null 반환
+        return null;
     }
 }

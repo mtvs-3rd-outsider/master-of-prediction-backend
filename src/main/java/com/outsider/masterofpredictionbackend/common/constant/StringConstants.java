@@ -14,4 +14,8 @@ public class StringConstants {
     public static final String USER_DEFAULT_TIER = "Nostradamus";
     public static final String MY_CHANNEL_UPDATE_TOPIC = "my-channel.update";
     public static final String MY_CHANNEL_CREATE_TOPIC = "my-channel.create";
+    // 예시
+    public static final String UPDATE_FOLLOWING_COUNT_TOPIC = "update_following_count_topic";
+    public static final String UPDATE_FOLLOWER_COUNT_TOPIC = "update_follower_count_topic";
+
 }

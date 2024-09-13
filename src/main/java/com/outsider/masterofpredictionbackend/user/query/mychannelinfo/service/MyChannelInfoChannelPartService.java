@@ -66,7 +66,7 @@ public class MyChannelInfoChannelPartService extends GenericService<MyChannelInf
 
     public void handleCreateOrUpdate(JsonNode jsonNode) {
         Long channelId = jsonNode.get("channel_id").asLong();
-        saveOrUpdate(jsonNode, channelId, MyChannelInfoQueryModel.class);
+        saveOrUpdate(jsonNode, channelId, MyChannelInfoQueryModel.class,"setUserId");
     }
 
     public void handleDelete(JsonNode jsonNode) {
