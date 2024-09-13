@@ -4,18 +4,20 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 @Data
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class BettingProductAndOptionDTO {
 
     private Long id;
@@ -26,16 +28,16 @@ public class BettingProductAndOptionDTO {
     @NotBlank(message = "content is required")
     private String content;
 
-    @NotNull(message = "userId is required")
     private Long userId;
 
     @NotNull(message = "categoryCode is required")
     private Long categoryCode;
 
-    @Future(message = "deadlineDate must be future date")
+    @Future(message = "deadLineDateTime must be future")
+    private LocalDateTime deadLineDateTime;
+
     private LocalDate deadlineDate;
 
-    @Future(message = "deadlineTime must be future date")
     private LocalTime deadlineTime;
 
 
@@ -44,8 +46,5 @@ public class BettingProductAndOptionDTO {
     @NotNull(message = "isBlind is required")
     private Boolean isBlind;
 
-
-    @NotNull(message = "option is required")
-    @Valid
-    private List<@Valid BettingProductOptionDTO> option;
+    private List<BettingProductOptionDTO> options;
 }
