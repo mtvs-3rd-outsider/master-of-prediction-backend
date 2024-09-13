@@ -11,7 +11,6 @@ import com.outsider.masterofpredictionbackend.utils.ImageStorageService;
 import com.outsider.masterofpredictionbackend.utils.InvalidImageException;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,7 +42,7 @@ public class ProductCommandService {
 
         List<String> mainImgUrls = new ArrayList<>();
         List<String> optionImgUrls;
-        List<MultipartFile> tmpOptionImgUrls = bettingProductAndOptionDTO.getOption().stream().map(BettingProductOptionDTO::getImgUrl).toList();
+        List<MultipartFile> tmpOptionImgUrls = bettingProductAndOptionDTO.getOptions().stream().map(BettingProductOptionDTO::getImage).toList();
 
         try{
             mainImgUrls = saveAndReturnImageNames(bettingProductAndOptionDTO.getMainImgUrl());
@@ -58,7 +57,7 @@ public class ProductCommandService {
 
         BettingProduct bettingProduct = BettingDTOConverter.convertToBettingProduct(bettingProductAndOptionDTO);
         List<BettingProductImage> bettingProductImages = BettingDTOConverter.convertToBettingProductImage(bettingProduct.getId(), mainImgUrls);
-        List<BettingProductOption> bettingProductOptions = BettingDTOConverter.convertToBettingProductOption(bettingProduct.getId(), bettingProductAndOptionDTO.getOption(), optionImgUrls);
+        List<BettingProductOption> bettingProductOptions = BettingDTOConverter.convertToBettingProductOption(bettingProduct.getId(), bettingProductAndOptionDTO.getOptions(), optionImgUrls);
         try{
             bettingProductService.save(bettingProduct, bettingProductImages, bettingProductOptions);
         }catch (IllegalArgumentException e){

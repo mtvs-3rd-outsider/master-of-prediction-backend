@@ -1,6 +1,8 @@
 package com.outsider.masterofpredictionbackend.betting.command.application.controller;
 
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductAndOptionDTO;
+import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionFormDTO;
+import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import jakarta.validation.Valid;
@@ -11,13 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 
-import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,9 +34,10 @@ public class BettingProductController {
         this.productCommandService = productCommandService;
     }
 
-    @PostMapping("/users/{userId}")
+    @PostMapping
     public ResponseEntity<?> save(
-            @Valid @RequestBody BettingProductAndOptionDTO bettingProductAndOptionDTO,
+           @Valid @ModelAttribute BettingProductAndOptionDTO bettingProductAndOptionDTO,
+           @Valid @ModelAttribute BettingProductOptionFormDTO bettingProductOptionFormDTO,
             BindingResult bindingResult,
             @AuthenticationPrincipal CustomUserDetail customUserDetail
             ){
@@ -47,11 +48,31 @@ public class BettingProductController {
                 String errorMessage = error.getDefaultMessage();
                 errors.put(fieldName, errorMessage);
             });
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(errors);
         }
 
-        Long productId = null;
+        try {
+            LocalDateTime dateTime = bettingProductAndOptionDTO.getDeadLineDateTime();
+            // 날짜와 시간 분리
+            bettingProductAndOptionDTO.setDeadlineDate(dateTime.toLocalDate());
+            bettingProductAndOptionDTO.setDeadlineTime(dateTime.toLocalTime());
 
+        } catch (Exception e) {
+            // 예외 발생 시 처리
+            return new ResponseEntity<>(Map.of("error","error not 'yyyy-MM-ddTHH:mm'"), HttpStatus.BAD_REQUEST);
+        }
+        int size = bettingProductOptionFormDTO.getOptions_image().size();
+        if (bettingProductOptionFormDTO.getOptions_image().size() != bettingProductOptionFormDTO.getOptions_content().size() || size < 2) {
+            return new ResponseEntity<>(Map.of("error","options_image and options_content size must be same"), HttpStatus.BAD_REQUEST);
+        }
+        bettingProductAndOptionDTO.setOptions(new ArrayList<BettingProductOptionDTO>(size));
+        for (int i = 0; i < size; i++) {
+            bettingProductAndOptionDTO.getOptions().add(new BettingProductOptionDTO(bettingProductOptionFormDTO.getOptions_content().get(i), bettingProductOptionFormDTO.getOptions_image().get(i)));
+        }
+        // bettingProductAndOptionDTO.setUserId(customUserDetail.getId());
+        // NOTE: 임시 데이터
+        bettingProductAndOptionDTO.setUserId(1L);
+        Long productId = null;
         try {
             productId = productCommandService.save(bettingProductAndOptionDTO);
         } catch (BadRequestException e) {

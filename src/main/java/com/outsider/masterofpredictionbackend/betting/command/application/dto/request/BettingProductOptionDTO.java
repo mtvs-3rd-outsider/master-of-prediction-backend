@@ -1,19 +1,25 @@
 package com.outsider.masterofpredictionbackend.betting.command.application.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BettingProductOptionDTO {
 
     private Long id;
 
-    @NotBlank(message = "content is required")
     private String content;
 
-    private MultipartFile imgUrl;
+    private MultipartFile image;
 
+    public BettingProductOptionDTO(String content, MultipartFile image) {
+        this.content = content;
+        this.image = image;
+    }
 }
