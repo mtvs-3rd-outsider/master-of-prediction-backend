@@ -7,7 +7,7 @@ import com.outsider.masterofpredictionbackend.bettingChannelComment.command.doma
 import com.outsider.masterofpredictionbackend.bettingChannelComment.command.domain.model.embedded.WriterInfo;
 import com.outsider.masterofpredictionbackend.bettingChannelComment.command.domain.repository.BettingChannelCommentRepository;
 import com.outsider.masterofpredictionbackend.bettingChannelComment.command.exception.BettingCommentNotFoundException;
-import com.outsider.masterofpredictionbackend.bettingChannelComment.command.exception.MisMatchUserException;
+import com.outsider.masterofpredictionbackend.common.exception.MisMatchUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.Arguments;

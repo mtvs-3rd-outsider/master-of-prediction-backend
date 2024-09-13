@@ -1,12 +1,16 @@
-package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.model.embedded;
+package com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.aggregate.embedded;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * 카테고리 채널 게시물의 댓글 내용들
  */
 @Embeddable
+@Getter
+@ToString
 public class Content {
 
     /**
@@ -24,4 +28,12 @@ public class Content {
      * */
     @Column(name = "password", nullable = true)
     private String password;
+
+    protected Content() {}
+
+    public Content(String content, String imageUrl, String password) {
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.password = password;
+    }
 }
