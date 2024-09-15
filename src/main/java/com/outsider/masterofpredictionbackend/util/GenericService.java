@@ -81,7 +81,7 @@ public abstract class GenericService<T, ID, S> {
     public void retryProcessing(ConsumerRecord<String, String> record, Consumer<String, String> consumer) {
         try {
             logger.info("Retrying message consumption for record: {}", record);
-//            consume(record, consumer);
+            consume(record, consumer);
         } catch (Exception e) {
             logger.error("Error during retry of record: {}", record, e);
         }

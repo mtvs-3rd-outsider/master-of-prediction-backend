@@ -7,6 +7,7 @@ import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embe
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.ProviderInfo;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.user.command.domain.service.MyChanneRegistClient;
+import com.outsider.masterofpredictionbackend.utils.IdGenerator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +30,37 @@ public class UserRegistService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.myChanneRegistClient = myChanneRegistClient;
+    }
+    /*
+ 사용자 등록
+ */
+    @Transactional
+    public Long registManualIdUser(UserRegistDTO userRegistRequestDTO,Long Id) {
+        // 중복된 email 확인
+        if (userRepository.findByEmail(userRegistRequestDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("User with this email already exists.");
+        }
+
+        // 중복된 user_name 확인 및 처리
+        String userName = userRegistRequestDTO.getUserName();
+        String newUserName = ensureUniqueUserName(userName);
+
+        // 새로운 사용자 생성
+        User newUser = new User(
+                userRegistRequestDTO.getEmail(),
+                passwordEncoder.encode(userRegistRequestDTO.getPassword()),
+                userName,
+                newUserName,
+                userRegistRequestDTO.getAuthority(),
+                userRegistRequestDTO.getProviderInfo()
+        );
+        newUser.setId(Id);
+        // 사용자 저장
+        Long userId = userRepository.save(newUser).getId();
+        log.info("User registered successfully with ID: {}, userName: {}", userId, userName);
+        // 채널 등록 이벤트 발행
+        myChanneRegistClient.publish(userId);
+        return userId;
     }
 
     /*
@@ -54,6 +86,7 @@ public class UserRegistService {
                 userRegistRequestDTO.getAuthority(),
                 userRegistRequestDTO.getProviderInfo()
         );
+        newUser.setId(IdGenerator.generateId());
         // 사용자 저장
         Long userId = userRepository.save(newUser).getId();
         log.info("User registered successfully with ID: {}, userName: {}", userId, userName);

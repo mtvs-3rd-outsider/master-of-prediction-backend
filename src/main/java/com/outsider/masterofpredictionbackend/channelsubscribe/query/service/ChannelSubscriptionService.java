@@ -27,13 +27,23 @@ public class ChannelSubscriptionService {
         return repository.findById(subscriptionId).orElse(null);
     }
 
-    // 사용자가 팔로우한 모든 채널 목록을 페이징하여 가져오기
-    public Page<ChannelInfo> getAllFollowingByUserId(Long userId, boolean isUserChannel, Pageable pageable) {
+    public Page<ChannelInfo> getAllFollowingByUserId(Long userId, Long targetUserId, boolean isUserChannel, Pageable pageable) {
         ChannelSubscriptionId userSubscriptionId = new ChannelSubscriptionId(userId, isUserChannel);
         ChannelSubscription userSubscription = repository.findById(userSubscriptionId).orElse(null);
 
         if (userSubscription != null) {
             List<ChannelInfo> followingList = userSubscription.getFollowing();
+
+            for (ChannelInfo channel : followingList) {
+                // 해당 채널이 사용자 채널인지 검증
+                if (channel.isUserChannel()) {
+                    // targetUserId를 활용하여 채널 구독 여부 확인
+                    channel.setIsFollowing(isUserFollowingChannel(targetUserId,  channel.getChannelId(),true));
+                } else {
+                    // 채널이 사용자 채널이 아닌 경우, following 값을 null로 설정
+                    channel.setIsFollowing(null);
+                }
+            }
             int start = (int) pageable.getOffset();
             int end = Math.min((start + pageable.getPageSize()), followingList.size());
 
@@ -43,13 +53,19 @@ public class ChannelSubscriptionService {
         return Page.empty(pageable);
     }
 
-    // 특정 채널의 모든 구독자 목록을 페이징하여 가져오기
-    public Page<UserInfo> getAllSubscribersByChannelId(Long channelId, boolean isUserChannel, Pageable pageable) {
+
+
+    // 특정 채널의 모든 구독자 목록을 페이징하여 가져오기 + 특정 사용자를 팔로우하는지 여부
+    public Page<UserInfo> getAllSubscribersByChannelId(Long channelId, Long targetUserId, boolean isUserChannel, Pageable pageable) {
         ChannelSubscriptionId channelSubscriptionId = new ChannelSubscriptionId(channelId, isUserChannel);
         ChannelSubscription channelSubscription = repository.findById(channelSubscriptionId).orElse(null);
 
         if (channelSubscription != null) {
             List<UserInfo> subscribersList = channelSubscription.getSubscribers();
+            for (UserInfo subscriber : subscribersList) {
+                // targetUserId를 활용하여 특정 사용자가 구독자인지 확인
+                subscriber.setFollowing(isUserFollowingChannel( targetUserId, subscriber.getUserId(),true));
+            }
             int start = (int) pageable.getOffset();
             int end = Math.min((start + pageable.getPageSize()), subscribersList.size());
 
@@ -58,7 +74,6 @@ public class ChannelSubscriptionService {
 
         return Page.empty(pageable);
     }
-
     // 사용자가 특정 채널을 팔로우하고 있는지 확인
     public boolean isUserFollowingChannel(Long userId, Long channelId, boolean isUserChannel) {
         ChannelSubscriptionId userSubscriptionId = new ChannelSubscriptionId(userId, isUserChannel);

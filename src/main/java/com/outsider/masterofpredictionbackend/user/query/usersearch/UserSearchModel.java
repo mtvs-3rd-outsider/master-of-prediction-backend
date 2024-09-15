@@ -12,24 +12,27 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "users")
 public class UserSearchModel {
 
+
     @Id
     @JsonProperty("user_id")
-    private String userId;
-
+    @Field(type = FieldType.Long)
+    private Long userId;
 
     @JsonProperty("display_name")
     @Field(type = FieldType.Text)
     private String displayName;
 
+    @Field(type = FieldType.Keyword)  // 필드 추가
+    @JsonProperty("tier_name")
     private String tier;
 
     @JsonProperty("user_img")
+    @Field(type = FieldType.Text)  // text 타입으로 설정
     private String userImg ;
 
 

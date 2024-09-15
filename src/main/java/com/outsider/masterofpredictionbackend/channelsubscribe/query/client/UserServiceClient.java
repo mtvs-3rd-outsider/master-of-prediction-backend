@@ -11,6 +11,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.USER_REQUEST_TOPIC;
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.USER_RESPONSE_TOPIC;
+
 @Service
 public class UserServiceClient {
 
@@ -32,7 +35,7 @@ public class UserServiceClient {
 
         try {
             String message = objectMapper.writeValueAsString(request);
-            kafkaTemplate.send("user-request", message);
+            kafkaTemplate.send(USER_REQUEST_TOPIC, message);
         } catch (Exception e) {
             future.completeExceptionally(e);
         }
@@ -40,7 +43,7 @@ public class UserServiceClient {
         return future;
     }
 
-    @KafkaListener(topics = "user-response", groupId = "subscription-service")
+    @KafkaListener(topics = USER_RESPONSE_TOPIC, groupId = "subscription-service")
     public void consume(String message) {
         try {
             UserResponse response = objectMapper.readValue(message, UserResponse.class);

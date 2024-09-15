@@ -30,21 +30,31 @@ public class ChannelSubscribeService {
         this.updateFollowerService = updateFollowerService;
         this.updateFollowingService = updateFollowingService;
     }
+    @Transactional
+    public void manageSubscription(ChannelSubscribeRequestDTO dto,String action) {
+        MyChannelSubscribeId id = new MyChannelSubscribeId(dto.getUserId(), dto.getChannelId(), dto.getIsUserChannel());
+        Optional<ChannelSubscribe> optionalSubscribe = repository.findById(id);
+        ChannelSubscribe channelSubscribe = optionalSubscribe.orElse(null);
 
+        if ("subscribe".equals(action)) {
+            // 기존 구독이 없으면 새로운 구독 처리
+            subscribe(channelSubscribe, id, dto);
+        } else {
+            // 구독이 활성화된 상태라면 구독 해지
+            unsubscribe(channelSubscribe, dto);
+        }
+    }
     @Transactional
     public void manageSubscription(ChannelSubscribeRequestDTO dto) {
         MyChannelSubscribeId id = new MyChannelSubscribeId(dto.getUserId(), dto.getChannelId(), dto.getIsUserChannel());
         Optional<ChannelSubscribe> optionalSubscribe = repository.findById(id);
         ChannelSubscribe channelSubscribe = optionalSubscribe.orElse(null);
 
-        if (channelSubscribe == null) {
-            // 기존 구독이 없으면 새로운 구독 처리
-            subscribe(null, id, dto);
-        } else if (!channelSubscribe.getIsActive()) {
-            // 기존 구독이 비활성화된 경우 갱신 처리
-            renewSubscription(channelSubscribe, dto);
+        if (channelSubscribe == null || !channelSubscribe.getIsActive()) {
+            // 구독이 없거나 비활성화된 경우 구독 처리
+            subscribe(channelSubscribe, id, dto);
         } else {
-            // 구독이 활성화된 상태라면 구독 해지
+            // 구독이 활성화된 상태라면 구독 해지 처리
             unsubscribe(channelSubscribe, dto);
         }
     }
@@ -81,18 +91,19 @@ public class ChannelSubscribeService {
 
     }
 
-    private void renewSubscription(ChannelSubscribe existingSubscribe, ChannelSubscribeRequestDTO dto) {
-        if (existingSubscribe == null) {
+    @Transactional
+    public void deleteById(Long userId, Long channelId, Boolean isUserChannel) {
+        MyChannelSubscribeId id = new MyChannelSubscribeId(userId, channelId, isUserChannel);
+
+        if (!repository.existsById(id)) {
             throw new RuntimeException("Subscription not found");
         }
-        // 구독 갱신: 활성화 및 만료일 제거
-        existingSubscribe.setActive(true);
-        existingSubscribe.setExpirationDate(null);
-        repository.save(existingSubscribe);
 
-        // 팔로워 및 팔로잉 수 업데이트
-        updateFollowerAndFollowing(dto.getUserId(), dto.getChannelId(), dto.getIsUserChannel(), true);
+        // Delete the subscription
+        repository.deleteById(id);
 
+        // Update follower and following counts
+        updateFollowerAndFollowing(userId, channelId, isUserChannel, false);
     }
 
     private void updateFollowerAndFollowing(Long userId, Long channelId, Boolean isUserChannel, Boolean isSubscribing) {

@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.channelsubscribe.query.model;
 
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.ChannelInfo;
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.UserInfo;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "channel_subscriptions")
+@ToString
 public class ChannelSubscription {
 
     @Id
@@ -60,6 +62,15 @@ public class ChannelSubscription {
                     subscriber.setUserName(userName);
                     subscriber.setUserAvatarUrl(userAvatarUrl);
                 });
+    }
+    public void updateFollowingInfo(Long userId, String displayName, String userName, String userAvatarUrl) {
+        for (ChannelInfo following : following) {
+            if (following.getChannelId().equals(userId)) {
+                following.setDisplayName(displayName);
+                following.setChannelName(userName);
+                following.setChannelImageUrl(userAvatarUrl);
+            }
+        }
     }
     // 생성자
     public ChannelSubscription(ChannelSubscriptionId id) {
@@ -113,8 +124,8 @@ public class ChannelSubscription {
     }
 
     // 팔로잉 추가 메서드
-    public void addFollowing(String displayName, Long channelId, String channelName, String channelImageUrl) {
-        following.add(new ChannelInfo(displayName, channelId, channelName, channelImageUrl));
+    public void addFollowing(String displayName, Long channelId, String channelName, String channelImageUrl,boolean isUserChannel) {
+        following.add(new ChannelInfo(displayName, channelId, channelName, channelImageUrl,isUserChannel));
     }
 
     // 팔로잉 제거 메서드

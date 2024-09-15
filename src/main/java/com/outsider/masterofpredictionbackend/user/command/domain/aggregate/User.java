@@ -17,7 +17,6 @@ public class User extends BaseEntity {
     @Id
     @Column(name = "user_id")
     @JsonProperty("user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // 또는 AUTO, SEQUENCE, TABLE 중 하나 선택
     private Long id;
     @Column(name = "user_email")
     @JsonProperty("user_email")

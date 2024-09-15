@@ -3,12 +3,10 @@ package com.outsider.masterofpredictionbackend.channelsubscribe.query.consumer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.UserUpdatedEvent;
-import com.outsider.masterofpredictionbackend.channelsubscribe.query.model.ChannelSubscription;
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.model.ChannelSubscriptionId;
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.repository.ChannelSubscriptionRepository;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
-import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.service.MyChannelInfoUserPartService;
+import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.service.MyChannelInfoCDCUserPartConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -20,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class UserUpdatedEventConsumer {
-    private static final Logger logger = LoggerFactory.getLogger(MyChannelInfoUserPartService.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyChannelInfoCDCUserPartConsumer.class);
     private final ObjectMapper mapper;
     private final ChannelSubscriptionRepository repository;
     public UserUpdatedEventConsumer(ObjectMapper objectMapper, ChannelSubscriptionRepository repository) {
@@ -98,15 +96,15 @@ public class UserUpdatedEventConsumer {
         logger.info("Updating user info in subscriptions for userId={}", userId);
 
         // 1. 사용자 채널 구독 정보 업데이트
-        ChannelSubscriptionId userChannelSubscriptionId = new ChannelSubscriptionId(userId, true);
-        ChannelSubscription userChannelSubscription = repository.findById(userChannelSubscriptionId)
-                .orElse(null);
+//        ChannelSubscriptionId userChannelSubscriptionId = new ChannelSubscriptionId(userId, true);
+//        ChannelSubscription userChannelSubscription = repository.findById(userChannelSubscriptionId)
+//                .orElse(null);
 
-        if (userChannelSubscription != null) {
-            userChannelSubscription.updateUserInfo(newDisplayName, newUserName, newUserAvatarUrl);
-            repository.save(userChannelSubscription);
-            logger.info("Updated userChannelSubscription for userId={}", userId);
-        }
+//        if (userChannelSubscription != null) {
+//            userChannelSubscription.updateUserInfo(newDisplayName, newUserName, newUserAvatarUrl);
+//            repository.save(userChannelSubscription);
+//            logger.info("Updated userChannelSubscription for userId={}", userId);
+//        }
 
         // 2. 채널 구독자 정보 업데이트
         // 모든 채널 구독에서 해당 사용자를 구독자로 포함하는 경우 업데이트
@@ -116,6 +114,13 @@ public class UserUpdatedEventConsumer {
             repository.save(subscription);
             logger.info("Updated subscriber info in subscriptionId={} for userId={}", subscription.getId(), userId);
         });
+        repository.findByFollowingChannelId(userId).forEach(subscription -> {
+            // 팔로잉 정보 업데이트
+            subscription.updateFollowingInfo(userId, newDisplayName, newUserName, newUserAvatarUrl);
+            repository.save(subscription);
+            logger.info("Updated following info in subscriptionId={} for userId={}", subscription.getId(), userId);
+        });
+
     }
 
     private void removeUserInfoFromSubscriptions(User userData) {
