@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.a
 
 
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.aggregate.embeded.MyChannelSubscribeId;
+import com.outsider.masterofpredictionbackend.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ChannelSubscribe")
-public class ChannelSubscribe {
+public class ChannelSubscribe extends BaseEntity {
 
         @EmbeddedId
         private MyChannelSubscribeId id;

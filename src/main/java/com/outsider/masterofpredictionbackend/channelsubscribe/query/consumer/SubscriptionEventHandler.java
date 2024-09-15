@@ -125,7 +125,8 @@ public class SubscriptionEventHandler {
                                     channelInfo.getDisplayName(),
                                     channelInfo.getUserId(),
                                     channelInfo.getUserName(),
-                                    channelInfo.getUserAvatarUrl()
+                                    channelInfo.getUserAvatarUrl(),
+                                    isUserChannel
                             );
                             logger.info("Added following: channelId={} to userId={}", channelId, userId);
                         } else {
@@ -137,15 +138,16 @@ public class SubscriptionEventHandler {
                                 channelResponse.getDisplayName(),
                                 channelResponse.getChannelId(),
                                 channelResponse.getChannelName(),
-                                channelResponse.getChannelImageUrl()
+                                channelResponse.getChannelImageUrl(),
+                                isUserChannel
                         );
-
                         if (!userChannelSubscription.hasFollowing(channelId)) {
                             userChannelSubscription.addFollowing(
                                     channelInfo.getDisplayName(),
                                     channelInfo.getChannelId(),
                                     channelInfo.getChannelName(),
-                                    channelInfo.getChannelImageUrl()
+                                    channelInfo.getChannelImageUrl(),
+                                    isUserChannel
                             );
                             logger.info("Added following: channelId={} to userId={}", channelId, userId);
                         } else {

@@ -9,6 +9,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.USER_REQUEST_TOPIC;
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.USER_RESPONSE_TOPIC;
+
 @Service
 public class UserRequestHandler {
 
@@ -22,7 +25,7 @@ public class UserRequestHandler {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topics = "user-request", groupId = "user-service")
+    @KafkaListener(topics = USER_REQUEST_TOPIC, groupId = "user-service")
     public void consume(String message) {
         try {
             UserRequest request = objectMapper.readValue(message, UserRequest.class);
@@ -40,7 +43,7 @@ public class UserRequestHandler {
             );
 
             String responseMessage = objectMapper.writeValueAsString(response);
-            kafkaTemplate.send("user-response", responseMessage);
+            kafkaTemplate.send(USER_RESPONSE_TOPIC, responseMessage);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -23,7 +23,7 @@ public class UserQueryController {
     @GetMapping("/displayName")
     public Page<UserSearchModel> searchByDisplayName(
             @RequestParam String q,
-            @PageableDefault(page = 0, size = 10, sort = "displayName", direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(page = 0, size = 10,  direction = Sort.Direction.ASC) Pageable pageable) {
         return userQueryService.searchByDisplayName(q, pageable);
     }
 
@@ -31,7 +31,15 @@ public class UserQueryController {
     @GetMapping("/userName")
     public Page<UserSearchModel> searchByUserName(
             @RequestParam String q,
-            @PageableDefault(page = 0, size = 10, sort = "userName", direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(page = 0, size = 10,  direction = Sort.Direction.ASC) Pageable pageable) {
         return userQueryService.searchByUserName(q, pageable);
+    }
+
+    // 모든 유저를 페이징과 기본값으로 검색
+    @GetMapping("/all")
+    public Page<UserSearchModel> findAllUsers(
+            @PageableDefault(page = 0, size = 10, sort = "userName", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        return userQueryService.findAllUsers(pageable);
     }
 }

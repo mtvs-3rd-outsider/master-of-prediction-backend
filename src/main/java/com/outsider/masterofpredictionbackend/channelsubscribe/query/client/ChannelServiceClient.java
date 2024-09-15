@@ -11,6 +11,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.CHANNEL_RESPONSE_TOPIC;
+
 @Service
 public class ChannelServiceClient {
 
@@ -40,7 +42,7 @@ public class ChannelServiceClient {
         return future;
     }
 
-    @KafkaListener(topics = "channel-response", groupId = "subscription-service")
+    @KafkaListener(topics = CHANNEL_RESPONSE_TOPIC, groupId = "subscription-service")
     public void consume(String message) {
         try {
             ChannelResponse response = objectMapper.readValue(message, ChannelResponse.class);

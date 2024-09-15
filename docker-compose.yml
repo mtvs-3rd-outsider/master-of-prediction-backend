@@ -1,10 +1,12 @@
+
 services:
 
   initdb:
     image: busybox
     volumes:
-      - ./my.cnf:/etc/mysql/my.cnf
+      - ./init-scripts/my.cnf:/etc/mysql/my.cnf
     entrypoint: ["sh", "-c", "chmod 644 /etc/mysql/my.cnf"]
+    profiles: ["db", "required"]
   db:
     restart: always
     image: mysql:8.0
@@ -22,10 +24,10 @@ services:
     ports:
       - "9876:3306"
     volumes:
-      - ./mysql_data:/var/lib/mysql
-      - ./my.cnf:/etc/mysql/my.cnf
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # SQL 스크립트 마운트
-    profiles: ["database", "required"]
+      - mysql_data:/var/lib/mysql
+      - ./init-scripts/my.cnf:/etc/mysql/my.cnf
+      - ./init-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql  # SQL 스크립트 마운트
+    profiles: ["db", "required"]
 
   redis:
     restart: always
@@ -141,7 +143,7 @@ services:
   zookeeper:
     restart: always
     container_name: zookeeper
-    image: bitnami/zookeeper:latest
+    image: bitnami/zookeeper:3.9.2
     ports:
       - "2181:2181"
     environment:
@@ -154,7 +156,7 @@ services:
   debezium:
     restart: always
     container_name: debezium
-    image: debezium/connect:latest
+    image: debezium/connect:2.7.2.Final
     ports:
       - 8083:8083
     depends_on:
@@ -178,19 +180,19 @@ services:
       CONNECT_TOPIC_CREATION_DEFAULT_RETENTION_MS: 86400000  # 기존 설정
       CONNECT_TOPIC_CREATION_DEFAULT_REPLICATION_FACTOR: 1
     volumes:
-      - ./initialize.sh:/kafka/startup.sh
+      - ./init-scripts/initialize.sh:/kafka/startup.sh
     profiles: ["kafka", "required"]
   connect-init:
-    image: debezium/connect:latest
+    image: debezium/connect:2.7.2.Final
     depends_on:
       - debezium
     volumes:
-      - ./startup.sh:/kafka/startup.sh  # 스크립트 추가
-      - ./mysql-connector.json:/kafka/connectors/mysql-connector.json
+      - ./init-scripts/startup.sh:/kafka/startup.sh  # 스크립트 추가
+      - ./init-scripts/mysql-connector.json:/kafka/connectors/mysql-connector.json
     entrypoint: ["/bin/bash", "/kafka/startup.sh"]
     profiles: ["kafka", "required"]
   kafka:
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:3.3.2
     container_name: kafka
     restart: always
     depends_on:
@@ -245,12 +247,12 @@ services:
       - "10001:27017"
     volumes:
       - mongo_data:/data/db
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+      - ./init-scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
 
     command: mongod --auth
     profiles: ["mongo", "required"]
   mongo-express:
-    image: mongo-express
+    image: mongo-express:1.0.2-18
     restart: always
     ports:
       - "8086:8081"
@@ -262,7 +264,7 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: adminpassword  # 기본 관리자 비밀번호를 강력한 값으로 변경
     profiles: ["mongo"]
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:sha256-fc898de747e8a4573c38f8bf976826449d8e5c320585f439b23476fc2bccf5f6
     container_name: elasticsearch
     environment:
       - node.name=es01
@@ -279,7 +281,7 @@ services:
     ports:
       - 9200:9200
     restart: always
-    profiles: ["elasticsearch", "required"]
+    profiles: ["es", "required"]
   kibana:
     image: docker.elastic.co/kibana/kibana:8.8.0
     restart: always
@@ -288,7 +290,7 @@ services:
       - 5601:5601
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    profiles: ["elasticsearch" ]
+    profiles: ["es" ]
 
 volumes:
   grafana-storage:
@@ -298,9 +300,7 @@ volumes:
   minio-data:
   mc-config:
   mongo_data:
+  mysql_data:
   zookeeper_data:
-    driver: local
   kafka-data:
-    driver: local
   es_data:
-    driver: local

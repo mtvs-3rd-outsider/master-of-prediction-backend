@@ -71,7 +71,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   data:
     mongodb:
       uri: mongodb://ohgiraffers:ohgiraffers@localhost:10001/forecasthub?authSource=admin
@@ -121,3 +121,9 @@ logging:
   level:
     com:
       com.outsider: DEBUG
+    org:
+      elasticsearch:
+        client: DEBUG
+      springframework:
+        data:
+          elasticsearch: DEBUG
