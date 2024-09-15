@@ -10,9 +10,12 @@ import jakarta.persistence.*;
 public class CategoryChannel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CATEGORY_CHANNEL_ID")
     private long categoryChannelId;
+
+    public void setCategoryChannelId(long categoryChannelId) {
+        this.categoryChannelId = categoryChannelId;
+    }
 
     @Column(name = "DISPLAY_NAME")
     private String displayName;
@@ -22,9 +25,18 @@ public class CategoryChannel {
 
     @Column(name = "IMAGE_URL")
     private String imageUrl;
-
+    @Column(name = "BANNER_IMG")
+    private String bannerImg;
     @Column(name = "DESCRIPTION")
     private String description;
+
+    public String getBannerImg() {
+        return bannerImg;
+    }
+
+    public void setBannerImg(String bannerImg) {
+        this.bannerImg = bannerImg;
+    }
 
     @Embedded
     private CommunityRule communityRule;
@@ -38,10 +50,9 @@ public class CategoryChannel {
 
     public CategoryChannel() {}
 
-    public CategoryChannel(String displayName, long ownerUserId, String imageUrl, String description, CommunityRule communityRule, CategoryChannelUserCounts categoryChannelUserCounts, CategoryChannelStatus categoryChannelStatus) {
+    public CategoryChannel(String displayName, long ownerUserId,String description, CommunityRule communityRule, CategoryChannelUserCounts categoryChannelUserCounts, CategoryChannelStatus categoryChannelStatus) {
         this.displayName = displayName;
         this.ownerUserId = ownerUserId;
-        this.imageUrl = imageUrl;
         this.description = description;
         this.communityRule = communityRule;
         this.categoryChannelUserCounts = categoryChannelUserCounts;

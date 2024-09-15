@@ -65,7 +65,7 @@ public class ChannelSubscription {
     }
     public void updateFollowingInfo(Long userId, String displayName, String userName, String userAvatarUrl) {
         for (ChannelInfo following : following) {
-            if (following.getChannelId().equals(userId)) {
+            if (following.getChannelId().equals(userId) && following.isUserChannel()) {
                 following.setDisplayName(displayName);
                 following.setChannelName(userName);
                 following.setChannelImageUrl(userAvatarUrl);

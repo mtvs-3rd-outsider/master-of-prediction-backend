@@ -29,12 +29,17 @@ class CategoryChannelRegistServiceTest {
                                 CategoryChannelStatus.APPLY
                         ),
                         new MockMultipartFile(
-                                "file",                       // 파라미터 이름
-                                "testfile.txt",               // 원래 파일 이름
-                                "text/plain",                 // MIME 타입
-                                "This is a test file.".getBytes() // 파일 내용
+                                "representativeImage",                       // 대표 이미지 파일 파라미터 이름
+                                "representativeImage.jpg",               // 원래 파일 이름
+                                "image/jpeg",                 // MIME 타입
+                                "This is a representative image file.".getBytes() // 파일 내용
+                        ),
+                        new MockMultipartFile(
+                                "bannerImage",                       // 배너 이미지 파일 파라미터 이름
+                                "bannerImage.jpg",               // 원래 파일 이름
+                                "image/jpeg",                 // MIME 타입
+                                "This is a banner image file.".getBytes() // 파일 내용
                         )
-
                 )
         );
     }
@@ -42,11 +47,11 @@ class CategoryChannelRegistServiceTest {
     @ParameterizedTest
     @MethodSource("newCategoryChannel")
     @Transactional
-    void newCategoryChannel(CategoryChannelRegistRequestDTO registRequestDTO, MockMultipartFile file) {
+    void newCategoryChannel(CategoryChannelRegistRequestDTO registRequestDTO, MockMultipartFile representativeImageFile, MockMultipartFile bannerImageFile) {
 
         Assertions.assertDoesNotThrow(
                 () -> {
-                    categoryChannelRegistService.registerCategoryChannel(registRequestDTO, file);
+                    categoryChannelRegistService.registerCategoryChannel(registRequestDTO, representativeImageFile, bannerImageFile, 99L); // userId 예시로 99L 사용
                 }
         );
     }

@@ -15,6 +15,7 @@ public class StringConstants {
     public static final String MY_CHANNEL_UPDATE_TOPIC = "dbserver1.my-channel.update.event";
     public static final String MY_CHANNEL_CREATE_TOPIC = "dbserver1.my-channel.create.event";
     public static final String CHANNEL_RESPONSE_TOPIC = "dbserver1.channel-response.event";
+    public static final String CHANNEL_REQUEST_TOPIC = "dbserver1.channel-request.event";
     public static final String USER_RESPONSE_TOPIC = "dbserver1.user-response.event";
     public static final String USER_REQUEST_TOPIC = "dbserver1.user-request.event";
     // 예시

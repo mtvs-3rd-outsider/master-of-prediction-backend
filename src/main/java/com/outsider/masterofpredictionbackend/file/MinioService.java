@@ -12,7 +12,7 @@ import java.util.UUID;
 import static java.io.File.separator;
 
 @Service
-public class MinioService {
+public class MinioService implements FileUploadService {
 
     @Autowired
     private MinioClient minioClient;

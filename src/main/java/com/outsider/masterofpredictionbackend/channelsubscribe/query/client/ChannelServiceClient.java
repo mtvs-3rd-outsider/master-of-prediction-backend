@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.CHANNEL_REQUEST_TOPIC;
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.CHANNEL_RESPONSE_TOPIC;
 
 @Service
@@ -34,7 +35,7 @@ public class ChannelServiceClient {
 
         try {
             String message = objectMapper.writeValueAsString(request);
-            kafkaTemplate.send("channel-request", message);
+            kafkaTemplate.send(CHANNEL_REQUEST_TOPIC, message);
         } catch (Exception e) {
             future.completeExceptionally(e);
         }
