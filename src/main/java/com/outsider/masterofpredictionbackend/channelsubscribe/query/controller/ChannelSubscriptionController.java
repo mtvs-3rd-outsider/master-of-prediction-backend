@@ -2,13 +2,10 @@ package com.outsider.masterofpredictionbackend.channelsubscribe.query.controller
 
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.ChannelInfo;
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.UserInfo;
-import com.outsider.masterofpredictionbackend.channelsubscribe.query.model.ChannelSubscription;
-import com.outsider.masterofpredictionbackend.channelsubscribe.query.model.ChannelSubscriptionId;
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.service.ChannelSubscriptionService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.UserId;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -30,8 +27,10 @@ public class ChannelSubscriptionController {
     public ResponseEntity<Page<ChannelInfo>> getFollowingByUserId(
             @PathVariable Long userId,
             @RequestParam boolean isUserChannel,  // 컨트롤러에서 isUserChannel 값을 받음
-            @PageableDefault(size = 10, page = 0, sort = "channelName", direction = Sort.Direction.ASC) Pageable pageable, @UserId CustomUserInfoDTO userInfoDTO) {
-        Page<ChannelInfo> following = subscriptionService.getAllFollowingByUserId(userId,userInfoDTO.getUserId(), isUserChannel, pageable);
+            @RequestParam(required = false, defaultValue = "ALL") String flag,  // 추가된 flag 파라미터
+            @PageableDefault(size = 10, page = 0, sort = "channelName", direction = Sort.Direction.ASC) Pageable pageable,
+            @UserId CustomUserInfoDTO userInfoDTO) {
+        Page<ChannelInfo> following = subscriptionService.getAllFollowingByUserId(userId, userInfoDTO.getUserId(), isUserChannel, pageable, flag);
         return ResponseEntity.ok(following);
     }
 
@@ -40,8 +39,9 @@ public class ChannelSubscriptionController {
     public ResponseEntity<Page<UserInfo>> getSubscribersByChannelId(
             @PathVariable Long channelId,
             @RequestParam boolean isUserChannel,  // 컨트롤러에서 isUserChannel 값을 받음
-            @PageableDefault(size = 10, page = 0, sort = "displayName", direction = Sort.Direction.ASC) Pageable pageable, @UserId CustomUserInfoDTO userInfoDTO) {
-        Page<UserInfo> subscribers = subscriptionService.getAllSubscribersByChannelId(channelId,userInfoDTO.getUserId(), isUserChannel, pageable);
+            @PageableDefault(size = 10, page = 0, sort = "displayName", direction = Sort.Direction.ASC) Pageable pageable,
+            @UserId CustomUserInfoDTO userInfoDTO) {
+        Page<UserInfo> subscribers = subscriptionService.getAllSubscribersByChannelId(channelId, userInfoDTO.getUserId(), isUserChannel, pageable);
         return ResponseEntity.ok(subscribers);
     }
 }

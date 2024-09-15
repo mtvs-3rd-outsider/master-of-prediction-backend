@@ -1,5 +1,8 @@
 package com.outsider.masterofpredictionbackend.config;
 
+import com.outsider.masterofpredictionbackend.categorychannel.command.application.dto.CategoryChannelRegistRequestDTO;
+import com.outsider.masterofpredictionbackend.categorychannel.command.application.service.CategoryChannelRegistService;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.dto.ChannelSubscribeRequestDTO;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.service.ChannelSubscribeService;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.aggregate.ChannelSubscribe;
@@ -24,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -33,7 +37,7 @@ import static com.outsider.masterofpredictionbackend.common.constant.StringConst
 
 @Configuration
 public class DummyConfig {
-
+    private final CategoryChannelRegistService categoryChannelRegistService;
     private final UserRegistService userRegistService;
     private final DeleteUserService deleteUserService;
     private final ChannelSubscribeService subscribeService;
@@ -47,11 +51,13 @@ public class DummyConfig {
     private final KafkaAdmin kafkaAdmin;
     // 리스트를 사용하여 여러 사용자 ID를 저장
     private final List<Long> userIds = new ArrayList<>();
+    private final List<Long> categoryChannelIds = new ArrayList<>();  // Track created category channels
 
-    public DummyConfig(UserCommandRepository userCommandRepository,
+    public DummyConfig(CategoryChannelRegistService categoryChannelRegistService, UserCommandRepository userCommandRepository,
                        UserRegistService userRegistService,
                        DeleteUserService deleteUserService, ChannelSubscribeService subscribeService,
                        UserProfileUpdateService userProfileUpdateService, MyChannelCommandRepository myChannelCommandRepository, ChannelSubscribeCommandRepository channelSubscribeCommandRepository, KafkaAdmin kafkaAdmin) {
+        this.categoryChannelRegistService = categoryChannelRegistService;
         this.userCommandRepository = userCommandRepository;
         this.userRegistService = userRegistService;
         this.deleteUserService = deleteUserService;
@@ -92,28 +98,51 @@ public class DummyConfig {
                 Long userId = userRegistService.registManualIdUser(dto, (long) i+1);
                 userIds.add(userId);
             }
+            // Category Channel creation
+            if (userIds.size() >= 3) {
+                Long ownerId = userIds.get(0); // Set the first user as the owner of the category channel
+                List<CategoryChannelRegistRequestDTO> channelsToCreate = List.of(
+                        new CategoryChannelRegistRequestDTO("Tech Channel", "A channel about technology", "[\"No spamming\"]", CategoryChannelStatus.APPLY),
+                        new CategoryChannelRegistRequestDTO("Gaming Channel", "A channel about gaming", "[\"Be respectful\"]", CategoryChannelStatus.APPLY)
+                );
 
+                for (int i = 0; i < channelsToCreate.size(); i++) {
+                    CategoryChannelRegistRequestDTO channelDto = channelsToCreate.get(i);
+                    System.out.println("Creating category channel " + (i + 1));
+                    MultipartFile representativeImageFile = null; // You can add dummy files if needed
+                    MultipartFile bannerImageFile = null;
+                    categoryChannelRegistService.registerCategoryChannelWithManualId(channelDto, representativeImageFile, bannerImageFile, 2L, (long) i + 1);
+                    categoryChannelIds.add((long) i + 1); // Track category channel ID
+                }
+            }
             // 특정 사용자에 대한 추가 작업
             if (userIds.size() >= 3) {
                 Long subscriberId = userIds.get(0); // 예: 첫 번째 사용자
                 Long channelId = userIds.get(1);    // 예: 두 번째 사용자
-                ChannelSubscribeRequestDTO channelSubscribeRequestDTO= new ChannelSubscribeRequestDTO(subscriberId, channelId, true);
-                MyChannelSubscribeId myChannelSubscribeId =  new MyChannelSubscribeId(channelSubscribeRequestDTO.getUserId(), channelSubscribeRequestDTO.getChannelId(), channelSubscribeRequestDTO.getIsUserChannel());
-                Optional<ChannelSubscribe> existMyChannelSubscribeId =channelSubscribeCommandRepository.findById(myChannelSubscribeId);
-                if(existMyChannelSubscribeId.isPresent())
+//                ChannelSubscribeRequestDTO channelSubscribeRequestDTO= new ChannelSubscribeRequestDTO(subscriberId, channelId, true);
+//                MyChannelSubscribeId myChannelSubscribeId =  new MyChannelSubscribeId(channelSubscribeRequestDTO.getUserId(), channelSubscribeRequestDTO.getChannelId(), channelSubscribeRequestDTO.getIsUserChannel());
+//                Optional<ChannelSubscribe> existMyChannelSubscribeId =channelSubscribeCommandRepository.findById(myChannelSubscribeId);
+//                if(existMyChannelSubscribeId.isPresent())
+//                {
+//                    channelSubscribeService.deleteById(myChannelSubscribeId.getUserId(),myChannelSubscribeId.getChannelId(),true);
+//                }
+//                subscribeService.manageSubscription(channelSubscribeRequestDTO,"subscribe");
+
+                ChannelSubscribeRequestDTO channelSubscribeRequestDTO2= new ChannelSubscribeRequestDTO(subscriberId, 1L, false);
+                MyChannelSubscribeId myChannelSubscribeId2 =  new MyChannelSubscribeId(channelSubscribeRequestDTO2.getUserId(), channelSubscribeRequestDTO2.getChannelId(), channelSubscribeRequestDTO2.getIsUserChannel());
+                Optional<ChannelSubscribe> existMyChannelSubscribeId2 =channelSubscribeCommandRepository.findById(myChannelSubscribeId2);
+                if(existMyChannelSubscribeId2.isPresent())
                 {
-                    channelSubscribeService.deleteById(myChannelSubscribeId.getUserId(),myChannelSubscribeId.getChannelId(),true);
+                    channelSubscribeService.deleteById(myChannelSubscribeId2.getUserId(),myChannelSubscribeId2.getChannelId(),false);
                 }
-                subscribeService.manageSubscription(channelSubscribeRequestDTO,"subscribe");
-
-
+                subscribeService.manageSubscription(channelSubscribeRequestDTO2,"subscribe");
 
                 // 프로필 업데이트
                 userProfileUpdateService.updateUser(
                         UserUpdateRequestDTO.builder()
                                 .userId(subscriberId)
                                 .displayName("YY2")
-                                .userName("YY2")
+                                .userName("YY3")
                                 .build()
                 );
             }
@@ -127,7 +156,11 @@ public class DummyConfig {
                         userCommandRepository.deleteById(id); // Hard delete on shutdown
                     }
                 });
-
+                categoryChannelIds.forEach(id -> {
+                    if (id != null) {
+                        myChannelCommandRepository.deleteById(id); // Hard delete category channels on shutdown
+                    }
+                });
                 deleteKafkaTopics(adminClient, "dbserver1.*");
                 adminClient.close();
             }));

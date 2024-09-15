@@ -137,7 +137,7 @@ public class SubscriptionEventHandler {
                         ChannelInfo channelInfo = new ChannelInfo(
                                 channelResponse.getDisplayName(),
                                 channelResponse.getChannelId(),
-                                channelResponse.getChannelName(),
+                                channelResponse.getDisplayName(),
                                 channelResponse.getChannelImageUrl(),
                                 isUserChannel
                         );

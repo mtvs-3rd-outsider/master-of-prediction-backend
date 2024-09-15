@@ -21,7 +21,6 @@ public class ChannelSubscribeQueryController {
             @UserId CustomUserInfoDTO userInfoDTO,
             @RequestParam Long channelId,
             @RequestParam Boolean isUserChannel
-            ) {
-        return channelSubscribeQueryService.isSubscribed(userInfoDTO.getUserId(), channelId,isUserChannel);
+            ) {return channelSubscribeQueryService.isSubscribed(userInfoDTO.getUserId(), channelId,isUserChannel);
     }
 }

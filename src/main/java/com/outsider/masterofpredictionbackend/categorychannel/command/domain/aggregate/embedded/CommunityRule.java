@@ -1,74 +1,55 @@
 package com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Transient;
 
 @Embeddable
 public class CommunityRule {
 
-    @Column(name = "COMMUNITY_RULE")
-    private String communityRule;
+    @Column(name = "COMMUNITY_RULE", columnDefinition = "JSON")
+    private String communityRule; // Stores the JSON string
 
-    @Transient
-    private JsonNode communityRuleJsonNode;
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    // Constructor for a valid communityRule string
     public CommunityRule(String communityRule) {
-        validateCommunityRule(communityRule);
-        this.communityRule = communityRule;
+        this.communityRule = communityRule; // Store the raw JSON string
     }
 
+    // Default constructor for JPA
     public CommunityRule() {}
 
     public String getCommunityRule() {
         return communityRule;
     }
 
-    public JsonNode getCommunityRuleJsonNode() {
-        return communityRuleJsonNode;
-    }
-    /* 예상되는 json 형식 (규칙 숫자는 가변)
-        {
-          "rules": [
-            {
-              "number": 1,
-              "rule": "규칙 1"
-            },
-            {
-              "number": 2,
-              "rule": "규칙 2"
-            }
-          ]
-        }
-     */
-    private void validateCommunityRule(String communityRule) {
-        // json parsing
-        communityRuleJsonNode = getCommunityRuleJsonNode(communityRule);
-
-        // 입력값 중 규칙 하나는 있는지 확인
-        // 규칙 최대갯수 제한 여부는 아직 미정
+    public void setCommunityRule(String communityRule) {
+        this.communityRule = communityRule;
     }
 
-    @Transient
-    private JsonNode getCommunityRuleJsonNode(String communityRule) {
-        ObjectMapper mapper = new ObjectMapper();
+    // Method to return communityRule as JSON string (same as the stored JSON)
+    public String toJson() {
         try {
-            return mapper.readTree(communityRule);
+            // In case communityRule is already a valid JSON string, just return it
+            return MAPPER.writeValueAsString(MAPPER.readTree(communityRule));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Invalid JSON format for community rule", e);
         }
     }
 
-    @Transient
-    private void setCommunityRuleString(JsonNode communityRuleJsonNode) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            communityRule = mapper.writeValueAsString(communityRuleJsonNode);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    // Override equals and hashCode for proper comparisons
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommunityRule that = (CommunityRule) o;
+        return communityRule.equals(that.communityRule);
+    }
+
+    @Override
+    public int hashCode() {
+        return communityRule.hashCode();
     }
 }

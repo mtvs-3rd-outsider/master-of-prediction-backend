@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.command.application.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.outsider.masterofpredictionbackend.file.FileUploadService;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelInfoUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.UserChannelUpdateDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserUpdateRequestDTO;
@@ -12,6 +13,7 @@ import com.outsider.masterofpredictionbackend.user.command.domain.service.MyChan
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -20,10 +22,12 @@ import java.util.Optional;
 public class UserProfileUpdateService {
     private final UserCommandRepository userRepository;
     private final MyChannelInfoUpdateClient myChannelInfoUpdateClient;
+    private final FileUploadService fileUploadService; // 파일 업로드 인터페이스
     @Autowired
-    public UserProfileUpdateService(UserCommandRepository userRepository, MyChannelInfoUpdateClient myChannelInfoUpdateClient) {
+    public UserProfileUpdateService(UserCommandRepository userRepository, MyChannelInfoUpdateClient myChannelInfoUpdateClient, FileUploadService fileUploadService) {
         this.userRepository = userRepository;
         this.myChannelInfoUpdateClient = myChannelInfoUpdateClient;
+        this.fileUploadService = fileUploadService;
     }
     @Transactional
     public User updateUser(UserUpdateRequestDTO userUpdateRequestDTO) {
@@ -67,7 +71,26 @@ public class UserProfileUpdateService {
         // 채널 정보 업데이트 클라이언트 호출
         myChannelInfoUpdateClient.publish(myChannelInfoUpdateRequestDTO);
     }
+    @Transactional
+    public void updateUser(UserChannelUpdateDTO updateDTO, Long userId, MultipartFile bannerImage, MultipartFile avatarImage) throws Exception {
+        // 파일 업로드 처리
+        if (bannerImage != null && !bannerImage.isEmpty()) {
+            String bannerImg = fileUploadService.uploadFile(bannerImage); // 파일 업로드 인터페이스 사용
+            updateDTO.setBannerImg(bannerImg);
+        }
 
+        if (avatarImage != null && !avatarImage.isEmpty()) {
+            String avatarImg = fileUploadService.uploadFile(avatarImage); // 파일 업로드 인터페이스 사용
+            updateDTO.setUserImg(avatarImg);
+        }
+
+        // 사용자 및 채널 정보 업데이트 로직
+        UserUpdateRequestDTO userUpdateRequestDTO = convertToUserUpdateRequestDTO(updateDTO, userId);
+        updateUser(userUpdateRequestDTO);
+
+        MyChannelInfoUpdateRequestDTO myChannelInfoUpdateRequestDTO = convertToMyChannelInfoUpdateRequestDTO(updateDTO, userId);
+        myChannelInfoUpdateClient.publish(myChannelInfoUpdateRequestDTO);
+    }
     private MyChannelInfoUpdateRequestDTO convertToMyChannelInfoUpdateRequestDTO(UserChannelUpdateDTO userChannelUpdateDTO, Long userId) {
         return MyChannelInfoUpdateRequestDTO.builder()
                 .userId(userId)
