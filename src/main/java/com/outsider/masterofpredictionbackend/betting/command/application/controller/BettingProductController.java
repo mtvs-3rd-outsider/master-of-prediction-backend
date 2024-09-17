@@ -23,7 +23,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/v1/betting-products")
+@RequestMapping
 @Validated
 public class BettingProductController {
 
@@ -34,7 +34,7 @@ public class BettingProductController {
         this.productCommandService = productCommandService;
     }
 
-    @PostMapping
+    @PostMapping("/api/v1/betting-products")
     public ResponseEntity<?> save(
            @Valid @ModelAttribute BettingProductAndOptionDTO bettingProductAndOptionDTO,
            @Valid @ModelAttribute BettingProductOptionFormDTO bettingProductOptionFormDTO,

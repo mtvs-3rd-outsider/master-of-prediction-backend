@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.betting.command.application.service;
 
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionDTO;
+import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductRepository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.*;
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductAndOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
@@ -24,12 +25,14 @@ public class ProductCommandService {
     private final ImageRollbackHelper imageRollbackHelper;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final BettingProductRepository bettingProductRepository;
 
-    public ProductCommandService(BettingProductService bettingProductService, ImageRollbackHelper imageRollbackHelper, UserService userService, CategoryService categoryService) {
+    public ProductCommandService(BettingProductService bettingProductService, ImageRollbackHelper imageRollbackHelper, UserService userService, CategoryService categoryService, BettingProductRepository bettingProductRepository) {
         this.bettingProductService = bettingProductService;
         this.imageRollbackHelper = imageRollbackHelper;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.bettingProductRepository = bettingProductRepository;
     }
 
 
@@ -56,10 +59,11 @@ public class ProductCommandService {
         imageRollbackHelper.registerForRollback();
 
         BettingProduct bettingProduct = BettingDTOConverter.convertToBettingProduct(bettingProductAndOptionDTO);
-        List<BettingProductImage> bettingProductImages = BettingDTOConverter.convertToBettingProductImage(bettingProduct.getId(), mainImgUrls);
-        List<BettingProductOption> bettingProductOptions = BettingDTOConverter.convertToBettingProductOption(bettingProduct.getId(), bettingProductAndOptionDTO.getOptions(), optionImgUrls);
+        BettingProduct saveBetting =  bettingProductRepository.save(bettingProduct);
+        List<BettingProductImage> bettingProductImages = BettingDTOConverter.convertToBettingProductImage(saveBetting.getId(), mainImgUrls);
+        List<BettingProductOption> bettingProductOptions = BettingDTOConverter.convertToBettingProductOption(saveBetting.getId(), bettingProductAndOptionDTO.getOptions(), optionImgUrls);
         try{
-            bettingProductService.save(bettingProduct, bettingProductImages, bettingProductOptions);
+            bettingProductService.save(bettingProductImages, bettingProductOptions);
         }catch (IllegalArgumentException e){
             throw new BadRequestException(e.getMessage());
         }
