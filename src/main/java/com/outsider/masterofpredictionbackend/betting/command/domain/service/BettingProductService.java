@@ -30,12 +30,10 @@ public class BettingProductService {
     }
 
     public void save(
-            BettingProduct bettingProduct,
             List<BettingProductImage> bettingProductImages,
             List<BettingProductOption> bettingProductOptions
     ) {
 
-        bettingRepository.save(bettingProduct);
         if (!bettingProductImages.isEmpty()){
             bettingProductImageRepository.saveAll(bettingProductImages);
         }

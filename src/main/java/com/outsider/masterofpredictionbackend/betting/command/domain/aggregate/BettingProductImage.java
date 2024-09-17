@@ -1,11 +1,16 @@
 package com.outsider.masterofpredictionbackend.betting.command.domain.aggregate;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "betting_product_image")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class BettingProductImage {
 
     @Id
@@ -17,9 +22,6 @@ public class BettingProductImage {
 
     @Column
     private String imgUrl;
-
-    protected BettingProductImage() {
-    }
 
     public BettingProductImage(long bettingId, String imgUrl) {
         this.bettingId = bettingId;
