@@ -23,7 +23,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/v1/betting-products")
+@RequestMapping
 @Validated
 public class BettingProductController {
 
@@ -34,7 +34,7 @@ public class BettingProductController {
         this.productCommandService = productCommandService;
     }
 
-    @PostMapping
+    @PostMapping("/api/v1/betting-products")
     public ResponseEntity<?> save(
            @Valid @ModelAttribute BettingProductAndOptionDTO bettingProductAndOptionDTO,
            @Valid @ModelAttribute BettingProductOptionFormDTO bettingProductOptionFormDTO,
@@ -65,14 +65,14 @@ public class BettingProductController {
         if (bettingProductOptionFormDTO.getOptions_image().size() != bettingProductOptionFormDTO.getOptions_content().size() || size < 2) {
             return new ResponseEntity<>(Map.of("error","options_image and options_content size must be same"), HttpStatus.BAD_REQUEST);
         }
-        bettingProductAndOptionDTO.setOptions(new ArrayList<BettingProductOptionDTO>(size));
+        bettingProductAndOptionDTO.setOptions(new ArrayList<>(size));
         for (int i = 0; i < size; i++) {
             bettingProductAndOptionDTO.getOptions().add(new BettingProductOptionDTO(bettingProductOptionFormDTO.getOptions_content().get(i), bettingProductOptionFormDTO.getOptions_image().get(i)));
         }
         // bettingProductAndOptionDTO.setUserId(customUserDetail.getId());
         // NOTE: 임시 데이터
         bettingProductAndOptionDTO.setUserId(1L);
-        Long productId = null;
+        Long productId;
         try {
             productId = productCommandService.save(bettingProductAndOptionDTO);
         } catch (BadRequestException e) {
