@@ -5,6 +5,8 @@ import com.outsider.masterofpredictionbackend.betting.command.application.dto.re
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import java.util.Map;
 @RestController
 @RequestMapping
 @Validated
+@Tag(name = "배팅 API", description = "배팅 API")
 public class BettingProductController {
 
     private final ProductCommandService productCommandService;
@@ -35,6 +38,7 @@ public class BettingProductController {
     }
 
     @PostMapping("/api/v1/betting-products")
+    @Operation(summary = "배팅 상품 등록")
     public ResponseEntity<?> save(
            @Valid @ModelAttribute BettingProductAndOptionDTO bettingProductAndOptionDTO,
            @Valid @ModelAttribute BettingProductOptionFormDTO bettingProductOptionFormDTO,

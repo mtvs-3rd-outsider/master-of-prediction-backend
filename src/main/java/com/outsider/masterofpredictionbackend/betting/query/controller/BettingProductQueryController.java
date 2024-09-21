@@ -2,11 +2,13 @@ package com.outsider.masterofpredictionbackend.betting.query.controller;
 
 
 import com.outsider.masterofpredictionbackend.betting.query.service.BettingProductQueryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Tag(description = "배팅 API", name = "배팅 API")
 public class BettingProductQueryController {
 
     private final BettingProductQueryService bettingProductQueryService;
@@ -15,10 +17,22 @@ public class BettingProductQueryController {
         this.bettingProductQueryService = bettingProductQueryService;
     }
 
-    @GetMapping("/bettings")
+    @GetMapping("/api/v1/betting-products")
+    @Operation(summary = "배팅 상품 조회")
     public ResponseEntity<?> getBettingProducts(){
         return ResponseEntity.ok(bettingProductQueryService.all());
     }
 
-
+    @GetMapping("/api/v1/betting-products/{id}")
+    @Operation(summary = "배팅 상품 상세 조회")
+    public ResponseEntity<?> getBettingProductDetail(@PathVariable Long id){
+        return ResponseEntity.ok(bettingProductQueryService.detail(id));
+    }
+    
+    @GetMapping("/api/v1/user-point/{id}")
+    @Operation(summary = "유저 포인트 조회")
+    public ResponseEntity<?> getUserPoint(@PathVariable Long id){
+        return ResponseEntity.ok(bettingProductQueryService.findUserPoint(id));
+    }
+    
 }

@@ -21,10 +21,8 @@ public class BettingOrderDTO {
     @NotNull
     private Long bettingOptionId;
 
-    @NotNull
     private LocalDate orderDate;
 
-    @NotNull
     private LocalTime orderTime;
 
 }
