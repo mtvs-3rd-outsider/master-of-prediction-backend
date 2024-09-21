@@ -2,7 +2,6 @@ package com.outsider.masterofpredictionbackend.betting.command.domain.aggregate;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "betting_product_option")
@@ -14,7 +13,7 @@ public class BettingProductOption {
     private long id;
 
     @Column
-    private long BettingId;
+    private long bettingId;
 
     @Column
     private String content;
@@ -26,7 +25,7 @@ public class BettingProductOption {
     }
 
     public BettingProductOption(long bettingId, String content, String imgUrl) {
-        BettingId = bettingId;
+        this.bettingId = bettingId;
         this.content = content;
         this.imgUrl = imgUrl;
     }

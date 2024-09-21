@@ -28,27 +28,42 @@ public class BettingOrderCommandService {
     }
 
     @Transactional
-    public void buyBettingProduct(BettingOrderDTO bettingOrderDTO) {
+    public BettingOrder buyBettingProduct(BettingOrderDTO bettingOrderDTO) {
+        // TODO: 임시 유저 번호
+        bettingOrderDTO.setUserId(1L);
+
+        bettingOrderDTO.setOrderDate(LocalDate.now());
+        bettingOrderDTO.setOrderTime(LocalTime.now());
+
         validatePoint(bettingOrderDTO.getPoint(), bettingOrderDTO.getUserId());
         validateBettingProductStatus(bettingOrderDTO.getBettingId());
 
-        userPoint.pointUpdate(bettingOrderDTO.getUserId(), bettingOrderDTO.getPoint().negate());
-        bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
+        userPoint.pointUpdate(bettingOrderDTO.getUserId(), bettingOrderDTO.getPoint());
+        return bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
     }
 
     @Transactional
-    public void sellBettingProduct(BettingOrderDTO bettingOrderDTO) {
+    public BettingOrder sellBettingProduct(BettingOrderDTO bettingOrderDTO) {
+        // TODO: 임시 유저 번호
+        bettingOrderDTO.setUserId(1L);
+
+        bettingOrderDTO.setOrderDate(LocalDate.now());
+        bettingOrderDTO.setOrderTime(LocalTime.now());
+
         validatePoint(bettingOrderDTO.getPoint(), bettingOrderDTO.getUserId());
         validateBettingProductStatus(bettingOrderDTO.getBettingId());
+
+        // NOTE: 판매 시에는 포인트를 음수로 변경
+        bettingOrderDTO.setPoint(bettingOrderDTO.getPoint().negate());
         userPoint.pointUpdate(bettingOrderDTO.getUserId(), bettingOrderDTO.getPoint());
-        bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
+        return bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
     }
 
-    private void validatePoint(BigDecimal point, Long UserId) {
+    private void validatePoint(BigDecimal point, Long userId) {
         if (point.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("point less than or equal to zero");
         }
-        if (userPoint.find(UserId).compareTo(point) < 0) {
+        if (userPoint.find(userId).compareTo(point) < 0) {
             throw new IllegalArgumentException("point is not enough");
         }
     }
