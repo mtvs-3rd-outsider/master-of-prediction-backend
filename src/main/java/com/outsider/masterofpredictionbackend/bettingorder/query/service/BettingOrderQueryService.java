@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.bettingorder.query.service;
 
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
 import com.outsider.masterofpredictionbackend.bettingorder.query.dto.ActivityDTO;
+import com.outsider.masterofpredictionbackend.bettingorder.query.dto.RatioDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.query.dto.TopHolderDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.query.repository.BettingOrderQueryRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -36,5 +37,9 @@ public class BettingOrderQueryService {
                 .collect(Collectors.groupingBy(
                         TopHolderDTO::getBettingOptionId
                 ));
+    }
+
+    public List<RatioDTO> findBettingProductOptionsRatio(Long bettingId) {
+        return bettingOrderQueryRepository.findBettingProductOptionsRatio(bettingId);
     }
 }

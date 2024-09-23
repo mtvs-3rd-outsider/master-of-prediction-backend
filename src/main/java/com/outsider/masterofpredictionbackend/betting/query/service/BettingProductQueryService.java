@@ -67,4 +67,5 @@ public class BettingProductQueryService {
     public BigDecimal findUserPoint(Long id) {
         return userQueryRepository.findById(id).get().getPoints();
     }
+
 }
