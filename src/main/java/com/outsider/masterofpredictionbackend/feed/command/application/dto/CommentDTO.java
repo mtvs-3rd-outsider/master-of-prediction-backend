@@ -13,6 +13,6 @@ public class CommentDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public void setReplies(List<ReplyDTO> replies) {
+    public void setReplies(List<CommentDTO> replies) {
     }
 }

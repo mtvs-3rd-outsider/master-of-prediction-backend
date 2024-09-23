@@ -25,6 +25,6 @@ public class RootException extends RuntimeException{
         this.errorCode = errorCode;
         this.logMessage = logMessage;
         this.clientMessage = clientMessage;
-        log.error("예외 발생: {}", logMessage);
+        log.error("예외 발생. code: {} message: {}", errorCode.getErrorType(), logMessage);
     }
 }

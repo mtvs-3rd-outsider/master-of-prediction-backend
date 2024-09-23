@@ -65,6 +65,16 @@ dependencies {
 
 	implementation 'org.apache.kafka:kafka-clients'
 	implementation 'org.springframework.kafka:spring-kafka'
+	// Kafka Streams
+	implementation 'org.apache.kafka:kafka-streams'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch:3.3.2'
+	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-elasticsearch
+	implementation 'org.springframework.data:spring-data-elasticsearch:5.3.3'
+// https://mvnrepository.com/artifact/org.testcontainers/elasticsearch
+	testImplementation 'org.testcontainers:elasticsearch:1.19.8'
+// https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter
+	testImplementation 'org.testcontainers:junit-jupiter:1.20.1'
+
 }
 
 tasks.named('test') {

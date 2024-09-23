@@ -78,7 +78,7 @@ public class MyChannelService {
      * Kafka로부터 채널 정보 업데이트 메시지를 수신하여 처리하는 리스너 메서드입니다.
      * 수신된 메시지는 DTO로 변환된 후 saveOrUpdateMyChannel 메서드를 호출하여 처리됩니다.
      */
-    @KafkaListener(topics = MY_CHANNEL_UPDATE_TOPIC, groupId = "my-group")
+    @KafkaListener(topics = MY_CHANNEL_UPDATE_TOPIC)
     @Transactional
     public void consume(String message) throws JsonProcessingException {
         // JSON 문자열을 DTO로 변환

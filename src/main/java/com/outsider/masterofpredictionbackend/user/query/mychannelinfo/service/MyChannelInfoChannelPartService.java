@@ -6,6 +6,7 @@ import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate
 import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto.MyChannelInfoQueryModel;
 import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.repository.MyChannelInfoRepository;
 import com.outsider.masterofpredictionbackend.util.GenericService;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,9 @@ public class MyChannelInfoChannelPartService extends GenericService<MyChannelInf
         this.mapper = mapper;
     }
 
-    @KafkaListener(topics = "dbserver1.forecasthub.my_channel")
+    @KafkaListener(topics = "dbserver1.forecasthub.my_channel" ,groupId = "my-channel-info-group")
     @Transactional
-    public void consumeMyChannel(ConsumerRecord<String, String> record) {
+    public void consume(ConsumerRecord<String, String> record, Consumer<String, String> consumer) {
         String consumedValue = record.value();
 
         if (consumedValue == null) {
@@ -52,18 +53,26 @@ public class MyChannelInfoChannelPartService extends GenericService<MyChannelInf
                 default:
                     logger.warn("Unknown operation type: {}", operation);
             }
+
+            // 수동으로 오프셋 커밋
+            consumer.commitSync();
         } catch (Exception e) {
             logger.error("Unexpected error occurred while consuming record: {}", record, e);
+
+            // 재처리 로직 - 메시지 처리 실패 시 재시도하거나 별도의 큐에 추가하는 방식으로 처리
+            retryProcessing(record, consumer);
         }
     }
 
     public void handleCreateOrUpdate(JsonNode jsonNode) {
         Long channelId = jsonNode.get("channel_id").asLong();
-        saveOrUpdate(jsonNode, channelId, MyChannelInfoQueryModel.class);
+        saveOrUpdate(jsonNode, channelId, MyChannelInfoQueryModel.class,"setUserId");
     }
 
     public void handleDelete(JsonNode jsonNode) {
         Long channelId = jsonNode.get("channel_id").asLong();
         deleteById(channelId);
     }
+
+
 }

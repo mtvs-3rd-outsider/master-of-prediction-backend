@@ -1,7 +1,10 @@
 package com.outsider.masterofpredictionbackend.user.command.domain.aggregate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.outsider.masterofpredictionbackend.common.BaseEntity;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.*;
+import com.outsider.masterofpredictionbackend.utils.UserPointDeserializer;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -13,38 +16,53 @@ public class User extends BaseEntity {
 
     @Id
     @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // 또는 AUTO, SEQUENCE, TABLE 중 하나 선택
+    @JsonProperty("user_id")
     private Long id;
     @Column(name = "user_email")
+    @JsonProperty("user_email")
     private String email;
 
     @Column(name = "user_password")
+    @JsonProperty("user_password")
     private String password;
     @Column(name = "display_name")
+    @JsonProperty("display_name")
     private String displayName;
 
 
-    @Column(name = "user_name")
+    @Column(name = "user_name",unique = true)
+    @JsonProperty("user_name")
     private String userName;
 
     @Column(name = "user_age")
+    @JsonProperty("user_age")
     private int age;
 
     @Column(name = "user_point")
+    @JsonProperty("user_point")
+    @JsonDeserialize(using = UserPointDeserializer.class)
     private BigDecimal points;
 
     @Column(name = "user_gender")
+    @JsonProperty("user_gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_location")
+    @JsonProperty("user_location")
     private Location location;
     @Column(name = "user_withdrawal")
+    @JsonProperty("user_withdrawal")
     private Boolean isWithdrawal;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_authority")
+    @JsonProperty("user_authority")
     private Authority authority;
+
     @Column(name = "birthday")
+    @JsonProperty("birthday")
     private LocalDate birthday;
 
 
@@ -121,9 +139,10 @@ public class User extends BaseEntity {
     public User() {
     }
 
-    public User(String email, String password, String userName, Authority authority, ProviderInfo provider) {
+    public User(String email, String password,String displayName, String userName, Authority authority, ProviderInfo provider) {
         this.email = email;
         this.password = password;
+        this.displayName = displayName;
         this.userName = userName;
         this.tier = new Tier();
         this.points = new BigDecimal(0);
@@ -133,9 +152,10 @@ public class User extends BaseEntity {
         this.provider = provider;
     }
 
-    public User(String email, String password, String userName, int age, Gender gender, Location lcation, Authority authority) {
+    public User(String email, String password,String displayName, String userName, int age, Gender gender, Location lcation, Authority authority) {
         this.email = email;
         this.password = password;
+        this.displayName = displayName;
         this.userName = userName;
         this.age = age;
         this.gender = gender;

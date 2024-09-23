@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,15 +12,11 @@ import org.springframework.stereotype.Service;
  * 서비스 클래스는 특정 채널의 팔로워 수를 업데이트하는 기능을 제공합니다.
  */
 @Service
+@Slf4j
 public class UpdateMyChannelFollowerCountService {
 
     private final MyChannelCommandRepository myChannelRepository;
 
-    /**
-     * UpdateMyChannelFollowerCountService의 생성자입니다.
-     *
-     * @param myChannelRepository 채널 정보를 관리하는 리포지토리
-     */
     @Autowired
     public UpdateMyChannelFollowerCountService(MyChannelCommandRepository myChannelRepository) {
         this.myChannelRepository = myChannelRepository;
@@ -34,13 +31,18 @@ public class UpdateMyChannelFollowerCountService {
     @Transactional
     public void updateFollowerMyChannel(UpdateChannelUserCountDTO dto) {
         MyChannel myChannel = myChannelRepository.findById(dto.getChannelId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("Channel with ID " + dto.getChannelId() + " not found"));
 
-        if(dto.getIsPlus()) {
+        // 팔로워 수 증가 또는 감소
+        if (dto.getIsPlus()) {
+            log.info("Increasing followers for channel ID: {}", dto.getChannelId());
             myChannel.setFollowers(myChannel.getUserCounts().getFollowersCount() + 1);
         } else {
+            log.info("Decreasing followers for channel ID: {}", dto.getChannelId());
             myChannel.setFollowers(myChannel.getUserCounts().getFollowersCount() - 1);
         }
-    }
 
+        // 변경 사항 저장
+        myChannelRepository.save(myChannel);
+    }
 }

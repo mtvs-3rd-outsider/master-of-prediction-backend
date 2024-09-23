@@ -1,0 +1,31 @@
+### Get existing forecast-connector
+GET http://localhost:8083/connectors/forecast-connector/status
+### Delete existing forecast-connector
+DELETE http://localhost:8083/connectors/forecast-connector
+
+### Create Debezium MySQL Connector
+POST http://localhost:8083/connectors
+Content-Type: application/json
+
+{
+  "name": "forecast-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+    "database.hostname": "db",
+    "database.port": "3306",
+    "database.user": "ohgiraffers",
+    "database.password": "ohgiraffers",
+    "database.server.id": "1",
+    "topic.prefix": "dbserver1",
+    "database.include.list": "forecasthub",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+    "schema.history.internal.kafka.topic": "schemahistory.forceasthub",
+    "database.serverTimezone": "Asia/Seoul",
+    "include.schema.changes": "true",
+    "snapshot.mode": "initial"
+  }
+}
+
+### Restart Debezium MySQL Connector
+POST http://localhost:8083/connectors/forecast-connector/restart

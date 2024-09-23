@@ -14,15 +14,15 @@ public class ImageFile {
     @Column(name = "image_id")
     private long id;
 
-    @Column(name = "image_url", nullable = false)
-    private String imageUrl;
+    @Column(name = "file_url", nullable = false)
+    private String fileUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quotefeed_id", nullable = false)
     private QuoteFeed quoteFeed;
 
-    public ImageFile(String imageUrl, QuoteFeed quoteFeed) {
-        this.imageUrl = imageUrl;
+    public ImageFile(String fileUrl, QuoteFeed quoteFeed) {
+        this.fileUrl = fileUrl;
         this.quoteFeed = quoteFeed;
     }
 
@@ -30,7 +30,7 @@ public class ImageFile {
     public String toString() {
         return "ImageFile{" +
                 "id=" + id +
-                ", imageUrl='" + imageUrl + '\'' +
+                ", fileUrl='" + fileUrl + '\'' +
                 ", quoteFeed=" + quoteFeed +
                 '}';
     }

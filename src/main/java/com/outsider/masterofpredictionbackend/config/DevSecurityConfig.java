@@ -39,23 +39,17 @@ import static com.outsider.masterofpredictionbackend.common.constant.StringConst
 @EnableWebSecurity
 @Profile("dev")
 public class DevSecurityConfig {
-    private final UserRegistService registUserService;
-    private final DeleteUserService deleteUserService;
-    private Long id ;
 
-    private final String email= DEFAULT_USER_EMAIL;
-    private final String userName= DEFAULT_USER_NAME;
-    private final String password = DEFAULT_USER_PASSWORD;
+    private final UserCommandRepository userCommandRepository;
+    private final UserRegistService userRegistService;
     private final JwtUtil jwtUtil;
-    private final CustomUserService customUserService;
-    UserCommandRepository userCommandRepository;
+
     private final GetOrFullAuthorizationManager customAuthorizationManager;
 
-    public DevSecurityConfig(UserRegistService registUserService, DeleteUserService deleteUserService, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
-        this.registUserService = registUserService;
-        this.deleteUserService = deleteUserService;
+    public DevSecurityConfig(UserRegistService userRegistService,JwtUtil jwtUtil,UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+
         this.jwtUtil = jwtUtil;
-        this.customUserService = customUserService;
+        this.userRegistService = userRegistService;
         this.userCommandRepository = userMapper;
         this.customAuthorizationManager = customAuthorizationManager;
     }
@@ -86,7 +80,7 @@ public class DevSecurityConfig {
         return http.build();
     }
     private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService( ) {
-        final PrincipalOauthUserService delegate = new PrincipalOauthUserService(passwordEncoder(), userCommandRepository);
+        final PrincipalOauthUserService delegate = new PrincipalOauthUserService(passwordEncoder(), userRegistService,userCommandRepository);
         return (userRequest) -> {
 
             // Delegate to the default implementation for loading a user
@@ -102,6 +96,8 @@ public class DevSecurityConfig {
         config.addAllowedOrigin("https://*.google.com");
         config.addAllowedOrigin("https://lh3.googleusercontent.com");
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://125.132.216.190:3301");
+        config.addAllowedOrigin("http://125.132.216.190");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
@@ -112,27 +108,5 @@ public class DevSecurityConfig {
     }
 
 
-    @Bean
-    @Transactional
-    public ApplicationRunner init() {
-        return args -> {
-            if (userCommandRepository.findByEmail(email).isEmpty()) {
 
-                UserRegistDTO dto = new UserRegistDTO(
-                        email,
-                        password,
-                        userName,
-                        Authority.ROLE_USER
-                );
-
-                // when
-                id= registUserService.registUser(dto);
-
-
-            }
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                deleteUserService.deleteUser(id);
-            }));
-        };
-    }
 }

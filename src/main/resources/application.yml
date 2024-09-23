@@ -12,32 +12,47 @@ server:
     key-alias: tomcat
     enabled: false
 spring:
+  elasticsearch:
+    uris: http://localhost:9200
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
   kafka:
     bootstrap-servers: localhost:9093
+    admin:
+      client-id: admin-client
+    streams:
+      application-id: schema-change-processor
+
+      properties:
+        processing.guarantee: at_least_once
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
       group-id: test
       auto-offset-reset: earliest
+      enable-auto-commit: false  # 수동 커밋 설정
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   cloud:
-    openfeign:
-      httpclient:
-        enabled: true
-        connection-timeout: 5000 # 통신 요청 후 서버 연결 시간이 5초 경과 시 connection-time out 처리
-        ok-http:
-          read-timeout: 5000 # 응답 데이터를 읽는 시간이 5초 경과 시 read-time out 처리
     gateway:
       mvc:
         routes:
-          - id: after_route
-            uri: https://httpbin.org/get
+#          - id: rsocket_route
+#            uri: ws://localhost:7000
+#            predicates:
+#              - Path=/rsocket/chat/{roomId}
+#            filters:
+#              - RewritePath=/rsocket/chat/(?<roomId>.*), /rsocket/api.v1.messages.stream/${roomId}
+          - id: chat_route
+            uri: http://localhost:7000
             predicates:
-              - Path=/test
+              - Path=/chat
             filters:
-              - RewritePath=/test, /get
+              - RewritePath=/chat, /
   threads:
     virtual:
       enabled: true
@@ -56,7 +71,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   data:
     mongodb:
       uri: mongodb://ohgiraffers:ohgiraffers@localhost:10001/forecasthub?authSource=admin
@@ -101,8 +116,14 @@ minio:
   url: http://localhost:9000
   accessKey: MY-USER
   secretKey: MY-PASSWORD
-  bucketName: sns-files
+  bucketName: user-files
 logging:
   level:
     com:
       com.outsider: DEBUG
+    org:
+      elasticsearch:
+        client: DEBUG
+      springframework:
+        data:
+          elasticsearch: DEBUG

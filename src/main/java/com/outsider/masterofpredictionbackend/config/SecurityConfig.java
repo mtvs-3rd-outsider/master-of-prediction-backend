@@ -47,13 +47,9 @@ import static com.outsider.masterofpredictionbackend.common.constant.StringConst
 @Profile("prod")
 public class SecurityConfig {
 
-    private final UserRegistService registUserService;
-    private final DeleteUserService deleteUserService;
     @Value("${google.client.id}")
     private String clientId;
-    private final String email= DEFAULT_USER_EMAIL;
-    private final String userName= DEFAULT_USER_NAME;
-    private final String password = DEFAULT_USER_PASSWORD;
+
     @Value("${google.client.secret}")
     private String clientSecret;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
@@ -62,17 +58,14 @@ public class SecurityConfig {
     @Value("${google.redirect.successfulUri}")
     private String successfulUri;
     private final JwtUtil jwtUtil;
-    private final CustomUserService customUserService;
     private final UserCommandRepository userCommandRepository;
     private final GetOrFullAuthorizationManager customAuthorizationManager;
-    private Long id ;
+    private final UserRegistService userRegistService;
 
-    public SecurityConfig(UserRegistService registUserService, DeleteUserService deleteUserService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
-        this.registUserService = registUserService;
-        this.deleteUserService = deleteUserService;
+    public SecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+        this.userRegistService = userRegistService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtUtil = jwtUtil;
-        this.customUserService = customUserService;
         this.userCommandRepository = userMapper;
         this.customAuthorizationManager = customAuthorizationManager;
     }
@@ -117,7 +110,7 @@ public class SecurityConfig {
     }
 
     private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
-        final PrincipalOauthUserService delegate = new PrincipalOauthUserService(passwordEncoder(), userCommandRepository);
+        final PrincipalOauthUserService delegate = new PrincipalOauthUserService(passwordEncoder(), userRegistService,userCommandRepository);
         return (userRequest) -> {
 
             // Delegate to the default implementation for loading a user
@@ -165,27 +158,5 @@ public class SecurityConfig {
                 .clientName("Google")
                 .build();
     }
-    @Bean
-    @Transactional
-    public ApplicationRunner init() {
-        return args -> {
-            if (userCommandRepository.findByEmail(email).isEmpty()) {
 
-                UserRegistDTO dto = new UserRegistDTO(
-                        email,
-                        password,
-                        userName,
-                        Authority.ROLE_USER
-                );
-
-                // when
-                id= registUserService.registUser(dto);
-
-
-            }
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                deleteUserService.deleteUser(id);
-            }));
-        };
-    }
 }

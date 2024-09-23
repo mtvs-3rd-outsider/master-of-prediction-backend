@@ -54,7 +54,7 @@ public class MyChannelInfoQueryModel {
     @JsonProperty( "banner_img")
     private String bannerImg ;
 
-    @JsonProperty( "user_img")
+    @JsonProperty("user_img")
     private String userImg ;
 
     @JsonProperty("tier_level")

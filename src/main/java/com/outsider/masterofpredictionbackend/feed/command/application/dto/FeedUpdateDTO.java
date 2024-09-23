@@ -1,7 +1,7 @@
 package com.outsider.masterofpredictionbackend.feed.command.application.dto;
 
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
-import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.ImageFile;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.MediaFile;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
@@ -22,7 +22,7 @@ public class FeedUpdateDTO {
     private ChannelType channelType;
     private User user;
     private Guest guest;
-    private List<ImageFile> imageFiles;
+    private List<MediaFile> mediaFiles;
     private List<YouTubeVideo> youTubeVideos;
 
     public Feed updateFeed(Feed feed) {
