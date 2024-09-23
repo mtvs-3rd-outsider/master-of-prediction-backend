@@ -34,5 +34,4 @@ public class BettingProductQueryController {
     public ResponseEntity<?> getUserPoint(@PathVariable Long id){
         return ResponseEntity.ok(bettingProductQueryService.findUserPoint(id));
     }
-    
 }

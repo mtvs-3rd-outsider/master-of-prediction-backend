@@ -42,4 +42,10 @@ public class BettingOrderQueryController {
     public ResponseEntity<Map<Long, List<TopHolderDTO>>> getBettingTopHolders(@RequestParam Long bettingId){
         return ResponseEntity.ok(bettingOrderQueryService.findBettingTopHolders(bettingId));
     }
+
+    @GetMapping("/api/v1/betting-products/options/ratio")
+    @Operation(summary = "배팅 상품 옵션 비율 조회")
+    public ResponseEntity<?> getBettingProductOptions(@RequestParam Long bettingId){
+        return ResponseEntity.ok(bettingOrderQueryService.findBettingProductOptionsRatio(bettingId));
+    }
 }
