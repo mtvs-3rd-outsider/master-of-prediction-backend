@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class MediaFile {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id", nullable = false)
+    @JsonBackReference
     private Feed feed;
 
     public MediaFile(String fileUrl, Feed feed) {
