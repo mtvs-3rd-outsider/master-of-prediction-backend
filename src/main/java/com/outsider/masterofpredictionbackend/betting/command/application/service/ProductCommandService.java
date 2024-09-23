@@ -7,10 +7,12 @@ import com.outsider.masterofpredictionbackend.betting.command.application.dto.re
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductImage;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductOption;
+import com.outsider.masterofpredictionbackend.file.MinioService;
 import com.outsider.masterofpredictionbackend.utils.ImageRollbackHelper;
 import com.outsider.masterofpredictionbackend.utils.ImageStorageService;
 import com.outsider.masterofpredictionbackend.utils.InvalidImageException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ProductCommandService {
 
     private final BettingProductService bettingProductService;
@@ -26,13 +29,15 @@ public class ProductCommandService {
     private final UserService userService;
     private final CategoryService categoryService;
     private final BettingProductRepository bettingProductRepository;
+    private final MinioService minioService;
 
-    public ProductCommandService(BettingProductService bettingProductService, ImageRollbackHelper imageRollbackHelper, UserService userService, CategoryService categoryService, BettingProductRepository bettingProductRepository) {
+    public ProductCommandService(BettingProductService bettingProductService, ImageRollbackHelper imageRollbackHelper, UserService userService, CategoryService categoryService, BettingProductRepository bettingProductRepository, MinioService minioService) {
         this.bettingProductService = bettingProductService;
         this.imageRollbackHelper = imageRollbackHelper;
         this.userService = userService;
         this.categoryService = categoryService;
         this.bettingProductRepository = bettingProductRepository;
+        this.minioService = minioService;
     }
 
 
@@ -47,16 +52,21 @@ public class ProductCommandService {
         List<String> optionImgUrls;
         List<MultipartFile> tmpOptionImgUrls = bettingProductAndOptionDTO.getOptions().stream().map(BettingProductOptionDTO::getImage).toList();
 
+        for (MultipartFile file: tmpOptionImgUrls){
+            log.info(file.getName());
+        }
+
         try{
             mainImgUrls = saveAndReturnImageNames(bettingProductAndOptionDTO.getMainImgUrl());
             optionImgUrls = saveAndReturnImageNames(tmpOptionImgUrls);
-        }catch (InvalidImageException e){
-            mainImgUrls.forEach(ImageStorageService::deleteImage);
+        }catch (Exception e){
+            log.info("image upload fail: {}", e.getMessage());
+            // mainImgUrls.forEach(ImageStorageService::deleteImage);
             throw new InvalidImageException("image upload fail");
         }
-        mainImgUrls.forEach(imageRollbackHelper::addImageToDelete);
-        optionImgUrls.forEach(imageRollbackHelper::addImageToDelete);
-        imageRollbackHelper.registerForRollback();
+        // mainImgUrls.forEach(imageRollbackHelper::addImageToDelete);
+        // optionImgUrls.forEach(imageRollbackHelper::addImageToDelete);
+        // imageRollbackHelper.registerForRollback();
 
         BettingProduct bettingProduct = BettingDTOConverter.convertToBettingProduct(bettingProductAndOptionDTO);
         BettingProduct saveBetting =  bettingProductRepository.save(bettingProduct);
@@ -71,7 +81,14 @@ public class ProductCommandService {
         return bettingProduct.getId();
     }
 
-    private List<String> saveAndReturnImageNames(List<MultipartFile> files){
-        return ImageStorageService.saveAndReturnImageNames(files);
+    private List<String> saveAndReturnImageNames(List<MultipartFile> files) throws Exception {
+        List<String> savedImageNames = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (file == null || file.isEmpty()) {
+                continue;
+            }
+            savedImageNames.add(minioService.uploadFile(file));
+        }
+        return savedImageNames;
     }
 }
