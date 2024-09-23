@@ -1,5 +1,7 @@
 package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
@@ -67,6 +69,8 @@ public class Feed {
     private List<Like> like;
 
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @JsonManagedReference
+    @JsonIgnore
     private List<MediaFile> mediaFiles = new ArrayList<>();
 
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)

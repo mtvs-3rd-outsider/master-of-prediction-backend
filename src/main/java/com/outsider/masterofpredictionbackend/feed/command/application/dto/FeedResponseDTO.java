@@ -24,7 +24,7 @@ public class FeedResponseDTO {
     private LocalDateTime updatedAt;
     private int viewCount;
     private ChannelType channelType;
-    private User user;
+    private UserDTO user;
     private Guest guest;
     private List<MediaFile> mediaFiles;
     private List<YouTubeVideo> youTubeVideos;
@@ -34,25 +34,6 @@ public class FeedResponseDTO {
     private int commentsCount;
     private int quoteCount;
 
-    public static FeedResponseDTO fromFeed(Feed feed) {
-        FeedResponseDTO feedResponseDTO = new FeedResponseDTO();
-        feedResponseDTO.setId(feed.getId());
-        feedResponseDTO.setAuthorType(feed.getAuthorType());
-        feedResponseDTO.setTitle(feed.getTitle());
-        feedResponseDTO.setContent(feed.getContent());
-        feedResponseDTO.setCreatedAt(feed.getCreatedAt());
-        feedResponseDTO.setUpdatedAt(feed.getUpdatedAt());
-        feedResponseDTO.setViewCount(feed.getViewCount());
-        feedResponseDTO.setChannelType(feed.getChannelType());
-        feedResponseDTO.setUser(feed.getUser() != null ? feed.getUser() : null);
-        feedResponseDTO.setGuest(feed.getGuest() != null ? feed.getGuest() : null);
-        feedResponseDTO.setMediaFiles(feed.getMediaFiles());
-        feedResponseDTO.setYouTubeVideos(feed.getYoutubeVideos());
-        feedResponseDTO.setLikesCount(feed.getLikesCount());
-        feedResponseDTO.setCommentsCount(feed.getCommentsCount());
-        feedResponseDTO.setQuoteCount(feed.getQuoteCount());
-        return feedResponseDTO;
-    }
 
     public void setCommentsWithReplies(Map<Long, List<CommentDTO>> commentsWithReplies) {
         this.commentDTOS = new ArrayList<>();

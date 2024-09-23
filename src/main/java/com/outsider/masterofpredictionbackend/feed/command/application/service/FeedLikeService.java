@@ -21,7 +21,8 @@ public class FeedLikeService {
         this.likeRepository = likeRepository;
         this.feedRepository = feedRepository;
     }
-    public void toggleLike(Long feedId, String userId) {
+    public boolean toggleLike(Long feedId, String userId) {
+        boolean isLike=false;
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new EntityNotFoundException("Feed not found with id: " + feedId));
 
@@ -36,8 +37,10 @@ public class FeedLikeService {
             Like newLike = new Like(feed, userId);
             likeRepository.save(newLike);
             feed.incrementLikesCount();
+            isLike=true;
         }
 
         feedRepository.save(feed);
+        return isLike;
     }
 }

@@ -27,7 +27,8 @@ public class FeedFacadeService {
                              FeedUpdateService feedUpdateService,
                              FeedDeleteService feedDeleteService,
                              ExternalCommentService externalCommentService,
-                             ExternalReplyService externalReplyService, FileService fileService) {
+                             ExternalReplyService externalReplyService,
+                             FileService fileService) {
         this.feedCreateService = feedCreateService;
         this.feedReadService = feedReadService;
         this.feedUpdateService = feedUpdateService;
@@ -52,13 +53,13 @@ public class FeedFacadeService {
 
     // Feed 업데이트 메서드
     @Transactional
-    public void updateFeed(Long feedId, FeedUpdateDTO feedUpdateDTO, List<MultipartFile> files) throws Exception {
+    public void updateFeed(Long feedId, FeedUpdateDTO feedUpdateDTO, List<MultipartFile> files, List<String> youtubeUrls) throws Exception {
         FeedResponseDTO existingFeed = getFeed(feedId);
         validateUpdatePermission(existingFeed, feedUpdateDTO);
 
-        List<String> fileUrls = uploadFiles(files);
-        feedUpdateService.updateFeed(feedId, feedUpdateDTO, fileUrls);
+        feedUpdateService.updateFeed(feedId, feedUpdateDTO, files, youtubeUrls);
     }
+
     private List<String> uploadFiles(List<MultipartFile> files) throws Exception {
         List<String> fileUrls = new ArrayList<>();
         if (files != null && !files.isEmpty()) {
@@ -69,6 +70,7 @@ public class FeedFacadeService {
         }
         return fileUrls;
     }
+
     private void validateUpdatePermission(FeedResponseDTO existingFeed, FeedUpdateDTO feedUpdateDTO) {
         if(existingFeed.getAuthorType() == AuthorType.GUEST) {
             if(!(existingFeed.getGuest().getGuestId().equals(feedUpdateDTO.getGuest().getGuestId()))
@@ -83,8 +85,6 @@ public class FeedFacadeService {
         feedDeleteService.deleteFeed(feedId);
     }
 
-    // 사용자 정보 조회 메서드
-
     // 댓글 조회 메서드
     public List<CommentDTO> getComments(Long feedId) {
         return externalCommentService.getCommentsByFeedId(feedId);
@@ -94,5 +94,4 @@ public class FeedFacadeService {
     public List<ReplyDTO> getReplies(Long commentId) {
         return externalReplyService.getRepliesByCommentId(commentId);
     }
-
 }

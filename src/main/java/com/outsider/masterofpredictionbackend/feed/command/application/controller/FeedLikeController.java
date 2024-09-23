@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/feeds")
+@RequestMapping("/api/v1/feeds")
 public class FeedLikeController {
     private final FeedLikeService feedLikeService;
 
@@ -22,13 +22,14 @@ public class FeedLikeController {
 
     // Feed 좋아요 엔드포인트
     @PostMapping("/{feedId}/{userId}")
-    public ResponseEntity<ResponseMessage> likeFeed(@PathVariable long feedId, @PathVariable String userId){
+    public ResponseEntity<Boolean> likeFeed(@PathVariable long feedId, @PathVariable String userId){
+        boolean isLike = false;
         try {
-            feedLikeService.toggleLike(feedId, userId);
-            return ResponseEntity.ok(new ResponseMessage("피드가 성공적으로 수정되었습니다.", feedId));
+            isLike=feedLikeService.toggleLike(feedId, userId);
+            return ResponseEntity.ok(isLike);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseMessage("피드 수정에 실패했습니다: " + e.getMessage(), feedId));
+                    .body(isLike);
         }
     }
 }

@@ -24,7 +24,6 @@ public class FeedReadController {
     public ResponseEntity<FeedResponseDTO> getFeed(@PathVariable Long feedId) {
         try {
             FeedResponseDTO feed = feedFacadeService.getFeed(feedId);
-            System.out.println(11);
             return ResponseEntity.ok(feed);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
