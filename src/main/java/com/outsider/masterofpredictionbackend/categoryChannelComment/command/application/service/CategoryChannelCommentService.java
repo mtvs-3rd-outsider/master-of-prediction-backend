@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.categoryChannelComment.command.application;
+package com.outsider.masterofpredictionbackend.categoryChannelComment.command.application.service;
 
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.application.dto.CategoryChannelCommentAddRequestDTO;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.application.dto.CategoryChannelCommentDeleteRequestDTO;
