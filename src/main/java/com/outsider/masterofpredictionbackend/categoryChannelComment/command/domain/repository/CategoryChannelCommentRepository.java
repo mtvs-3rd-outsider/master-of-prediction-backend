@@ -4,6 +4,10 @@ import com.outsider.masterofpredictionbackend.categoryChannelComment.command.dom
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CategoryChannelCommentRepository extends JpaRepository<CategoryChannelComment, Long> {
+
+    List<CategoryChannelComment> findAllByChannelId(Long channelId);
 }

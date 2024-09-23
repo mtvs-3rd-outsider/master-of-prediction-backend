@@ -14,22 +14,25 @@ public class CategoryChannelComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
+
+    private Long channelId;
 
     @Embedded
-    WriterInfo writer;
+    private WriterInfo writer;
 
     public void setContent(Content content) {
         this.content = content;
     }
 
     @Embedded
-    Content content;
+    private Content content;
 
     protected CategoryChannelComment() {}
 
-    public CategoryChannelComment(WriterInfo writer, Content content) {
+    public CategoryChannelComment(WriterInfo writer, Content content, Long channelId) {
         this.writer = writer;
         this.content = content;
+        this.channelId = channelId;
     }
 }

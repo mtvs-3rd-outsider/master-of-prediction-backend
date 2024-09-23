@@ -45,7 +45,8 @@ public class CategoryChannelCommentService {
                             comment.getComment(),
                             comment.getImageUrl(),
                             comment.getPassword()
-                    )
+                    ),
+                    comment.getChannelId()
             );
         }
         
@@ -63,7 +64,8 @@ public class CategoryChannelCommentService {
                             comment.getComment(),
                             comment.getImageUrl(),
                             comment.getPassword()
-                    )
+                    ),
+                    comment.getChannelId()
             );
         }
 
