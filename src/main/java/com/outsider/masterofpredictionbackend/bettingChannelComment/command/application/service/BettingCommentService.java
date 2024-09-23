@@ -144,6 +144,4 @@ public class BettingCommentService {
         return true;
     }
 
-
-
 }
