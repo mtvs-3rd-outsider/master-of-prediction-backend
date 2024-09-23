@@ -7,7 +7,10 @@ import com.outsider.masterofpredictionbackend.bettingorder.query.repository.Bett
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,8 +30,11 @@ public class BettingOrderQueryService {
         return bettingOrderQueryRepository.findActivity(bettingId);
     }
 
-    public List<TopHolderDTO> findBettingTopHolders(Long bettingId) {
-        List<BettingOrder> topHolders = bettingOrderQueryRepository.findTopHolders(bettingId);
-        return null;
+    public Map<Long, List<TopHolderDTO>> findBettingTopHolders(Long bettingId) {
+        List<TopHolderDTO> results = bettingOrderQueryRepository.findTopHolders(bettingId);
+        return results.stream()
+                .collect(Collectors.groupingBy(
+                        TopHolderDTO::getBettingOptionId
+                ));
     }
 }

@@ -28,10 +28,20 @@ public interface BettingOrderQueryRepository extends JpaRepository<BettingOrder,
             "FROM BettingOrder as bo " +
             "         join User as u on u.id = bo.userId " +
             "         join BettingProductOption as bpo on bo.bettingOptionId = bpo.id " +
-            "WHERE bo.bettingId = :bettingId")
+            "WHERE bo.bettingId = :bettingId ORDER BY bo.orderDate DESC, bo.orderTime DESC")
     List<ActivityDTO> findActivity(Long bettingId);
 
 
-
-    List<BettingOrder> findTopHolders(Long bettingId);
+    @Query("SELECT new com.outsider.masterofpredictionbackend.bettingorder.query.dto.TopHolderDTO(" +
+            "    u.userName, " +
+            "    u.displayName, " +
+            "    u.tier.name, " +
+            "    u.userImg, " +
+            "    sum(bo.point), " +
+            "    bo.bettingOptionId)" +
+            "FROM BettingOrder bo " +
+            "    join User as u on bo.userId=u.id " +
+            "group by bo.userId, bo.bettingOptionId " +
+            "HAVING SUM(bo.point) > 0 ORDER BY bo.bettingOptionId , SUM(bo.point) DESC")
+    List<TopHolderDTO> findTopHolders(Long bettingId);
 }

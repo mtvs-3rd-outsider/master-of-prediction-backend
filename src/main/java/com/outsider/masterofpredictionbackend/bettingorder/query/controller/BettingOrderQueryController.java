@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.bettingorder.query.controller;
 
+import com.outsider.masterofpredictionbackend.bettingorder.query.dto.TopHolderDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.query.service.BettingOrderQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -35,7 +39,7 @@ public class BettingOrderQueryController {
 
     @GetMapping("/api/v1/betting-products/top-holders")
     @Operation(summary = "배팅 상품의 구매내역 조회(보유자 순위)")
-    public ResponseEntity<?> getBettingTopHolders(@RequestParam Long bettingId){
+    public ResponseEntity<Map<Long, List<TopHolderDTO>>> getBettingTopHolders(@RequestParam Long bettingId){
         return ResponseEntity.ok(bettingOrderQueryService.findBettingTopHolders(bettingId));
     }
 }
