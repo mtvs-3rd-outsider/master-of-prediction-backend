@@ -4,7 +4,8 @@ import com.outsider.masterofpredictionbackend.betting.command.application.dto.re
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionFormDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
-import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.masterofpredictionbackend.util.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,7 +13,6 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +43,7 @@ public class BettingProductController {
            @Valid @ModelAttribute BettingProductAndOptionDTO bettingProductAndOptionDTO,
            @Valid @ModelAttribute BettingProductOptionFormDTO bettingProductOptionFormDTO,
             BindingResult bindingResult,
-            @AuthenticationPrincipal CustomUserDetail customUserDetail
+            @UserId CustomUserInfoDTO customUserInfo
             ){
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
@@ -73,9 +73,9 @@ public class BettingProductController {
         for (int i = 0; i < size; i++) {
             bettingProductAndOptionDTO.getOptions().add(new BettingProductOptionDTO(bettingProductOptionFormDTO.getOptions_content().get(i), bettingProductOptionFormDTO.getOptions_image().get(i)));
         }
-        // bettingProductAndOptionDTO.setUserId(customUserDetail.getId());
         // NOTE: 임시 데이터
-        bettingProductAndOptionDTO.setUserId(1L);
+        bettingProductAndOptionDTO.setUserId(customUserInfo.getUserId());
+        // bettingProductAndOptionDTO.setUserId(1L);
         Long productId;
         try {
             productId = productCommandService.save(bettingProductAndOptionDTO);

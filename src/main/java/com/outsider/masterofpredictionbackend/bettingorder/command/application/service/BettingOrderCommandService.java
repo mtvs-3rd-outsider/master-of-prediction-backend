@@ -1,10 +1,12 @@
 package com.outsider.masterofpredictionbackend.bettingorder.command.application.service;
 
+import com.outsider.masterofpredictionbackend.betting.command.domain.service.UserService;
 import com.outsider.masterofpredictionbackend.bettingorder.command.application.dto.request.BettingOrderDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.BettingOrderService;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.BettingProductValidator;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.UserPoint;
+import com.outsider.masterofpredictionbackend.util.UserId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,18 +21,21 @@ public class BettingOrderCommandService {
     private final UserPoint userPoint;
     private final BettingOrderService bettingOrderService;
     private final BettingProductValidator bettingProductValidator;
+    private final UserService userService;
 
     @Autowired
-    public BettingOrderCommandService(UserPoint userPoint, BettingOrderService bettingOrderService, BettingProductValidator bettingProductValidator) {
+    public BettingOrderCommandService(UserPoint userPoint, BettingOrderService bettingOrderService, BettingProductValidator bettingProductValidator, UserService userService) {
         this.userPoint = userPoint;
         this.bettingOrderService = bettingOrderService;
         this.bettingProductValidator = bettingProductValidator;
+        this.userService = userService;
     }
 
     @Transactional
     public BettingOrder buyBettingProduct(BettingOrderDTO bettingOrderDTO) {
         // TODO: 임시 유저 번호
-        bettingOrderDTO.setUserId(1L);
+        // bettingOrderDTO.setUserId(1L);
+        bettingOrderDTO.setUserId(userService.getUserId());
 
         bettingOrderDTO.setOrderDate(LocalDate.now());
         bettingOrderDTO.setOrderTime(LocalTime.now());
@@ -45,7 +50,8 @@ public class BettingOrderCommandService {
     @Transactional
     public BettingOrder sellBettingProduct(BettingOrderDTO bettingOrderDTO) {
         // TODO: 임시 유저 번호
-        bettingOrderDTO.setUserId(1L);
+        // bettingOrderDTO.setUserId(1L);
+        bettingOrderDTO.setUserId(userService.getUserId());
 
         bettingOrderDTO.setOrderDate(LocalDate.now());
         bettingOrderDTO.setOrderTime(LocalTime.now());
