@@ -22,4 +22,6 @@ public class StringConstants {
     public static final String UPDATE_FOLLOWING_COUNT_TOPIC = "dbserver1.update_following_count_topic.event";
     public static final String UPDATE_FOLLOWER_COUNT_TOPIC = "dbserver1.update_follower_count_topic.event";
 
+    public static final String UPDATE_CHANNEL_SUBSCRIBE = "dbserver1.update_channel_subscribe.event";
+
 }

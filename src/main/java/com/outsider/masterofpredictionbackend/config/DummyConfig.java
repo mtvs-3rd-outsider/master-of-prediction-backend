@@ -128,23 +128,23 @@ public class DummyConfig {
 //                }
 //                subscribeService.manageSubscription(channelSubscribeRequestDTO,"subscribe");
 
-                ChannelSubscribeRequestDTO channelSubscribeRequestDTO2= new ChannelSubscribeRequestDTO(subscriberId, 1L, false);
-                MyChannelSubscribeId myChannelSubscribeId2 =  new MyChannelSubscribeId(channelSubscribeRequestDTO2.getUserId(), channelSubscribeRequestDTO2.getChannelId(), channelSubscribeRequestDTO2.getIsUserChannel());
-                Optional<ChannelSubscribe> existMyChannelSubscribeId2 =channelSubscribeCommandRepository.findById(myChannelSubscribeId2);
-                if(existMyChannelSubscribeId2.isPresent())
-                {
-                    channelSubscribeService.deleteById(myChannelSubscribeId2.getUserId(),myChannelSubscribeId2.getChannelId(),false);
-                }
-                subscribeService.manageSubscription(channelSubscribeRequestDTO2,"subscribe");
+//                ChannelSubscribeRequestDTO channelSubscribeRequestDTO2= new ChannelSubscribeRequestDTO(subscriberId, 1L, false);
+//                MyChannelSubscribeId myChannelSubscribeId2 =  new MyChannelSubscribeId(channelSubscribeRequestDTO2.getUserId(), channelSubscribeRequestDTO2.getChannelId(), channelSubscribeRequestDTO2.getIsUserChannel());
+//                Optional<ChannelSubscribe> existMyChannelSubscribeId2 =channelSubscribeCommandRepository.findById(myChannelSubscribeId2);
+//                if(existMyChannelSubscribeId2.isPresent())
+//                {
+//                    channelSubscribeService.deleteById(myChannelSubscribeId2.getUserId(),myChannelSubscribeId2.getChannelId(),false);
+//                }
+//                subscribeService.manageSubscription(channelSubscribeRequestDTO2,"subscribe");
 
                 // 프로필 업데이트
-                userProfileUpdateService.updateUser(
-                        UserUpdateRequestDTO.builder()
-                                .userId(subscriberId)
-                                .displayName("YY2")
-                                .userName("YY3")
-                                .build()
-                );
+//                userProfileUpdateService.updateUser(
+//                        UserUpdateRequestDTO.builder()
+//                                .userId(subscriberId)
+//                                .displayName("YY2")
+//                                .userName("YY3")
+//                                .build()
+//                );
             }
 
             Pageable pageable = PageRequest.of(0, 10);

@@ -108,7 +108,7 @@ public class ChannelSubscribeService {
 
     private void updateFollowerAndFollowing(Long userId, Long channelId, Boolean isUserChannel, Boolean isSubscribing) {
         // 팔로잉 수 업데이트
-        updateFollowingService.publish(userId,  isUserChannel, isSubscribing);
+        updateFollowingService.publish(userId,  true, isSubscribing);
 
         // 팔로워 수 업데이트
         updateFollowerService.publish(channelId, isUserChannel, isSubscribing);

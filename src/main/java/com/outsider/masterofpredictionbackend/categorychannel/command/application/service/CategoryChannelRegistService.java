@@ -6,6 +6,8 @@ import com.outsider.masterofpredictionbackend.categorychannel.command.domain.agg
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.embedded.CommunityRule;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.repository.CategoryChannelRepository;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.service.ChannelSubscribeClient;
+import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.service.ChannelSubscribeService;
 import com.outsider.masterofpredictionbackend.file.FileUploadService;
 import com.outsider.masterofpredictionbackend.utils.IdGenerator;
 import jakarta.transaction.Transactional;
@@ -18,11 +20,13 @@ public class CategoryChannelRegistService {
 
     private final CategoryChannelRepository categoryChannelRepository;
     private final FileUploadService fileUploadService;  // 파일 업로드 인터페이스
+    private final ChannelSubscribeClient channelSubscribeClient;
 
     @Autowired
-    public CategoryChannelRegistService(CategoryChannelRepository categoryChannelRepository, FileUploadService fileUploadService) {
+    public CategoryChannelRegistService(CategoryChannelRepository categoryChannelRepository, FileUploadService fileUploadService, ChannelSubscribeClient channelSubscribeClient) {
         this.categoryChannelRepository = categoryChannelRepository;
         this.fileUploadService = fileUploadService;
+        this.channelSubscribeClient = channelSubscribeClient;
     }
     @Transactional
     public void registerCategoryChannelWithManualId(
@@ -42,6 +46,8 @@ public class CategoryChannelRegistService {
                 CategoryChannelStatus.APPLY
         );
         categoryChannel.setCategoryChannelId(manualId); // 수동으로 ID 할당
+
+        channelSubscribeClient.publish(userId,manualId, false);
         try {
             // 대표 이미지 업로드 및 URL 설정
             if (representativeImageFile != null && !representativeImageFile.isEmpty()) {
@@ -78,6 +84,8 @@ public class CategoryChannelRegistService {
                 CategoryChannelStatus.APPLY
         );
         categoryChannel.setCategoryChannelId(IdGenerator.generateId());
+        channelSubscribeClient.publish(userId,categoryChannel.getCategoryChannelId(), false);
+
         try {
             // 대표 이미지 업로드 및 URL 설정
             if (representativeImageFile != null && !representativeImageFile.isEmpty()) {
