@@ -31,7 +31,7 @@ public class HotTopicFeedService {
 
         List<HotTopicFeedResponseDTO> feedResponseDTOS = feeds.stream()
                 .map(this::fromFeed)
-                .collect(Collectors.toList());
+                .toList();
 
 
 

@@ -19,14 +19,22 @@ public class JpaExternalUserService implements ExternalUserService {
     @Override
     public UserDTO getUser(String userId) {
         Optional<UserInfoResponseDTO> optionalDTO = userInfoService.getUserInfoById(Long.parseLong(userId));
-        UserInfoResponseDTO dto = optionalDTO.get();
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(dto.getId());
-        userDTO.setUserImg(dto.getAvatarUrl());
-        userDTO.setUserName(dto.getUserName());
-        //티어넣어야함
-        userDTO.setDisplayName(dto.getDisplayName());
-        //권한다름
-        return userDTO;
+        if(optionalDTO.isPresent()) {
+            UserInfoResponseDTO dto = optionalDTO.get();
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(dto.getId());
+            userDTO.setUserImg(dto.getAvatarUrl());
+            userDTO.setUserName(dto.getUserName());
+            //티어넣어야함
+            userDTO.setDisplayName(dto.getDisplayName());
+            //권한다름
+            return userDTO;
+
+        }else
+        {
+            return null;
+        }
+
+
     }
 }

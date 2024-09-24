@@ -37,22 +37,6 @@ spring:
       enable-auto-commit: false  # 수동 커밋 설정
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  cloud:
-    gateway:
-      mvc:
-        routes:
-#          - id: rsocket_route
-#            uri: ws://localhost:7000
-#            predicates:
-#              - Path=/rsocket/chat/{roomId}
-#            filters:
-#              - RewritePath=/rsocket/chat/(?<roomId>.*), /rsocket/api.v1.messages.stream/${roomId}
-          - id: chat_route
-            uri: http://localhost:7000
-            predicates:
-              - Path=/chat
-            filters:
-              - RewritePath=/chat, /
   threads:
     virtual:
       enabled: true
@@ -113,7 +97,7 @@ management:
     prometheus:
       enabled: true # Prometheus 엔드포인트 활성화
 minio:
-  url: http://localhost:9000
+  url: http://125.132.216.190:9000
   accessKey: MY-USER
   secretKey: MY-PASSWORD
   bucketName: user-files
