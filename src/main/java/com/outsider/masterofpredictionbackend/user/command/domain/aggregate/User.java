@@ -145,7 +145,7 @@ public class User extends BaseEntity {
         this.displayName = displayName;
         this.userName = userName;
         this.tier = new Tier();
-        this.points = new BigDecimal(0);
+        this.points = new BigDecimal(3000);
         this.isWithdrawal = false;
         this.authority = authority;
         this.joinDate = LocalDate.now();
@@ -161,7 +161,7 @@ public class User extends BaseEntity {
         this.gender = gender;
         this.location = lcation;
         this.tier = new Tier();
-        this.points = new BigDecimal(0);
+        this.points = new BigDecimal(3000);
         this.isWithdrawal = false;
         this.joinDate = LocalDate.now();
         this.authority = authority;
