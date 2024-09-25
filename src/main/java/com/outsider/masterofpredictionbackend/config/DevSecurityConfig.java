@@ -43,14 +43,17 @@ public class DevSecurityConfig {
     private final UserCommandRepository userCommandRepository;
     private final UserRegistService userRegistService;
     private final JwtUtil jwtUtil;
-
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final GetOrFullAuthorizationManager customAuthorizationManager;
 
-    public DevSecurityConfig(UserRegistService userRegistService,JwtUtil jwtUtil,UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+    public DevSecurityConfig(UserRegistService userRegistService, JwtUtil jwtUtil, UserCommandRepository userMapper, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint, GetOrFullAuthorizationManager customAuthorizationManager) {
 
         this.jwtUtil = jwtUtil;
         this.userRegistService = userRegistService;
         this.userCommandRepository = userMapper;
+        this.accessDeniedHandler = accessDeniedHandler;
+        this.authenticationEntryPoint = authenticationEntryPoint;
         this.customAuthorizationManager = customAuthorizationManager;
     }
 
@@ -68,12 +71,19 @@ public class DevSecurityConfig {
                         .requestMatchers("/**").permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
+
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable
-                ).httpBasic(AbstractHttpConfigurer::disable)
+                ).httpBasic(AbstractHttpConfigurer::disable).exceptionHandling(
+                        handler->handler
+                .accessDeniedHandler(accessDeniedHandler) // 403 발생 시 커스텀 핸들러 사용
+                .authenticationEntryPoint(authenticationEntryPoint) // 401 발생 시 커스텀 핸들러 사용
+                )
                 .addFilterBefore(new JwtAuthFilter( jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+
 
 
 

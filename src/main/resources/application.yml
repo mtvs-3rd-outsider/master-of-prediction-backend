@@ -11,7 +11,15 @@ server:
     key-store-type: PKCS12
     key-alias: tomcat
     enabled: false
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 spring:
+  messages:
+    basename: messages
+    encoding: UTF-8
   elasticsearch:
     uris: http://localhost:9200
   servlet:
@@ -24,10 +32,8 @@ spring:
       client-id: admin-client
     streams:
       application-id: schema-change-processor
-
       properties:
         processing.guarantee: at_least_once
-
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer

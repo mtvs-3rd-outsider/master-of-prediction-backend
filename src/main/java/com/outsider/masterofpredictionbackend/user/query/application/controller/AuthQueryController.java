@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.user.query.application.controller;
 
+import com.outsider.masterofpredictionbackend.common.constant.CustomHttpStatus;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.LoginRequestDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.service.AuthService;
@@ -8,6 +9,7 @@ import com.outsider.masterofpredictionbackend.util.UserId;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,15 +19,16 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthQueryController {
-
+    private final MessageSource messageSource;
     private final AuthService authService;
     private final UserInfoService userService;
-    public AuthQueryController(AuthService authService, UserInfoService userService) {
+    public AuthQueryController(MessageSource messageSource, AuthService authService, UserInfoService userService) {
+        this.messageSource = messageSource;
         this.authService = authService;
         this.userService = userService;
     }
     @PostMapping("login")
-    public  ResponseEntity<UserInfoResponseDTO> postMemberProfile(
+    public  ResponseEntity<?> postMemberProfile(
             @Valid @RequestBody LoginRequestDTO request,
             HttpServletResponse response
     ) {
@@ -55,7 +58,8 @@ public class AuthQueryController {
             return ResponseEntity.ok(userInfo.get());
         }else
         {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(CustomHttpStatus.LOGIN_ERROR.value())
+                    .body(CustomHttpStatus.LOGIN_ERROR.getMessage(messageSource));
         }
 
     }

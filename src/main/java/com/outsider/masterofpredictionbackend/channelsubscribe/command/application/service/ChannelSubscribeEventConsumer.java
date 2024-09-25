@@ -30,6 +30,7 @@ public class ChannelSubscribeEventConsumer {
      */
     @KafkaListener(topics = UPDATE_CHANNEL_SUBSCRIBE, groupId = "channel-subscribe-update-group")
     public void consume(String message) {
+
         try {
             // JSON 문자열을 UpdateFollowMessage 객체로 변환
             ChannelSubscribeRequestDTO dto = objectMapper.readValue(message, ChannelSubscribeRequestDTO.class);
