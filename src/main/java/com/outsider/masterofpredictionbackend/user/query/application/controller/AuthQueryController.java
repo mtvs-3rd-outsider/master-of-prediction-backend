@@ -61,7 +61,6 @@ public class AuthQueryController {
             return ResponseEntity.status(CustomHttpStatus.LOGIN_ERROR.value())
                     .body(CustomHttpStatus.LOGIN_ERROR.getMessage(messageSource));
         }
-
     }
     @GetMapping("users")
     public  ResponseEntity<UserInfoResponseDTO> getMemberProfile(@UserId Long userId

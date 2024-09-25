@@ -16,6 +16,8 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+  tomcat:
+    uri-encoding: UTF-8
 spring:
   messages:
     basename: messages
