@@ -4,6 +4,7 @@ package com.outsider.masterofpredictionbackend.betting.query.controller;
 import com.outsider.masterofpredictionbackend.betting.query.service.BettingProductQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,12 @@ public class BettingProductQueryController {
     @Operation(summary = "배팅 상품 조회")
     public ResponseEntity<?> getBettingProducts(){
         return ResponseEntity.ok(bettingProductQueryService.all());
+    }
+
+    @GetMapping("/api/v1/betting-products/user")
+    @Operation(summary = "특정 유저의 상품 조회")
+    public ResponseEntity<?> getBettingProductsByUserId(@RequestParam Long userId){
+        return ResponseEntity.ok(bettingProductQueryService.allByUserId(userId));
     }
 
     @GetMapping("/api/v1/betting-products/{id}")
