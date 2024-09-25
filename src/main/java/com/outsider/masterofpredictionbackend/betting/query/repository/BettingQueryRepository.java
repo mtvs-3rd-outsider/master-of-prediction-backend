@@ -3,7 +3,6 @@ package com.outsider.masterofpredictionbackend.betting.query.repository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO;
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,7 +13,13 @@ public interface BettingQueryRepository extends JpaRepository<BettingProduct, Lo
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO(" +
             " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind)  FROM BettingProduct bp " +
             "JOIN User u ON bp.userId = u.id ORDER BY bp.id LIMIT :limit OFFSET :offset")
-    List<BettingViewDTO> findBettinglimit(int limit, int offset);
+    List<BettingViewDTO> findBettingAllLimit(int limit, int offset);
+
+
+    @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO(" +
+            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind)  FROM BettingProduct bp " +
+            "JOIN User u ON bp.userId = u.id where u.id = :userId ORDER BY bp.id LIMIT :limit OFFSET :offset")
+    List<BettingViewDTO> findBettingByUserIdLimit(Long userId, int limit, int offset);
 
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO(" +

@@ -34,9 +34,6 @@ public class BettingOrderCommandServiceTest {
     @Mock
     private UserPoint userPoint;
 
-    @InjectMocks
-    private UserPointImpl userPointImpl;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);  // Mockito 객체 초기화
@@ -44,13 +41,15 @@ public class BettingOrderCommandServiceTest {
 
     static Stream<Arguments> validatePointTest() {
         return Stream.of(
-            Arguments.of(createBettingOrderDTO(1L, 1L, BigDecimal.ZERO, 1L, LocalDate.now(), LocalTime.now()))
+            Arguments.of(createBettingOrderDTO(1L, 1L, BigDecimal.ZERO,
+                    1L, LocalDate.now(), LocalTime.now()))
         );
     }
 
     static Stream<Arguments> validateBettingProductStatusTest() {
         return Stream.of(
-            Arguments.of(createBettingOrderDTO(1L, 1L, BigDecimal.valueOf(10L), 1L, LocalDate.now(), LocalTime.now()))
+            Arguments.of(createBettingOrderDTO(1L, 1L, BigDecimal.valueOf(10L),
+                    1L, LocalDate.now(), LocalTime.now()))
         );
     }
 
@@ -77,7 +76,8 @@ public class BettingOrderCommandServiceTest {
     void validateBettingProductStatusTest(BettingOrderDTO bettingOrderDTO) {
 
         when(userPoint.find(bettingOrderDTO.getUserId())).thenReturn(BigDecimal.valueOf(10L));
-        when(bettingProductValidator.validateProductExistenceAndStatus(bettingOrderDTO.getBettingId())).thenReturn(false);
+        when(bettingProductValidator
+                .validateProductExistenceAndStatus(bettingOrderDTO.getBettingId())).thenReturn(false);
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             bettingOrderCommandService.buyBettingProduct(bettingOrderDTO);
         });
