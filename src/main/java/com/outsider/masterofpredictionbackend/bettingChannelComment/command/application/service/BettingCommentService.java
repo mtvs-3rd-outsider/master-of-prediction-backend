@@ -10,6 +10,7 @@ import com.outsider.masterofpredictionbackend.bettingChannelComment.command.doma
 import com.outsider.masterofpredictionbackend.bettingChannelComment.command.exception.BettingCommentNotFoundException;
 import com.outsider.masterofpredictionbackend.common.exception.LoginRequiredException;
 import com.outsider.masterofpredictionbackend.common.exception.MisMatchUserException;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,16 +33,15 @@ public class BettingCommentService {
      * @param dto 입력 dto
      * @return 성공시 배팅댓글의 고유 id, 실패시 null 반환
      */
-    public Long addComment(BettingCommentAddRequestDTO dto){
+    public Long addComment(BettingCommentAddRequestDTO dto, CustomUserInfoDTO loginInfo){
 
-        /*시큐리티에서 검증함*/
         /*로그인 여부 검증*/
-        if(!policy.isLogin()){
+        if(loginInfo == null){
             throw new LoginRequiredException("[BettingComment] add: 로그인 필요", "로그인이 필요합니다.");
         }
 
         /*사용자 정보 추출*/
-        long userNo = policy.getLoginUserInfo().getUserNo();
+        long userNo = loginInfo.getUserId();
 
         /*배팅 댓글 객체 생성*/
         BettingChannelComment comment = new BettingChannelComment(
@@ -72,11 +72,11 @@ public class BettingCommentService {
      * @param updatedComment 입력 dto
      * @return 성공시 true, 실패시 false 반환
      */
-    public Boolean updateComment(BettingCommentUpdateRequestDTO updatedComment) {
+    public Boolean updateComment(BettingCommentUpdateRequestDTO updatedComment, CustomUserInfoDTO userInfoDTO) {
         
         /*시큐리티에서 검증함*/
         /*로그인 여부 확인*/
-        if(!policy.isLogin()){
+        if(userInfoDTO == null){
             throw new LoginRequiredException("[BettingComment] add: 로그인 필요", "로그인이 필요합니다.");
         }
 
@@ -89,8 +89,8 @@ public class BettingCommentService {
         
         /*시큐리티에서 검증함*/
         /*수정하려는 사람과 댓글 작성자가 일치하는지 여부 확인*/
-        if(!policy.isMatchUserInfo(comment)){
-            throw new MisMatchUserException("[BettingComment] 작성자와 수정할 사람이 다름: 작성자: "+comment.getWriter().getWriterNo()+" 수정할 사람: "+policy.getLoginUserInfo().getUserNo(),
+        if(!policy.isMatchUserInfo(comment, userInfoDTO)){
+            throw new MisMatchUserException("[BettingComment] 작성자와 수정할 사람이 다름: 작성자: "+comment.getWriter().getWriterNo()+" 수정할 사람: "+userInfoDTO.getUserId(),
                     "댓글 작성자와 정보가 일치하지 않습니다."
             );
         }
@@ -115,11 +115,11 @@ public class BettingCommentService {
      * @param commentId 댓글 id
      * @return 성공시 true, 실패시 false 반환
      */
-    public Boolean deleteComment(Long commentId) {
+    public Boolean deleteComment(Long commentId, CustomUserInfoDTO loginInfo) {
         
         /*시큐리티에서 검증함*/
         /*로그인 여부 검증*/
-        if(!policy.isLogin()){
+        if(loginInfo == null){
             throw new LoginRequiredException("[BettingComment] delete: 로그인 필요", "로그인이 필요합니다.");
         }
 
@@ -130,8 +130,8 @@ public class BettingCommentService {
         
         /*시큐리티에서 검증함*/
         /*삭제할 댓글이 본인이 작성한건지 확인*/
-        if(!policy.isMatchUserInfo(deletedComment)){
-            throw new MisMatchUserException("[BettingComment] 작성자와 삭제할 사람이 다름: 작성자: "+deletedComment.getWriter().getWriterNo()+" 삭제할 사람: "+policy.getLoginUserInfo().getUserNo(),
+        if(!policy.isMatchUserInfo(deletedComment, loginInfo)){
+            throw new MisMatchUserException("[BettingComment] 작성자와 삭제할 사람이 다름: 작성자: "+deletedComment.getWriter().getWriterNo()+" 삭제할 사람: "+loginInfo.getUserId(),
                     "댓글 작성자와 정보가 일치하지 않습니다."
             );
         }
