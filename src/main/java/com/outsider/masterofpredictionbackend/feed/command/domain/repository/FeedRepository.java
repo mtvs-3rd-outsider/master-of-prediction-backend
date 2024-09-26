@@ -17,10 +17,10 @@ public interface FeedRepository extends JpaRepository<Feed, Long>{
     @NotNull
     Optional<Feed> findById(@NotNull Long id);
 
-    @Query("SELECT f FROM Feed f WHERE f.id < :lastId ORDER BY f.viewCount DESC")
+    @Query("SELECT f FROM Feed f WHERE f.id < :lastId ORDER BY f.viewCount DESC, f.id DESC")
     List<Feed> findHotTopicFeedsAfter(@Param("lastId") Long lastId, Pageable pageable);
 
-    @Query("SELECT f FROM Feed f ORDER BY f.viewCount DESC")
+    @Query("SELECT f FROM Feed f ORDER BY f.viewCount DESC, f.id DESC")
     List<Feed> findInitialHotTopicFeeds(Pageable pageable);
 
     @Modifying

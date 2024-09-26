@@ -137,14 +137,14 @@ public class DummyConfig {
                 }
                 subscribeService.manageSubscription(channelSubscribeRequestDTO2,"subscribe");
 
-                // 프로필 업데이트
-                userProfileUpdateService.updateUser(
-                        UserUpdateRequestDTO.builder()
-                                .userId(subscriberId)
-                                .displayName("YY2")
-                                .userName("YY3")
-                                .build()
-                );
+//                // 프로필 업데이트
+//                userProfileUpdateService.updateUser(
+//                        UserUpdateRequestDTO.builder()
+//                                .userId(subscriberId)
+//                                .displayName("YY2")
+//                                .userName("YY3")
+//                                .build()
+//                );
             }
 
             Pageable pageable = PageRequest.of(0, 10);
