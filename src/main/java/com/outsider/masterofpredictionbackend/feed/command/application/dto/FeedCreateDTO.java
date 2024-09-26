@@ -25,37 +25,4 @@ public class FeedCreateDTO {
     private List<String> mediaFileUrls;
     private List<String> youtubeUrls;
 
-    public Feed toEntity() {
-        Feed feed = new Feed(
-                this.authorType,
-                this.title,
-                this.content,
-                LocalDateTime.now(),
-                null,
-                this.channelType,
-                0,
-                0,
-                0,
-                0,
-                this.user,
-                this.guest,
-                null,
-                new ArrayList<>(),
-                new ArrayList<>()
-        );
-
-        if (mediaFileUrls != null) {
-            feed.setMediaFiles(mediaFileUrls.stream()
-                    .map(url -> new MediaFile(url, feed))
-                    .collect(Collectors.toList()));
-        }
-
-        if (youtubeUrls != null) {
-            feed.setYoutubeVideos(youtubeUrls.stream()
-                    .map(url -> new YouTubeVideo(url, feed))
-                    .collect(Collectors.toList()));
-        }
-
-        return feed;
-    }
 }

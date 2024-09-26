@@ -43,7 +43,7 @@ public class FeedCreateService {
                 0,
                 dto.getUser(),
                 dto.getGuest(),
-                null,
+                false,
                 new ArrayList<>(),
                 new ArrayList<>()
         );
