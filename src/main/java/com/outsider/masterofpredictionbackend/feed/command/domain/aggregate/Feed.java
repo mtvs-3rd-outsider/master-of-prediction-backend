@@ -65,8 +65,8 @@ public class Feed {
     @Embedded
     private Guest guest;
 
-    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> like;
+    @Column(name = "feed_like")
+    private boolean like;
 
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JsonManagedReference
@@ -76,7 +76,7 @@ public class Feed {
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<YouTubeVideo> youtubeVideos = new ArrayList<>();
 
-    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, ChannelType channelType, int viewCount, int likesCount, int commentsCount, int quoteCount, User user, Guest guest, List<Like> like, List<MediaFile> mediaFiles, List<YouTubeVideo> youtubeVideos) {
+    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, ChannelType channelType, int viewCount, int likesCount, int commentsCount, int quoteCount, User user, Guest guest, boolean like, List<MediaFile> mediaFiles, List<YouTubeVideo> youtubeVideos) {
         this.authorType = authorType;
         this.title = title;
         this.content = content;
