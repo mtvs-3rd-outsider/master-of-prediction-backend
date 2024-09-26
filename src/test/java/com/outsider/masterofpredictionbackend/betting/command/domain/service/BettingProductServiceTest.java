@@ -86,9 +86,9 @@ public class BettingProductServiceTest {
                    List<BettingProductOption> bettingProductOptions){
         if (bettingProductOptions.size() < 2){
             Assertions.assertThrows(IllegalArgumentException.class,() ->
-                    bettingProductService.save(bettingProduct, bettingProductImages, bettingProductOptions));
+                    bettingProductService.save(bettingProductImages, bettingProductOptions));
         } else{
-            bettingProductService.save(bettingProduct, bettingProductImages, bettingProductOptions);
+            bettingProductService.save(bettingProductImages, bettingProductOptions);
             Assertions.assertNotNull(bettingProductService.findById(bettingProduct.getId()));
         }
     }

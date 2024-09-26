@@ -1,7 +1,6 @@
 package com.outsider.masterofpredictionbackend.feed.command.application.service;
 
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.HotTopicFeedResponseDTO;
-import com.outsider.masterofpredictionbackend.feed.command.application.dto.UserDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.MediaFile;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
@@ -19,6 +18,7 @@ public class HotTopicFeedService {
 
     private final FeedRepository feedRepository;
     private final ExternalUserService externalUserService;
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     @Autowired
     public HotTopicFeedService(FeedRepository feedRepository, ExternalUserService externalUserService) {
@@ -26,27 +26,21 @@ public class HotTopicFeedService {
         this.externalUserService = externalUserService;
     }
 
-    public List<HotTopicFeedResponseDTO> getInitialHotTopicFeeds(int size) {
-        List<Feed> feeds = feedRepository.findInitialHotTopicFeeds(PageRequest.of(0, size));
-
-        List<HotTopicFeedResponseDTO> feedResponseDTOS = feeds.stream()
-                .map(this::fromFeed)
-                .toList();
-
-
-
+    public List<HotTopicFeedResponseDTO> getInitialHotTopicFeeds(Integer size) {
+        int pageSize = (size != null) ? size : DEFAULT_PAGE_SIZE;
+        List<Feed> feeds = feedRepository.findInitialHotTopicFeeds(PageRequest.of(0, pageSize));
         return feeds.stream()
                 .map(this::fromFeed)
                 .collect(Collectors.toList());
     }
 
-    public List<HotTopicFeedResponseDTO> getNextHotTopicFeeds(Long lastId, int size) {
-        List<Feed> feeds = feedRepository.findHotTopicFeedsAfter(lastId, PageRequest.of(0, size));
+    public List<HotTopicFeedResponseDTO> getNextHotTopicFeeds(Long lastId, Integer size) {
+        int pageSize = (size != null) ? size : DEFAULT_PAGE_SIZE;
+        List<Feed> feeds = feedRepository.findHotTopicFeedsAfter(lastId, PageRequest.of(0, pageSize));
         return feeds.stream()
                 .map(this::fromFeed)
                 .collect(Collectors.toList());
     }
-
 
     public HotTopicFeedResponseDTO fromFeed(Feed feed) {
         HotTopicFeedResponseDTO dto = new HotTopicFeedResponseDTO();
@@ -59,7 +53,7 @@ public class HotTopicFeedService {
         dto.setViewCount(feed.getViewCount());
         dto.setChannelType(feed.getChannelType());
 
-        if (feed.getUser().getUserId() != null) {
+        if (feed.getUser() != null && feed.getUser().getUserId() != null) {
             dto.setUser(externalUserService.getUser(feed.getUser().getUserId()));
         }
 
