@@ -13,8 +13,8 @@ import static com.outsider.masterofpredictionbackend.common.constant.StringConst
 @Service
 public class ChannelSubscribeClientImpl implements ChannelSubscribeClient {
     @Override
-    public void publish(Long userId, Long channelId, boolean isUserChannel) {
-        ChannelSubscribeRequestDTO message = new ChannelSubscribeRequestDTO(userId, channelId, isUserChannel);
+    public void publish(Long userId, Long channelId, boolean isUserChannel,String actionType) {
+        ChannelSubscribeRequestDTO message = new ChannelSubscribeRequestDTO(userId, channelId, isUserChannel,actionType);
 
         String messageJson = null;
         try {

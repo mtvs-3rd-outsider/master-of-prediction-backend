@@ -14,6 +14,7 @@
     "schema.history.internal.kafka.topic": "schemahistory.forceasthub",
     "database.serverTimezone": "Asia/Seoul",
     "include.schema.changes": "true",
-    "snapshot.mode": "initial"
+    "snapshot.mode": "initial",
+    "decimal.handling.mode": "string"
   }
 }

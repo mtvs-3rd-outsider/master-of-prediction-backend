@@ -39,6 +39,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 10
     consumer:
       group-id: test
       auto-offset-reset: earliest

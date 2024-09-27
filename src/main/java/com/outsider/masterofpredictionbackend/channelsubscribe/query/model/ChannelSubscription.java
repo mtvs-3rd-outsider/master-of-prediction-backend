@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.channelsubscribe.query.model;
 
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.ChannelInfo;
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.UserInfo;
+import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.response.UserResponse;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -112,10 +113,12 @@ public class ChannelSubscription {
     public boolean hasFollowing(Long channelId) {
         return following.stream().anyMatch(following -> following.getChannelId().equals(channelId));
     }
-
+    public boolean hasFollowing(ChannelSubscriptionId channelId) {
+        return following.stream().anyMatch(following -> following.getChannelSubscriptionId().equals(channelId));
+    }
     // 구독자 추가 메서드
-    public void addSubscriber(String displayName, Long userId, String userName, String userAvatarUrl) {
-        subscribers.add(new UserInfo(displayName, userId, userName, userAvatarUrl));
+    public void addSubscriber(UserResponse userResponse) {
+        subscribers.add(new UserInfo(userResponse.getDisplayName(), userResponse.getUserId(), userResponse.getUserName(), userResponse.getUserAvatarUrl()));
     }
 
     // 구독자 제거 메서드

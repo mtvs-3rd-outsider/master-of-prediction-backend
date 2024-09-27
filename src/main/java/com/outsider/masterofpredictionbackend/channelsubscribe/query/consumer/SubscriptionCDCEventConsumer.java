@@ -2,34 +2,33 @@ package com.outsider.masterofpredictionbackend.channelsubscribe.query.consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.outsider.masterofpredictionbackend.betting.command.domain.service.UserService;
-import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.GenericEvent;
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.SubscriptionEvent;
-import com.outsider.masterofpredictionbackend.channelsubscribe.query.model.ChannelSubscription;
-import com.outsider.masterofpredictionbackend.channelsubscribe.query.repository.ChannelSubscriptionRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+
 @Service
 @Slf4j
-public class SubscriptionEventConsumer {
+public class SubscriptionCDCEventConsumer {
 
-    private final SubscriptionEventHandler eventHandler;
+    private final SubscriptionCDCEventHandler eventHandler;
     private final ObjectMapper objectMapper;
 
-    public SubscriptionEventConsumer(SubscriptionEventHandler eventHandler, ObjectMapper objectMapper) {
+    public SubscriptionCDCEventConsumer(SubscriptionCDCEventHandler eventHandler, ObjectMapper objectMapper) {
         this.eventHandler = eventHandler;
         this.objectMapper = objectMapper;
     }
 
     @KafkaListener(topics = "dbserver1.forecasthub.channel_subscribe", groupId = "subscription-group")
     @Transactional
-    public void consume(ConsumerRecord<String, String> record) {
+    public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
         String consumedValue = record.value();
 
         if (consumedValue == null) {
@@ -57,9 +56,10 @@ public class SubscriptionEventConsumer {
                 default:
                     log.warn("Unknown operation type: {}", operation);
             }
-
+            ack.acknowledge();
         } catch (Exception e) {
             log.error("Error processing Kafka record", e);
+            ack.nack(Duration.ofSeconds(1));
         }
     }
 

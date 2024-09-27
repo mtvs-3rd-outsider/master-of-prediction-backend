@@ -8,8 +8,12 @@ import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.ag
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.UpdateChannelUserCountDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.service.UpdateMyChannelFollowerCountService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.UPDATE_CHANNEL_SUBSCRIBE;
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.UPDATE_FOLLOWER_COUNT_TOPIC;
@@ -29,8 +33,9 @@ public class ChannelSubscribeEventConsumer {
      * 수신된 메시지는 DTO로 변환된 후 처리됩니다.
      */
     @KafkaListener(topics = UPDATE_CHANNEL_SUBSCRIBE, groupId = "channel-subscribe-update-group")
-    public void consume(String message) {
-
+    public void consume(String message , ConsumerRecord<String, String> record, Acknowledgment ack) {
+        System.out.printf("Received message: %s, From partition: %d, With offset: %d, From topic: %s%n",
+                record.value(), record.partition(), record.offset(), record.topic());
         try {
             // JSON 문자열을 UpdateFollowMessage 객체로 변환
             ChannelSubscribeRequestDTO dto = objectMapper.readValue(message, ChannelSubscribeRequestDTO.class);
@@ -43,6 +48,7 @@ public class ChannelSubscribeEventConsumer {
 
             // 팔로워 수 증가 또는 감소
             channelSubscribeService.manageSubscription(dto);
+            ack.acknowledge();
 
         } catch (JsonProcessingException e) {
             log.error("Failed to deserialize Kafka message: {}", message, e);

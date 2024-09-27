@@ -6,7 +6,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.util.Locale;
 
 public enum CustomHttpStatus {
-    LOGIN_ERROR(406, "custom.http.status.login_error"); // 메시지 키를 저장
+    LOGIN_ERROR(403, "custom.http.status.login_error"); // 메시지 키를 저장
 
     private final int code;
     private final String messageKey;

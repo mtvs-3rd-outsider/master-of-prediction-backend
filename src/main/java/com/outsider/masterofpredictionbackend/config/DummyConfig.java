@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.config;
 import com.outsider.masterofpredictionbackend.categorychannel.command.application.dto.CategoryChannelRegistRequestDTO;
 import com.outsider.masterofpredictionbackend.categorychannel.command.application.service.CategoryChannelRegistService;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.repository.CategoryChannelRepository;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.dto.ChannelSubscribeRequestDTO;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.service.ChannelSubscribeService;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.aggregate.ChannelSubscribe;
@@ -16,12 +17,13 @@ import com.outsider.masterofpredictionbackend.user.command.application.service.U
 import com.outsider.masterofpredictionbackend.user.command.application.service.UserRegistService;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.DeleteTopicsResult;
-import org.apache.kafka.clients.admin.ListTopicsOptions;
-import org.apache.kafka.clients.admin.ListTopicsResult;
+import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaAdmin;
@@ -34,8 +36,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.*;
-
 @Configuration
+@Order(Integer.MAX_VALUE)
 public class DummyConfig {
     private final CategoryChannelRegistService categoryChannelRegistService;
     private final UserRegistService userRegistService;
@@ -44,6 +46,7 @@ public class DummyConfig {
     private final UserProfileUpdateService userProfileUpdateService;
     private final UserCommandRepository userCommandRepository;
     private final MyChannelCommandRepository myChannelCommandRepository;
+    private final CategoryChannelRepository categoryChannelRepository;
     private final ChannelSubscribeCommandRepository channelSubscribeCommandRepository;
     private final String defaultEmail = DEFAULT_USER_EMAIL;
     private final String defaultUserName = DEFAULT_USER_NAME;
@@ -52,11 +55,12 @@ public class DummyConfig {
     // 리스트를 사용하여 여러 사용자 ID를 저장
     private final List<Long> userIds = new ArrayList<>();
     private final List<Long> categoryChannelIds = new ArrayList<>();  // Track created category channels
+    private final List<Long> myChannelIds = new ArrayList<>();  // Track created category channels
 
     public DummyConfig(CategoryChannelRegistService categoryChannelRegistService, UserCommandRepository userCommandRepository,
                        UserRegistService userRegistService,
                        DeleteUserService deleteUserService, ChannelSubscribeService subscribeService,
-                       UserProfileUpdateService userProfileUpdateService, MyChannelCommandRepository myChannelCommandRepository, ChannelSubscribeCommandRepository channelSubscribeCommandRepository, KafkaAdmin kafkaAdmin) {
+                       UserProfileUpdateService userProfileUpdateService, MyChannelCommandRepository myChannelCommandRepository, CategoryChannelRepository categoryChannelRepository, ChannelSubscribeCommandRepository channelSubscribeCommandRepository, KafkaAdmin kafkaAdmin) {
         this.categoryChannelRegistService = categoryChannelRegistService;
         this.userCommandRepository = userCommandRepository;
         this.userRegistService = userRegistService;
@@ -64,10 +68,12 @@ public class DummyConfig {
         this.subscribeService = subscribeService;
         this.userProfileUpdateService = userProfileUpdateService;
         this.myChannelCommandRepository = myChannelCommandRepository;
+        this.categoryChannelRepository = categoryChannelRepository;
         this.channelSubscribeCommandRepository = channelSubscribeCommandRepository;
         this.kafkaAdmin = kafkaAdmin;
     }
-    @Bean
+    @Bean()
+    @Order(Integer.MAX_VALUE)
     @Transactional
     public CommandLineRunner init(ChannelSubscribeService channelSubscribeService) {
         return args -> {
@@ -101,10 +107,17 @@ public class DummyConfig {
             // Category Channel creation
             if (userIds.size() >= 3) {
                 Long ownerId = userIds.get(0); // Set the first user as the owner of the category channel
-                List<CategoryChannelRegistRequestDTO> channelsToCreate = List.of(
-                        new CategoryChannelRegistRequestDTO("Tech Channel", "A channel about technology", "[\"No spamming\"]", CategoryChannelStatus.APPLY),
-                        new CategoryChannelRegistRequestDTO("Gaming Channel", "A channel about gaming", "[\"Be respectful\"]", CategoryChannelStatus.APPLY)
-                );
+                List<CategoryChannelRegistRequestDTO> channelsToCreate = new ArrayList<>();
+
+                // 30개의 더미 채널을 생성
+                for (int i = 1; i <= 30; i++) {
+                    channelsToCreate.add(new CategoryChannelRegistRequestDTO(
+                            "Channel " + i,
+                            "Description for channel " + i,
+                            "[\"No spamming\", \"Be respectful\"]",
+                            CategoryChannelStatus.APPLY
+                    ));
+                }
 
                 for (int i = 0; i < channelsToCreate.size(); i++) {
                     CategoryChannelRegistRequestDTO channelDto = channelsToCreate.get(i);
@@ -128,14 +141,14 @@ public class DummyConfig {
 //                }
 //                subscribeService.manageSubscription(channelSubscribeRequestDTO,"subscribe");
 
-                ChannelSubscribeRequestDTO channelSubscribeRequestDTO2= new ChannelSubscribeRequestDTO(subscriberId, 1L, false);
-                MyChannelSubscribeId myChannelSubscribeId2 =  new MyChannelSubscribeId(channelSubscribeRequestDTO2.getUserId(), channelSubscribeRequestDTO2.getChannelId(), channelSubscribeRequestDTO2.getIsUserChannel());
-                Optional<ChannelSubscribe> existMyChannelSubscribeId2 =channelSubscribeCommandRepository.findById(myChannelSubscribeId2);
-                if(existMyChannelSubscribeId2.isPresent())
-                {
-                    channelSubscribeService.deleteById(myChannelSubscribeId2.getUserId(),myChannelSubscribeId2.getChannelId(),false);
-                }
-                subscribeService.manageSubscription(channelSubscribeRequestDTO2,"subscribe");
+//                ChannelSubscribeRequestDTO channelSubscribeRequestDTO2= new ChannelSubscribeRequestDTO(subscriberId, 1L, false);
+//                MyChannelSubscribeId myChannelSubscribeId2 =  new MyChannelSubscribeId(channelSubscribeRequestDTO2.getUserId(), channelSubscribeRequestDTO2.getChannelId(), channelSubscribeRequestDTO2.getIsUserChannel());
+//                Optional<ChannelSubscribe> existMyChannelSubscribeId2 =channelSubscribeCommandRepository.findById(myChannelSubscribeId2);
+//                if(existMyChannelSubscribeId2.isPresent())
+//                {
+//                    channelSubscribeService.deleteById(myChannelSubscribeId2.getUserId(),myChannelSubscribeId2.getChannelId(),false);
+//                }
+//                subscribeService.manageSubscription(channelSubscribeRequestDTO2,"subscribe");
 
                 // 프로필 업데이트
                 userProfileUpdateService.updateUser(
@@ -153,12 +166,14 @@ public class DummyConfig {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 userIds.forEach(id -> {
                     if (id != null) {
-                        userCommandRepository.deleteById(id); // Hard delete on shutdown
+                        userCommandRepository.deleteById(id);
+                        myChannelCommandRepository.deleteById(id);
+                        // Hard delete on shutdown
                     }
                 });
                 categoryChannelIds.forEach(id -> {
                     if (id != null) {
-                        myChannelCommandRepository.deleteById(id); // Hard delete category channels on shutdown
+                        categoryChannelRepository.deleteById(id); // Hard delete category channels on shutdown
                     }
                 });
                 deleteKafkaTopics(adminClient, "dbserver1.*");
@@ -168,14 +183,15 @@ public class DummyConfig {
     }
     private void deleteKafkaTopics(AdminClient adminClient, String topicPattern) {
         try {
+            // 1. 사용자 생성 토픽만 가져오기
             ListTopicsOptions options = new ListTopicsOptions();
             options.listInternal(false); // Only user-created topics
-            ListTopicsResult topicsResult = adminClient.listTopics(options);
+            ListTopicsResult topicsResult = adminClient.listTopics();
 
             Set<String> topics = topicsResult.names().get();
             Pattern pattern = Pattern.compile(topicPattern);
 
-            // Find topics starting with "dbserver1"
+            // 2. "dbserver1"로 시작하는 토픽 찾기
             Set<String> topicsToDelete = new HashSet<>();
             for (String topic : topics) {
                 if (pattern.matcher(topic).matches()) {
@@ -184,11 +200,54 @@ public class DummyConfig {
             }
 
             if (!topicsToDelete.isEmpty()) {
+                // 3. 토픽 삭제
                 DeleteTopicsResult deleteTopicsResult = adminClient.deleteTopics(topicsToDelete);
                 deleteTopicsResult.all().get(); // Wait for deletion to complete
                 System.out.println("Deleted topics: " + topicsToDelete);
+
+                // 4. 토픽과 관련된 모든 Consumer 그룹의 오프셋 및 메타데이터 삭제
+                resetAllConsumerGroupOffsets(adminClient, topicsToDelete);
             } else {
                 System.out.println("No topics matched the pattern: " + topicPattern);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void resetAllConsumerGroupOffsets(AdminClient adminClient, Set<String> topicsToDelete) {
+        try {
+            // 1. 모든 Consumer 그룹 가져오기
+            ListConsumerGroupsResult consumerGroupsResult = adminClient.listConsumerGroups();
+            Collection<ConsumerGroupListing> consumerGroups = consumerGroupsResult.all().get();
+
+            for (ConsumerGroupListing groupListing : consumerGroups) {
+                String groupId = groupListing.groupId();
+
+                // 2. 각 Consumer 그룹에 대한 오프셋 정보 가져오기
+                for (String topic : topicsToDelete) {
+                    // 토픽 파티션 정보를 가져옴
+                    ListConsumerGroupOffsetsOptions options = new ListConsumerGroupOffsetsOptions();
+                    ListConsumerGroupOffsetsResult consumerGroupOffsets = adminClient.listConsumerGroupOffsets(groupId, options);
+
+                    Map<TopicPartition, OffsetAndMetadata> offsets = consumerGroupOffsets.partitionsToOffsetAndMetadata().get();
+
+                    // 3. 특정 토픽의 오프셋을 초기화
+                    Map<TopicPartition, OffsetAndMetadata> offsetsToReset = new HashMap<>();
+                    for (Map.Entry<TopicPartition, OffsetAndMetadata> entry : offsets.entrySet()) {
+                        TopicPartition topicPartition = entry.getKey();
+                        if (topicPartition.topic().equals(topic)) {
+                            // 오프셋을 0으로 설정하거나 원하는 값으로 재설정
+                            offsetsToReset.put(topicPartition, new OffsetAndMetadata(0L));
+                        }
+                    }
+
+                    if (!offsetsToReset.isEmpty()) {
+                        // 4. 오프셋 재설정 실행
+                        adminClient.alterConsumerGroupOffsets(groupId, offsetsToReset).all().get();
+                        System.out.println("Resetting offsets for group: " + groupId + ", topic: " + topic);
+                    }
+                }
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

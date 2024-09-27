@@ -11,6 +11,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +26,12 @@ public class MyChannelInfoChannelPartService extends GenericService<MyChannelInf
         this.mapper = mapper;
     }
 
-    @KafkaListener(topics = "dbserver1.forecasthub.my_channel" ,groupId = "my-channel-info-group")
+    @KafkaListener(topics = "dbserver1.forecasthub.my_channel" ,groupId = "my-channel-info-channel-group")
     @Transactional
-    public void consume(ConsumerRecord<String, String> record, Consumer<String, String> consumer) {
+    public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
+
+        System.out.printf("Received message: %s, From partition: %d, With offset: %d, From topic: %s%n",
+                record.value(), record.partition(), record.offset(), record.topic());
         String consumedValue = record.value();
 
         if (consumedValue == null) {
@@ -53,18 +57,16 @@ public class MyChannelInfoChannelPartService extends GenericService<MyChannelInf
                 default:
                     logger.warn("Unknown operation type: {}", operation);
             }
-
-            // 수동으로 오프셋 커밋
-            consumer.commitSync();
+            ack.acknowledge();
         } catch (Exception e) {
             logger.error("Unexpected error occurred while consuming record: {}", record, e);
 
             // 재처리 로직 - 메시지 처리 실패 시 재시도하거나 별도의 큐에 추가하는 방식으로 처리
-            retryProcessing(record, consumer);
+            retryProcessing(record, ack);
         }
     }
 
-    public void handleCreateOrUpdate(JsonNode jsonNode) {
+    public void handleCreateOrUpdate(JsonNode jsonNode) throws IllegalAccessException {
         Long channelId = jsonNode.get("channel_id").asLong();
         saveOrUpdate(jsonNode, channelId, MyChannelInfoQueryModel.class,"setUserId");
     }

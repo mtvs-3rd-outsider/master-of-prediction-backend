@@ -7,7 +7,10 @@ import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.USER_REQUEST_TOPIC;
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.USER_RESPONSE_TOPIC;
@@ -26,7 +29,7 @@ public class UserRequestHandler {
     }
 
     @KafkaListener(topics = USER_REQUEST_TOPIC, groupId = "user-service")
-    public void consume(String message) {
+    public void consume(String message, Acknowledgment ack) {
         try {
             UserRequest request = objectMapper.readValue(message, UserRequest.class);
             Long userId = request.getUserId();
@@ -44,9 +47,10 @@ public class UserRequestHandler {
 
             String responseMessage = objectMapper.writeValueAsString(response);
             kafkaTemplate.send(USER_RESPONSE_TOPIC, responseMessage);
-
+            ack.acknowledge();
         } catch (Exception e) {
             e.printStackTrace();
+            ack.nack(Duration.ofSeconds(1));
         }
     }
 }

@@ -6,6 +6,7 @@ import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.ag
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.repository.ChannelSubscribeCommandRepository;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.service.UpdateFollowerCountClient;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.service.UpdateFollowingCountClient;
+import com.outsider.masterofpredictionbackend.channelsubscribe.exception.InvalidSubscriptionException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,11 +51,15 @@ public class ChannelSubscribeService {
         Optional<ChannelSubscribe> optionalSubscribe = repository.findById(id);
         ChannelSubscribe channelSubscribe = optionalSubscribe.orElse(null);
 
-        if (channelSubscribe == null || !channelSubscribe.getIsActive()) {
-            // 구독이 없거나 비활성화된 경우 구독 처리
+        if(dto.getUserId().equals(dto.getChannelId()) && dto.getIsUserChannel()) {
+            throw new InvalidSubscriptionException();
+        }
+
+        if ("subscribe".equals(dto.getActionType())) {
+            // 기존 구독이 없으면 새로운 구독 처리
             subscribe(channelSubscribe, id, dto);
         } else {
-            // 구독이 활성화된 상태라면 구독 해지 처리
+            // 구독이 활성화된 상태라면 구독 해지
             unsubscribe(channelSubscribe, dto);
         }
     }
@@ -108,9 +113,9 @@ public class ChannelSubscribeService {
 
     private void updateFollowerAndFollowing(Long userId, Long channelId, Boolean isUserChannel, Boolean isSubscribing) {
         // 팔로잉 수 업데이트
-        updateFollowingService.publish(userId,  true, isSubscribing);
+//        updateFollowingService.publish(userId,  true, isSubscribing);
 
         // 팔로워 수 업데이트
-        updateFollowerService.publish(channelId, isUserChannel, isSubscribing);
+//        updateFollowerService.publish(channelId, isUserChannel, isSubscribing);
     }
 }

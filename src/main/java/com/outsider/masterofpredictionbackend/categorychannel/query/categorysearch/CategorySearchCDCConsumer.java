@@ -1,11 +1,12 @@
-package com.outsider.masterofpredictionbackend.user.query.usersearch;
+package com.outsider.masterofpredictionbackend.categorychannel.query.categorysearch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
+import com.outsider.masterofpredictionbackend.user.query.usersearch.UserSearchModel;
+import com.outsider.masterofpredictionbackend.user.query.usersearch.UserSearchRepository;
 import com.outsider.masterofpredictionbackend.util.GenericService;
 import com.outsider.masterofpredictionbackend.util.IDs;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,17 +16,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserSearchCDCConsumer extends GenericService<UserSearchModel,Long, User> {
+public class CategorySearchCDCConsumer extends GenericService<CategorySearchModel,Long, User> {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserSearchCDCConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(CategorySearchCDCConsumer.class);
     private final ObjectMapper objectMapper;
 
-    public UserSearchCDCConsumer(UserSearchRepository userSearchRepository, UserSearchRepository userSearchRepository1, ObjectMapper objectMapper) {
+    public CategorySearchCDCConsumer(CategorySearchRepository userSearchRepository, UserSearchRepository userSearchRepository1, ObjectMapper objectMapper) {
         super(userSearchRepository, User.class);
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topics = "dbserver1.forecasthub.user", groupId = "user-search-group")
+    @KafkaListener(topics = "dbserver1.forecasthub.category_channel", groupId = "category-search-group")
     @Transactional
     public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
         System.out.printf("Received message: %s, From partition: %d, With offset: %d, From topic: %s%n",
@@ -68,13 +69,13 @@ public class UserSearchCDCConsumer extends GenericService<UserSearchModel,Long, 
 
     public void handleCreateOrUpdate(JsonNode jsonNode) throws IllegalAccessException {
         //TODO: 여기에 ID 바꾸면됨
-        Long userId = jsonNode.get(IDs.USER_ID).asLong();
-        saveOrUpdate(jsonNode, userId, UserSearchModel.class);
+        Long userId = jsonNode.get(IDs.CATEGORY_ID).asLong();
+        saveOrUpdate(jsonNode, userId, CategorySearchModel.class);
     }
 
     public void handleDelete(JsonNode jsonNode) {
         //TODO: 여기에 ID 바꾸면됨
-        Long userId = jsonNode.get(IDs.USER_ID).asLong();
+        Long userId = jsonNode.get(IDs.CATEGORY_ID).asLong();
         deleteById(userId);
     }
 

@@ -17,15 +17,15 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class SubscriptionEventHandler {
+public class SubscriptionCDCEventHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(SubscriptionEventHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionCDCEventHandler.class);
 
     private final UserServiceClient userServiceClient;
     private final ChannelServiceClient channelServiceClient;
     private final ChannelSubscriptionRepository repository;
 
-    public SubscriptionEventHandler(UserServiceClient userServiceClient, ChannelServiceClient channelServiceClient, ChannelSubscriptionRepository repository) {
+    public SubscriptionCDCEventHandler(UserServiceClient userServiceClient, ChannelServiceClient channelServiceClient, ChannelSubscriptionRepository repository) {
         this.userServiceClient = userServiceClient;
         this.channelServiceClient = channelServiceClient;
         this.repository = repository;
@@ -89,10 +89,7 @@ public class SubscriptionEventHandler {
                 if (isSubscribed) {
                     if (!channelSubscription.hasSubscriber(userId)) {
                         channelSubscription.addSubscriber(
-                                userResponse.getDisplayName(),
-                                userResponse.getUserId(),
-                                userResponse.getUserName(),
-                                userResponse.getUserAvatarUrl()
+                                userResponse
                         );
                         logger.info("Added subscriber: userId={} to channelId={}", userId, channelId);
                     } else {
@@ -119,8 +116,7 @@ public class SubscriptionEventHandler {
                                 channelUserResponse.getUserName(),
                                 channelUserResponse.getUserAvatarUrl()
                         );
-
-                        if (!userChannelSubscription.hasFollowing(channelId)) {
+                        if (!userChannelSubscription.hasFollowing(channelSubscriptionId)) {
                             userChannelSubscription.addFollowing(
                                     channelInfo.getDisplayName(),
                                     channelInfo.getUserId(),
@@ -141,7 +137,7 @@ public class SubscriptionEventHandler {
                                 channelResponse.getChannelImageUrl(),
                                 isUserChannel
                         );
-                        if (!userChannelSubscription.hasFollowing(channelId)) {
+                        if (!userChannelSubscription.hasFollowing(channelSubscriptionId)) {
                             userChannelSubscription.addFollowing(
                                     channelInfo.getDisplayName(),
                                     channelInfo.getChannelId(),

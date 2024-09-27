@@ -47,7 +47,7 @@ public class CategoryChannelRegistService {
         );
         categoryChannel.setCategoryChannelId(manualId); // 수동으로 ID 할당
 
-        channelSubscribeClient.publish(userId,manualId, false);
+        channelSubscribeClient.publish(userId,manualId, false,"subscribe");
         try {
             // 대표 이미지 업로드 및 URL 설정
             if (representativeImageFile != null && !representativeImageFile.isEmpty()) {
@@ -84,7 +84,7 @@ public class CategoryChannelRegistService {
                 CategoryChannelStatus.APPLY
         );
         categoryChannel.setCategoryChannelId(IdGenerator.generateId());
-        channelSubscribeClient.publish(userId,categoryChannel.getCategoryChannelId(), false);
+        channelSubscribeClient.publish(userId,categoryChannel.getCategoryChannelId(), false,"subscribe");
 
         try {
             // 대표 이미지 업로드 및 URL 설정
