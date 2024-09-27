@@ -4,6 +4,8 @@ import com.outsider.masterofpredictionbackend.categoryChannelComment.command.app
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.application.dto.CategoryChannelCommentDeleteRequestDTO;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.application.dto.CategoryChannelCommentUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.application.service.CategoryChannelCommentService;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.masterofpredictionbackend.util.UserId;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,31 +23,34 @@ public class CategoryChannelCommentController {
     private final CategoryChannelCommentService categoryChannelCommentService;
 
     @PostMapping
-    public ResponseEntity<Void> addComment(@Valid @RequestBody CategoryChannelCommentAddRequestDTO request) {
+    public ResponseEntity<Void> addComment(@Valid @RequestBody CategoryChannelCommentAddRequestDTO request,
+                                           @UserId CustomUserInfoDTO userInfoDTO) {
 
-        Long commentId = categoryChannelCommentService.addComment(request);
+        Long commentId = categoryChannelCommentService.addComment(request, userInfoDTO);
 
         return ResponseEntity.created(URI.create("/api/v1/category-channels/comment/"+ commentId)).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateComment(@PathVariable(name = "id")Long id,
-                                              @Valid @RequestBody CategoryChannelCommentUpdateRequestDTO request
+                                              @Valid @RequestBody CategoryChannelCommentUpdateRequestDTO request,
+                                              @UserId CustomUserInfoDTO userInfoDTO
     ) {
 
         request.setCommentId(id);
-        categoryChannelCommentService.updateComment(request);
+        categoryChannelCommentService.updateComment(request, userInfoDTO);
 
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable(name = "id")Long id,
-                                              @Valid @RequestBody CategoryChannelCommentDeleteRequestDTO request
+                                              @Valid @RequestBody CategoryChannelCommentDeleteRequestDTO request,
+                                              @UserId CustomUserInfoDTO userInfoDTO
     ) {
 
         request.setCommentId(id);
-        categoryChannelCommentService.deleteComment(request);
+        categoryChannelCommentService.deleteComment(request, userInfoDTO);
 
         return ResponseEntity.noContent().build();
     }

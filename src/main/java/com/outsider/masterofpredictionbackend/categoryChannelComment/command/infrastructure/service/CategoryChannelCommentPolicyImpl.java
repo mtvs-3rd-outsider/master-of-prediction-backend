@@ -5,6 +5,7 @@ import com.outsider.masterofpredictionbackend.categoryChannelComment.command.dom
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.repository.CategoryChannelCommentRepository;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.service.CategoryChannelCommentPolicy;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.domain.service.dto.LoginUserInfo;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +17,8 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
 
     private final CategoryChannelCommentRepository commentRepository;
 
-
     @Override
-    public boolean isLogin() {
-        return true;
-    }
-
-    @Override
-    public LoginUserInfo getLoginUserInfo() {
+    public LoginUserInfo getLoginUserInfo(CustomUserInfoDTO userInfoDTO) {
         LoginUserInfo dummy = new LoginUserInfo();
 
         dummy.setUserNo(1L);
@@ -36,14 +31,14 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
     }
 
     @Override
-    public boolean isMatchUserInfo(CategoryChannelComment comment) {
+    public boolean isMatchUserInfo(CategoryChannelComment comment, CustomUserInfoDTO userInfoDTO) {
 
-        LoginUserInfo loginedUser = getLoginUserInfo();
+        LoginUserInfo loginedUser = getLoginUserInfo(userInfoDTO);
 
         Long writerNo = comment.getWriter().getWriterNo();
 
         /*로그인 여부 확인*/
-        if(!isLogin()) {
+        if(userInfoDTO == null) {
             return false;
         }
 
@@ -91,12 +86,12 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
 
 
     @Override
-    public Optional<CategoryChannelComment> getCommentById(Long id){
+    public Optional<CategoryChannelComment> getCommentById(Long id, CustomUserInfoDTO userInfoDTO){
         Optional<CategoryChannelComment> rawComment = commentRepository.findById(id);
 
         /*관리자는 soft delete 된것도 조회 할 수 있어야 함.*/
-        if(isLogin()){
-            if(getLoginUserInfo().getIsAdmin()){
+        if(userInfoDTO != null){
+            if(getLoginUserInfo(userInfoDTO).getIsAdmin()){
                 return rawComment;
             }
         }
