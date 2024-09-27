@@ -5,8 +5,10 @@ import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.request
 import com.outsider.masterofpredictionbackend.channelsubscribe.query.dto.response.ChannelResponse;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,15 +46,17 @@ public class ChannelServiceClient {
     }
 
     @KafkaListener(topics = CHANNEL_RESPONSE_TOPIC, groupId = "subscription-service")
-    public void consume(String message) {
+    public void consume(String message, Acknowledgment ack) {
         try {
             ChannelResponse response = objectMapper.readValue(message, ChannelResponse.class);
             CompletableFuture<ChannelResponse> future = pendingRequests.remove(response.getCorrelationId());
             if (future != null) {
                 future.complete(response);
             }
+            ack.acknowledge();
         } catch (Exception e) {
             e.printStackTrace();
+            ack.nack(Duration.ofSeconds(1));
         }
     }
 }

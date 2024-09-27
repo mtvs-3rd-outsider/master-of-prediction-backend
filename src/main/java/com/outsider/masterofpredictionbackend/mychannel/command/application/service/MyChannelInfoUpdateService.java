@@ -9,6 +9,7 @@ import com.outsider.masterofpredictionbackend.mychannel.command.domain.repositor
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+
+import java.time.Duration;
 
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.MY_CHANNEL_UPDATE_TOPIC;
 
@@ -70,15 +73,27 @@ public class MyChannelInfoUpdateService {
      */
     @KafkaListener(topics = MY_CHANNEL_UPDATE_TOPIC)
     @Transactional
-    public void consume(String message) throws JsonProcessingException {
+    public void consume(String message, Acknowledgment ack)  {
 
+        try {
             // JSON 문자열을 DTO로 변환
             MyChannelInfoUpdateRequestDTO dto = objectMapper.readValue(message, MyChannelInfoUpdateRequestDTO.class);
 
             // DTO를 사용하여 채널 정보 업데이트
             updateMyChannel(dto);
 
-        log.info("Updated channel from Kafka message: {}", dto);
+            log.info("Updated channel from Kafka message: {}", dto);
 
+            // 트랜잭션 성공 시 수동으로 메시지 ACK
+            ack.acknowledge();
+        } catch (JsonProcessingException e) {
+            log.error("Failed to process message: {}", message, e);
+            ack.nack(Duration.ofSeconds(1));
+        } catch (Exception e) {
+            log.error("Unexpected error occurred: {}", e.getMessage(), e);
+
+            // 트랜잭션 내에서 발생한 오류에 대해 nack 호출하여 메시지 재처리
+            ack.nack(Duration.ofSeconds(1));
+        }
     }
 }

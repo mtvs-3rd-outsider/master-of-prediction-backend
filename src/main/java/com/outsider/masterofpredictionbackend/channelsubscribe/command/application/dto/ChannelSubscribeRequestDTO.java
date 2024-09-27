@@ -8,11 +8,13 @@ public class ChannelSubscribeRequestDTO {
     private Long userId;
     private Long channelId;
     private Boolean isUserChannel;
+    private String actionType;
 
-    public ChannelSubscribeRequestDTO(Long userId, Long channelId, Boolean isUserChannel) {
+    public ChannelSubscribeRequestDTO(Long userId, Long channelId, Boolean isUserChannel, String actionType) {
         this.userId = userId;
         this.channelId = channelId;
         this.isUserChannel = isUserChannel;
+        this.actionType = actionType;
     }
 
     // 기본 생성자, 게터/세터
@@ -40,4 +42,11 @@ public class ChannelSubscribeRequestDTO {
         this.isUserChannel = isUserChannel;
     }
 
+    public String getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(String actionType) {
+        this.actionType = actionType;
+    }
 }

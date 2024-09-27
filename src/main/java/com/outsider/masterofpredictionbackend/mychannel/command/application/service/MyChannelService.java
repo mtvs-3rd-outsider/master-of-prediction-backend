@@ -13,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.MY_CHANNEL_UPDATE_TOPIC;
 
@@ -80,13 +83,29 @@ public class MyChannelService {
      */
     @KafkaListener(topics = MY_CHANNEL_UPDATE_TOPIC)
     @Transactional
-    public void consume(String message) throws JsonProcessingException {
-        // JSON 문자열을 DTO로 변환
-        MyChannelInfoUpdateRequestDTO dto = objectMapper.readValue(message, MyChannelInfoUpdateRequestDTO.class);
+    public void consume(String message, Acknowledgment ack) {
+        try {
+            // JSON 문자열을 DTO로 변환
+            MyChannelInfoUpdateRequestDTO dto = objectMapper.readValue(message, MyChannelInfoUpdateRequestDTO.class);
 
-        // DTO를 사용하여 채널 정보 등록 또는 업데이트
-        saveOrUpdateMyChannel(dto);
+            // DTO를 사용하여 채널 정보 등록 또는 업데이트
+            saveOrUpdateMyChannel(dto);
 
-        log.info("Processed channel from Kafka message: {}", dto);
+            log.info("Processed channel from Kafka message: {}", dto);
+
+            // 메시지 처리 후 수동 ACK 호출
+            ack.acknowledge();
+        } catch (JsonProcessingException e) {
+            log.error("Failed to deserialize Kafka message: {}", message, e);
+
+            // 메시지 처리 실패 시 1초 후 재처리
+            ack.nack(Duration.ofSeconds(1));
+        } catch (Exception e) {
+            log.error("Unexpected error while processing message: {}", e.getMessage(), e);
+
+            // 메시지 처리 실패 시 1초 후 재처리
+            ack.nack(Duration.ofSeconds(1));
+        }
     }
+
 }

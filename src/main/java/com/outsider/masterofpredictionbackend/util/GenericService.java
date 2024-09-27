@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
@@ -16,9 +18,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.kafka.support.Acknowledgment;
 
 import java.util.Optional;
 
+@Slf4j
 public abstract class GenericService<T, ID, S> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericService.class);
@@ -31,7 +35,7 @@ public abstract class GenericService<T, ID, S> {
         this.sourceClass = sourceClass;
     }
 
-    public void saveOrUpdate(JsonNode jsonNode, ID id, Class<T> targetClass, String... setIdMethodNames) {
+    public void saveOrUpdate(JsonNode jsonNode, ID id, Class<T> targetClass, String... setIdMethodNames) throws IllegalAccessException {
         Optional<T> existingEntity = repository.findById(id);
 
         if (existingEntity.isPresent()) {
@@ -72,20 +76,21 @@ public abstract class GenericService<T, ID, S> {
     }
 
 
-    public abstract void consume(ConsumerRecord<String, String> record, Consumer<String, String> consumer);
+    public abstract void consume(ConsumerRecord<String, String> record, Acknowledgment ack);
 
     public void deleteById(ID id) {
         repository.deleteById(id);
     }
 
-    public void retryProcessing(ConsumerRecord<String, String> record, Consumer<String, String> consumer) {
+    public void retryProcessing(ConsumerRecord<String, String> record, Acknowledgment ack) {
         try {
             logger.info("Retrying message consumption for record: {}", record);
-            consume(record, consumer);
+            ack.nack(Duration.ofSeconds(1));
         } catch (Exception e) {
             logger.error("Error during retry of record: {}", record, e);
+            ack.nack(Duration.ofSeconds(1));
         }
     }
-    public abstract void handleCreateOrUpdate(JsonNode jsonNode);
+    public abstract void handleCreateOrUpdate(JsonNode jsonNode) throws IllegalAccessException;
     public abstract void handleDelete(JsonNode jsonNode);
 }

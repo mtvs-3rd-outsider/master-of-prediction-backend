@@ -7,6 +7,15 @@ Content-Type: application/json
     "match_all": {}
   }
 }
+### 이 GET 요청은 'categories' 인덱스에서 'field_name' 필드가 'YYW'와 일치하는 문서를 검색합니다.
+GET http://localhost:9200/categories/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match_all": {}
+  }
+}
 
 
 ###
@@ -93,6 +102,9 @@ GET http://localhost:9200/
 
 ### users 제거
 DELETE http://localhost:9200/users
+### users 제거
+DELETE http://localhost:9200/categories
+
 
 ### users 생성
 PUT http://localhost:9200/users

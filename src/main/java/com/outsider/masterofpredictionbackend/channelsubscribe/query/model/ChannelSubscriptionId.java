@@ -1,7 +1,10 @@
 package com.outsider.masterofpredictionbackend.channelsubscribe.query.model;
 
+import lombok.ToString;
+
 import java.io.Serializable;
 
+@ToString
 public class ChannelSubscriptionId implements Serializable {
 
     private Long channelId;

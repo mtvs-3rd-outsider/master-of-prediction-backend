@@ -43,13 +43,12 @@ public class ChannelSubscriptionService {
                         ("CATEGORY".equalsIgnoreCase(flag) && !channel.isUserChannel())) {
 
                     // Verify if the channel is a user channel
-                    if (channel.isUserChannel()) {
                         // Check if the target user is following the channel
-                        channel.setIsFollowing(isUserFollowingChannel(targetUserId, channel.getChannelId(), true));
-                    } else {
+                        ChannelSubscriptionId targetUserSubscriptionId =new ChannelSubscriptionId(targetUserId,true);
+                        ChannelSubscriptionId channelId = new ChannelSubscriptionId(channel.getChannelId(),channel.isUserChannel());
+                        channel.setFollowing(isUserFollowingChannel(targetUserSubscriptionId, channelId));
+
                         // If it's not a user channel, set isFollowing to null
-                        channel.setIsFollowing(null);
-                    }
                     filteredList.add(channel);
                 }
             }
@@ -72,7 +71,9 @@ public class ChannelSubscriptionService {
             List<UserInfo> subscribersList = channelSubscription.getSubscribers();
             for (UserInfo subscriber : subscribersList) {
                 // targetUserId를 활용하여 특정 사용자가 구독자인지 확인
-                subscriber.setFollowing(isUserFollowingChannel( targetUserId, subscriber.getUserId(),true));
+                ChannelSubscriptionId targetUserSubscriptionId = new ChannelSubscriptionId(targetUserId,true);
+                ChannelSubscriptionId subscriberSubscriptionId = new ChannelSubscriptionId(subscriber.getUserId(),true);
+                subscriber.setFollowing(isUserFollowingChannel( targetUserSubscriptionId,subscriberSubscriptionId ));
             }
             int start = (int) pageable.getOffset();
             int end = Math.min((start + pageable.getPageSize()), subscribersList.size());
@@ -83,8 +84,7 @@ public class ChannelSubscriptionService {
         return Page.empty(pageable);
     }
     // 사용자가 특정 채널을 팔로우하고 있는지 확인
-    public boolean isUserFollowingChannel(Long userId, Long channelId, boolean isUserChannel) {
-        ChannelSubscriptionId userSubscriptionId = new ChannelSubscriptionId(userId, isUserChannel);
+    public boolean isUserFollowingChannel(ChannelSubscriptionId userSubscriptionId, ChannelSubscriptionId channelId) {
         ChannelSubscription userSubscription = repository.findById(userSubscriptionId).orElse(null);
         return userSubscription != null && userSubscription.hasFollowing(channelId);
     }
@@ -94,5 +94,32 @@ public class ChannelSubscriptionService {
         ChannelSubscriptionId channelSubscriptionId = new ChannelSubscriptionId(channelId, isUserChannel);
         ChannelSubscription channelSubscription = repository.findById(channelSubscriptionId).orElse(null);
         return channelSubscription != null && channelSubscription.hasSubscriber(userId);
+    }
+    // 사용자가 팔로우한 채널 수를 가져오는 메서드
+    public Long getFollowingCountByUserId(Long userId, boolean isUserChannel) {
+        ChannelSubscriptionId userSubscriptionId = new ChannelSubscriptionId(userId, isUserChannel);
+        ChannelSubscription userSubscription = repository.findById(userSubscriptionId).orElse(null);
+
+        if (userSubscription != null) {
+            // List of following channels
+            List<ChannelInfo> followingList = userSubscription.getFollowing();
+            return (long) followingList.size(); // Return the count of following channels
+        }
+
+        return 0L; // Return 0 if no subscriptions found
+    }
+
+    // 특정 채널의 구독자 수를 가져오는 메서드
+    public Long getSubscribersCountByChannelId(Long channelId, boolean isUserChannel) {
+        ChannelSubscriptionId channelSubscriptionId = new ChannelSubscriptionId(channelId, isUserChannel);
+        ChannelSubscription channelSubscription = repository.findById(channelSubscriptionId).orElse(null);
+
+        if (channelSubscription != null) {
+            // List of subscribers
+            List<UserInfo> subscribersList = channelSubscription.getSubscribers();
+            return (long) subscribersList.size(); // Return the count of subscribers
+        }
+
+        return 0L; // Return 0 if no subscriptions found
     }
 }

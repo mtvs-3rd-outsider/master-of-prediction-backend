@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class ReflectionUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtil.class);
@@ -26,17 +27,28 @@ public class ReflectionUtil {
         for (Map.Entry<String, Field> targetEntry : targetFieldMap.entrySet()) {
             Field targetField = targetEntry.getValue();
             String jsonFieldName = getJsonFieldName(targetField); // 타겟 JSON 필드 이름 가져오기
-            logger.info("Mapping field: {} to JSON field: {}", targetField.getName(), jsonFieldName);
 
-            Field sourceField = sourceFieldMap.get(jsonFieldName); // 해시맵에서 필드 가져오기
+            // sourceClass에 해당 필드가 없으면 직접 매핑
+            if (!sourceFieldMap.containsKey(jsonFieldName)) {
+                if (node.has(jsonFieldName)) {
+                    try {
+                        Object jsonValue = getValueForFieldWithoutSourceClass(node, targetField, jsonFieldName);
+                        if (jsonValue != null) {
+                            targetField.set(targetEntity, jsonValue);
+                        }
+                    } catch (IllegalAccessException e) {
+                        logger.error("Failed to set field value for field: {}", targetField.getName(), e);
+                    }
+                }
+                continue;
+            }
+
+            // sourceClass에 해당 필드가 있는 경우 처리
+            Field sourceField = sourceFieldMap.get(jsonFieldName);
             if (sourceField != null) {
                 try {
                     Object sourceValue = getValueForField(node, sourceField, jsonFieldName);
-                    logger.info("Source value for field {}: {}", jsonFieldName, sourceValue);
-
                     Object convertedValue = convertValue(sourceValue, targetField.getType());
-                    logger.info("Converted value for field {}: {}", targetField.getName(), convertedValue);
-
                     if (convertedValue != null) {
                         targetField.set(targetEntity, convertedValue);
                     }
@@ -65,6 +77,7 @@ public class ReflectionUtil {
         }
         return fieldCache.get(clazz);
     }
+
     // 클래스의 필드를 @Column 이름을 기준으로 해시맵에 변환하여 캐싱
     private static Map<String, Field> getFieldMapColumnOrField(Class<?> clazz) {
         if (!fieldCache.containsKey(clazz)) {
@@ -88,6 +101,7 @@ public class ReflectionUtil {
         }
         return field.getName(); // 없으면 필드 이름을 그대로 사용
     }
+
     // 필드에서 JSON 필드 이름 가져오기
     private static String getJsonFieldName(Field field) {
         JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
@@ -99,6 +113,37 @@ public class ReflectionUtil {
 
     // JSON 노드에서 값 추출 (Source 필드의 타입에 맞게 변환)
     private static Object getValueForField(JsonNode node, Field field, String jsonFieldName) {
+        Class<?> fieldType = field.getType();
+        JsonNode jsonValue = node.get(jsonFieldName);
+
+        if (jsonValue == null || jsonValue.isNull()) {
+            return null;
+        }
+
+        if (fieldType == Long.class || fieldType == long.class) {
+            return jsonValue.asLong();
+        } else if (fieldType == String.class) {
+            return jsonValue.asText();
+        } else if (fieldType == Integer.class || fieldType == int.class) {
+            return jsonValue.asInt();
+        } else if (fieldType == BigDecimal.class) {
+            return new BigDecimal(jsonValue.asText());
+        } else if (fieldType == Boolean.class || fieldType == boolean.class) {
+            return jsonValue.asBoolean();
+        } else if (fieldType == LocalDate.class) {
+            try {
+                return convertDaysToDate(jsonValue.asInt()); // 숫자를 LocalDate로 변환
+            } catch (Exception e) {
+                logger.error("Failed to parse LocalDate from JSON field: {}", jsonFieldName, e);
+            }
+        } else {
+            return jsonValue.asText();
+        }
+        return null;
+    }
+
+    // sourceClass에 없는 경우 JSON 값을 직접 매핑
+    private static Object getValueForFieldWithoutSourceClass(JsonNode node, Field field, String jsonFieldName) {
         Class<?> fieldType = field.getType();
         JsonNode jsonValue = node.get(jsonFieldName);
 

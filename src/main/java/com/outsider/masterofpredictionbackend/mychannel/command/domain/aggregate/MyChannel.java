@@ -1,11 +1,12 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate;
 
+import com.outsider.masterofpredictionbackend.common.BaseEntity;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.*;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name="MY_CHANNEL")
-public class MyChannel {
+public class MyChannel extends BaseEntity {
 
     @Id
     @Column(name="channel_id")

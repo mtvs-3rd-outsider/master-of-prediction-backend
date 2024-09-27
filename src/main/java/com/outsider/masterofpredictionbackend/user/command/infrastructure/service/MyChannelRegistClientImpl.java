@@ -23,7 +23,7 @@ public class MyChannelRegistClientImpl implements MyChanneRegistClient {
     public void publish(Long userId)  {
         // MyChannelInfoUpdateRequestDTO 객체를 JSON 문자열로 변환
         kafkaTemplate.send(MY_CHANNEL_CREATE_TOPIC, userId.toString());
-        log.info("Sent message to Kafka: {}", userId);
+        log.info("Sent message to Kafka: {} {}","MY_CHANNEL_CREATE_TOPIC" ,userId);
 
     }
 }
