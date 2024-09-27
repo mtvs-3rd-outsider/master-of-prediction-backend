@@ -1,5 +1,8 @@
 package com.outsider.masterofpredictionbackend.categorychannel.query;
 
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.CategoryChannel;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.repository.CategoryChannelRepository;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.UserId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -17,10 +21,12 @@ import java.util.Optional;
 public class CategoryChannelQueryController {
 
     private final CategoryChannelQueryService categoryChannelQueryService;
+    private final CategoryChannelRepository categoryChannelRepository;
 
     @Autowired
-    public CategoryChannelQueryController(CategoryChannelQueryService categoryChannelQueryService) {
+    public CategoryChannelQueryController(CategoryChannelQueryService categoryChannelQueryService, CategoryChannelRepository categoryChannelRepository) {
         this.categoryChannelQueryService = categoryChannelQueryService;
+        this.categoryChannelRepository = categoryChannelRepository;
     }
 
     // 모든 카테고리 채널을 페이지네이션으로 조회 (DTO로 변환 후 반환)
@@ -49,5 +55,9 @@ public class CategoryChannelQueryController {
             @UserId CustomUserInfoDTO userInfoDTO) {
         boolean isOwner = categoryChannelQueryService.isCategoryChannelOwner(channelId, userInfoDTO.getUserId());
         return ResponseEntity.ok(isOwner);
+    }
+    @GetMapping("/apply")
+    public List<CategoryChannel> getChannelsWithApplyStatus() {
+        return categoryChannelRepository.findByCategoryChannelStatus(CategoryChannelStatus.APPLY);
     }
 }
