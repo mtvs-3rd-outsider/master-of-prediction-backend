@@ -8,6 +8,8 @@ import com.outsider.masterofpredictionbackend.betting.query.repository.BettingOp
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingQueryRepository;
 import com.outsider.masterofpredictionbackend.betting.query.repository.UserQueryRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -53,6 +55,24 @@ public class BettingProductQueryService {
             BettingViewDTO dto = maps.get(item.getBettingId());
             dto.addImgUrl(item.getImgUrl());
         }
+        return bettingViewDTOS;
+    }
+    public Page<BettingViewDTO> allByUserId(Long userId, Pageable pageable) {
+        Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBettingByUserId(userId, pageable);
+
+        Map<Long, BettingViewDTO> maps = new HashMap<>();
+        List<Long> ids = new ArrayList<>();
+        for (BettingViewDTO dto : bettingViewDTOS) {
+            ids.add(dto.getBettingId());
+            maps.put(dto.getBettingId(), dto);
+        }
+
+        List<BettingProductImage> bettingProductImages = bettingImageQueryRepository.findAllByIds(ids);
+        for (BettingProductImage item : bettingProductImages) {
+            BettingViewDTO dto = maps.get(item.getBettingId());
+            dto.addImgUrl(item.getImgUrl());
+        }
+
         return bettingViewDTOS;
     }
 

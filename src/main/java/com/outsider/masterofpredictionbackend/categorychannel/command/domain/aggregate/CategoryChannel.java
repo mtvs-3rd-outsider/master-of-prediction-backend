@@ -48,6 +48,10 @@ public class CategoryChannel {
     @Column(name = "CATRGORY_CHANNEL_STATUS")
     private CategoryChannelStatus categoryChannelStatus;
 
+    public void setCategoryChannelStatus(CategoryChannelStatus categoryChannelStatus) {
+        this.categoryChannelStatus = categoryChannelStatus;
+    }
+
     public CategoryChannel() {}
 
     public CategoryChannel(String displayName, long ownerUserId,String description, CommunityRule communityRule, CategoryChannelUserCounts categoryChannelUserCounts, CategoryChannelStatus categoryChannelStatus) {
