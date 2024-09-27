@@ -21,11 +21,11 @@ public class CategoryChannelCommentPolicyImpl implements CategoryChannelCommentP
     public LoginUserInfo getLoginUserInfo(CustomUserInfoDTO userInfoDTO) {
         LoginUserInfo dummy = new LoginUserInfo();
 
-        dummy.setUserNo(1L);
-        dummy.setUserName("dummy userName");
-        dummy.setNickName("dummy nickName");
-        dummy.setRole("dummy role");
-        dummy.setIsAdmin(false);
+        dummy.setUserNo(userInfoDTO.getUserId());
+        dummy.setUserName(userInfoDTO.getUsername());
+        dummy.setNickName(userInfoDTO.getEmail());
+        dummy.setRole(userInfoDTO.getRole().getAuthority());
+        dummy.setIsAdmin(userInfoDTO.getRole().getAuthority().equals("ROLE_ADMIN"));
 
         return dummy;
     }
