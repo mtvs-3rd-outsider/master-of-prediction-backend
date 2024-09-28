@@ -48,25 +48,17 @@ public class ProductCommandService {
             throw new BadRequestException("category or user not exist");
         }
 
-        List<String> mainImgUrls = new ArrayList<>();
+        List<String> mainImgUrls;
         List<String> optionImgUrls;
         List<MultipartFile> tmpOptionImgUrls = bettingProductAndOptionDTO.getOptions().stream().map(BettingProductOptionDTO::getImage).toList();
-
-        for (MultipartFile file: tmpOptionImgUrls){
-            log.info(file.getName());
-        }
 
         try{
             mainImgUrls = saveAndReturnImageNames(bettingProductAndOptionDTO.getMainImgUrl());
             optionImgUrls = saveAndReturnImageNames(tmpOptionImgUrls);
         }catch (Exception e){
-            log.info("image upload fail: {}", e.getMessage());
-            // mainImgUrls.forEach(ImageStorageService::deleteImage);
+            log.error("betting create image upload fail: {}", e.getMessage());
             throw new InvalidImageException("image upload fail");
         }
-        // mainImgUrls.forEach(imageRollbackHelper::addImageToDelete);
-        // optionImgUrls.forEach(imageRollbackHelper::addImageToDelete);
-        // imageRollbackHelper.registerForRollback();
 
         BettingProduct bettingProduct = BettingDTOConverter.convertToBettingProduct(bettingProductAndOptionDTO);
         BettingProduct saveBetting =  bettingProductRepository.save(bettingProduct);
