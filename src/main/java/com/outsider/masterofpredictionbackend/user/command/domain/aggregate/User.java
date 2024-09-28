@@ -2,9 +2,11 @@ package com.outsider.masterofpredictionbackend.user.command.domain.aggregate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.outsider.masterofpredictionbackend.common.BaseEntity;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.*;
-import com.outsider.masterofpredictionbackend.utils.UserPointDeserializer;
+import com.outsider.masterofpredictionbackend.utils.BigDecimalDeserializer;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -40,7 +42,7 @@ public class User extends BaseEntity {
 
     @Column(name = "user_point")
     @JsonProperty("user_point")
-    @JsonDeserialize(using = UserPointDeserializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)  // 숫자를 문자열로 직렬화
     private BigDecimal points;
 
     @Column(name = "user_gender")

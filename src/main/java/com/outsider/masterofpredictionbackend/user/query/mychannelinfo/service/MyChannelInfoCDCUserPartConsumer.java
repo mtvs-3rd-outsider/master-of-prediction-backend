@@ -9,6 +9,7 @@ import com.outsider.masterofpredictionbackend.util.IDs;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -24,9 +25,11 @@ public class MyChannelInfoCDCUserPartConsumer extends GenericService<MyChannelIn
         this.mapper = mapper;
     }
 
-    @KafkaListener(topics = "dbserver1.forecasthub.user",groupId = "my-channel-info-group")
+    @KafkaListener(topics = "dbserver1.forecasthub.user",groupId = "my-channel-info-user-group")
     @Transactional
-    public void consume(ConsumerRecord<String, String> record, Consumer<String, String> consumer) {
+    public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        System.out.printf("Received message: %s, From partition: %d, With offset: %d, From topic: %s%n",
+                record.value(), record.partition(), record.offset(), record.topic());
         String consumedValue = record.value();
 
         if (consumedValue == null) {
@@ -54,16 +57,16 @@ public class MyChannelInfoCDCUserPartConsumer extends GenericService<MyChannelIn
             }
 
             // 수동으로 오프셋 커밋
-            consumer.commitSync();
+            ack.acknowledge();
         } catch (Exception e) {
             logger.error("Unexpected error occurred while consuming record: {}", record, e);
 
             // 재처리 로직 - 메시지 처리 실패 시 재시도하거나 별도의 큐에 추가하는 방식으로 처리
-            retryProcessing(record,consumer);
+            retryProcessing(record,ack);
         }
     }
 
-    public void handleCreateOrUpdate(JsonNode jsonNode) {
+    public void handleCreateOrUpdate(JsonNode jsonNode) throws IllegalAccessException {
         //TODO: 여기에 ID 바꾸면됨
         Long userId = jsonNode.get(IDs.USER_ID).asLong();
         saveOrUpdate(jsonNode, userId, MyChannelInfoQueryModel.class);

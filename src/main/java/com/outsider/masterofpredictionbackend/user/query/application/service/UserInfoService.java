@@ -1,10 +1,14 @@
 package com.outsider.masterofpredictionbackend.user.query.application.service;
 
 
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.CategoryChannel;
+import com.outsider.masterofpredictionbackend.categorychannel.query.CategoryChannelDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

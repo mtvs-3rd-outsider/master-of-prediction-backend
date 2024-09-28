@@ -12,8 +12,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
 
 @Service
 @Slf4j
@@ -29,7 +32,7 @@ public class UserUpdatedEventConsumer {
 
     @KafkaListener(topics = "dbserver1.forecasthub.user", groupId = "User-updated-info-subscribe-group")
     @Transactional
-    public void consume(ConsumerRecord<String, String> record) {
+    public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
 
         String consumedValue = record.value();
 
@@ -55,9 +58,10 @@ public class UserUpdatedEventConsumer {
                 default:
                     logger.warn("Unknown operation type: {}", operation);
             }
-
+            ack.acknowledge();
         } catch (Exception e) {
             logger.error("Error processing Kafka record", e);
+            ack.nack(Duration.ofSeconds(1));
         }
     }
     private void handleCreateOrUpdate(JsonNode after) {

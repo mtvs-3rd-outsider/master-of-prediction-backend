@@ -3,6 +3,8 @@ package com.outsider.masterofpredictionbackend.betting.query.repository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -21,6 +23,12 @@ public interface BettingQueryRepository extends JpaRepository<BettingProduct, Lo
             "JOIN User u ON bp.userId = u.id where u.id = :userId ORDER BY bp.id LIMIT :limit OFFSET :offset")
     List<BettingViewDTO> findBettingByUserIdLimit(Long userId, int limit, int offset);
 
+    @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO(" +
+            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind) " +
+            "FROM BettingProduct bp " +
+            "JOIN User u ON bp.userId = u.id " +
+            "WHERE u.id = :userId")
+    Page<BettingViewDTO> findBettingByUserId(Long userId, Pageable pageable);
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO(" +
             " new com.outsider.masterofpredictionbackend.betting.query.dto.BettingUserDTO(u.id, u.userName, u.displayName, u.tier.name, u.userImg), " +

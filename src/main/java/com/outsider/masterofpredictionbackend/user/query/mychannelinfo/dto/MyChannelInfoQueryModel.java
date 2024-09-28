@@ -49,13 +49,16 @@ public class MyChannelInfoQueryModel {
     @JsonProperty("user_gender")
     private String gender;
 
-    @JsonProperty("points")
+    @JsonProperty("user_point")
     private BigDecimal points;
     @JsonProperty( "banner_img")
     private String bannerImg ;
 
     @JsonProperty("user_img")
     private String userImg ;
+
+    @JsonProperty("tier_name")
+    private String tierName;
 
     @JsonProperty("tier_level")
     private int tierLevel;

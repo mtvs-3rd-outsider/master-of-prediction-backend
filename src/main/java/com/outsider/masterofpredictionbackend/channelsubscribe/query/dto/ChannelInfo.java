@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.channelsubscribe.query.dto;
 
+import com.outsider.masterofpredictionbackend.channelsubscribe.query.model.ChannelSubscriptionId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ public class ChannelInfo {
     private String channelName;
     private String channelImageUrl;
     private boolean isUserChannel;
-    private Boolean isFollowing; // 추가된 필드
+    private boolean isFollowing; // 추가된 필드
     public ChannelInfo(String displayName,Long channelId, String channelName, String channelImageUrl,boolean isUserChannel) {
         this.displayName = displayName;
         this.channelId = channelId;
@@ -21,13 +22,9 @@ public class ChannelInfo {
         this.channelImageUrl = channelImageUrl;
         this.isUserChannel = isUserChannel;
     }
-    public ChannelInfo(String displayName, Long channelId, String channelName, String channelImageUrl, boolean isUserChannel, boolean isFollowing) {
-        this.displayName = displayName;
-        this.channelId = channelId;
-        this.channelName = channelName;
-        this.channelImageUrl = channelImageUrl;
-        this.isUserChannel = isUserChannel;
-        this.isFollowing = isFollowing; // 새로운 필드 초기화
+    public ChannelSubscriptionId getChannelSubscriptionId()
+    {
+        return new ChannelSubscriptionId(channelId,isUserChannel);
     }
     // Getters and Setters 생략
 }

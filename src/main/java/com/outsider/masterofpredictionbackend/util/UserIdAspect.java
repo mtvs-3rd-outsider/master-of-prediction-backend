@@ -39,7 +39,7 @@ public class UserIdAspect {
 //        String userName = request.getHeader("X-User-Name");
         log.info("USER ID LOGIN ASPECT: {}",userIdHeader);
 
-        Long userId = userIdHeader != null ? Long.parseLong(userIdHeader) : 0L;
+        Long userId = userIdHeader != null ? Long.parseLong(userIdHeader) : null;
         log.info("USER ID LOGIN ASPECT: {}",userId);
         Authority role = roleStr != null ? Authority.valueOf(roleStr.toUpperCase()) : Authority.ROLE_USER; // 기본 값 USER로 설정
 

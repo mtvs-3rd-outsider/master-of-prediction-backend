@@ -10,7 +10,10 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.MY_CHANNEL_CREATE_TOPIC;
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.MY_CHANNEL_UPDATE_TOPIC;
@@ -53,10 +56,21 @@ public class MyChannelRegistService {
 
         return savedChannel.getId(); // 등록된 채널의 ID 반환
     }
-    @KafkaListener(topics = MY_CHANNEL_CREATE_TOPIC)
+    @KafkaListener(topics = MY_CHANNEL_CREATE_TOPIC, groupId = "my-channel-create-group")
     @Transactional
-    public void consume(String message)  {
-        registMyChannel(Long.parseLong(message));
-        log.info("Updated channel from Kafka message: {}", message);
+    public void consume(String message, Acknowledgment ack) {
+        try {
+            // 채널 등록 로직 실행
+            registMyChannel(Long.parseLong(message));
+            log.info("Updated channel from Kafka message: {}", message);
+
+            // 메시지 처리 성공 시 ACK 호출
+            ack.acknowledge();
+        } catch (Exception e) {
+            log.error("Failed to process message: {}", e.getMessage());
+
+            // 실패 시 메시지 재처리를 위해 NACK 호출
+            ack.nack(Duration.ofSeconds(1));
+        }
     }
 }

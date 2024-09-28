@@ -15,7 +15,7 @@ public class UserQueryService {
 
     // 페이징을 위한 메서드: displayName으로 검색
     public Page<UserSearchModel> searchByDisplayName(String displayName, Pageable pageable) {
-        return userSearchRepository.findByDisplayNameContaining(displayName, pageable);
+        return userSearchRepository.findByDisplayName(displayName, pageable);
     }
 
     // 페이징을 위한 메서드: userName으로 검색

@@ -13,4 +13,6 @@ public interface BettingImageQueryRepository extends JpaRepository<BettingProduc
 
     @Query("select bpi.imgUrl from BettingProductImage bpi where bpi.bettingId = :id")
     List<String> findByBettingId(Long id);
+
+
 }

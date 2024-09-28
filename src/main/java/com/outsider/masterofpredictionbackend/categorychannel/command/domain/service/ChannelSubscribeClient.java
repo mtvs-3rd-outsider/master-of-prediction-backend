@@ -2,5 +2,5 @@ package com.outsider.masterofpredictionbackend.categorychannel.command.domain.se
 
 public interface ChannelSubscribeClient {
 
-    public void publish( Long userId,Long channelId, boolean isUserChannel);
+    public void publish( Long userId,Long channelId, boolean isUserChannel, String actionType);
 }

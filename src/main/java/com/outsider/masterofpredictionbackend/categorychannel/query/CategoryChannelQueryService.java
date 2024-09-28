@@ -3,6 +3,9 @@ package com.outsider.masterofpredictionbackend.categorychannel.query;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.CategoryChannel;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.repository.CategoryChannelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,12 +22,10 @@ public class CategoryChannelQueryService {
         this.categoryChannelRepository = categoryChannelRepository;
     }
 
-    // 모든 카테고리 채널을 DTO로 변환하여 조회
-    public List<CategoryChannelDTO> getAllCategoryChannels() {
-        List<CategoryChannel> channels = categoryChannelRepository.findAll();
-        return channels.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    // 페이지네이션을 적용하여 모든 카테고리 채널을 DTO로 변환하여 조회
+    public Page<CategoryChannelDTO> getAllCategoryChannels(Pageable pageable) {
+        Page<CategoryChannel> channelPage = categoryChannelRepository.findAll(pageable);
+        return channelPage.map(this::convertToDTO);
     }
 
     // ID로 특정 카테고리 채널 조회 후 DTO로 변환
@@ -50,7 +51,7 @@ public class CategoryChannelQueryService {
         Optional<CategoryChannel> channelOpt = categoryChannelRepository.findById(channelId);
         if (channelOpt.isPresent()) {
             CategoryChannel channel = channelOpt.get();
-            return channel.getOwnerUserId()==userId; // 소유자 확인
+            return channel.getOwnerUserId() == userId; // 소유자 확인
         }
         return false; // 채널이 존재하지 않으면 false 반환
     }
