@@ -31,6 +31,12 @@ public class BettingOrderQueryController {
         return ResponseEntity.ok(bettingOrderQueryService.findUserOrderHistory(userId, bettingId));
     }
 
+    @GetMapping("/api/v1/betting-products/orders")
+    @Operation(summary = "배팅 상품 구매내역 조회")
+    public ResponseEntity<?> getBettingOrderHistory(@RequestParam Long bettingId){
+        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistory(bettingId));
+    }
+
     @GetMapping("/api/v1/betting-products/activity")
     @Operation(summary = "배팅 상품의 구매내역 조회(활동 내역)")
     public ResponseEntity<?> getBettingActivity(@RequestParam Long bettingId){

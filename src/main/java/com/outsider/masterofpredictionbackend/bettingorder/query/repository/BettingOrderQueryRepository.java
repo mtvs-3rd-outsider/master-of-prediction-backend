@@ -1,10 +1,7 @@
 package com.outsider.masterofpredictionbackend.bettingorder.query.repository;
 
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
-import com.outsider.masterofpredictionbackend.bettingorder.query.dto.ActivityDTO;
-import com.outsider.masterofpredictionbackend.bettingorder.query.dto.BettingOrderHistoryDTO;
-import com.outsider.masterofpredictionbackend.bettingorder.query.dto.RatioDTO;
-import com.outsider.masterofpredictionbackend.bettingorder.query.dto.TopHolderDTO;
+import com.outsider.masterofpredictionbackend.bettingorder.query.dto.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

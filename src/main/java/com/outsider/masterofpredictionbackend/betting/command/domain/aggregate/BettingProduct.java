@@ -4,15 +4,17 @@ package com.outsider.masterofpredictionbackend.betting.command.domain.aggregate;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "betting_product")
 @ToString
 @Getter
-public class BettingProduct {
+public class BettingProduct  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +40,10 @@ public class BettingProduct {
 
     @Column(nullable = false)
     private boolean isBlind;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     protected BettingProduct() {
     }

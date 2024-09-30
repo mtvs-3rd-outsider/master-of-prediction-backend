@@ -47,4 +47,17 @@ public class BettingProductAndOptionDTO {
     private Boolean isBlind;
 
     private List<BettingProductOptionDTO> options;
+
+    public BettingProductAndOptionDTO(String title, String content, Long userId, Long categoryCode, LocalDateTime deadLineDateTime, LocalDate deadlineDate, LocalTime deadlineTime, List<MultipartFile> mainImgUrl, Boolean isBlind, List<BettingProductOptionDTO> options) {
+        this.title = title;
+        this.content = content;
+        this.userId = userId;
+        this.categoryCode = categoryCode;
+        this.deadLineDateTime = deadLineDateTime;
+        this.deadlineDate = deadlineDate;
+        this.deadlineTime = deadlineTime;
+        this.mainImgUrl = mainImgUrl;
+        this.isBlind = isBlind;
+        this.options = options;
+    }
 }
