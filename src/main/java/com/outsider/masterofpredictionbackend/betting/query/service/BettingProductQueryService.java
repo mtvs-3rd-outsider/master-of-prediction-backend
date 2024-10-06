@@ -13,10 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -39,17 +36,27 @@ public class BettingProductQueryService {
      * 3. 조회된 이미지를 반환할 dto 에 추가하여 반환
      * NOTE: Mongo DB 적용 검토 필요
      */
-    public List<BettingViewDTO> all() {
-        // NOTE: 임시값
-        int limit = 10;
-        int offset = 0;
-        List<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBettingAllLimit(limit, offset);
+    public Page<BettingViewDTO> all(Pageable pageable) {
+
+        Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBetting(pageable);
+        /**
+         * isBlind를 확인하여 세분화
+         */
+
         Map<Long, BettingViewDTO> maps = new HashMap<>();
         List<Long> ids = new ArrayList<>();
         for (BettingViewDTO dto : bettingViewDTOS) {
             ids.add(dto.getBettingId());
+            if (dto.getIsBlind()) {
+                dto.setUserID(null);
+                dto.setUserName(null);
+                dto.setUserImg(null);
+                dto.setDisplayName(null);
+                dto.setTierName(null);
+            }
             maps.put(dto.getBettingId(), dto);
         }
+
         List<BettingProductImage> bettingProductImages = bettingImageQueryRepository.findAllByIds(ids);
         for (BettingProductImage item : bettingProductImages) {
             BettingViewDTO dto = maps.get(item.getBettingId());
@@ -57,6 +64,7 @@ public class BettingProductQueryService {
         }
         return bettingViewDTOS;
     }
+
     public Page<BettingViewDTO> allByUserId(Long userId, Pageable pageable) {
         Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBettingByUserId(userId, pageable);
 
@@ -97,6 +105,9 @@ public class BettingProductQueryService {
 
     public BettingDetailDTO detail(Long id) {
         BettingDetailDTO bettingDetailDTO = bettingQueryRepository.findBettingById(id);
+        if (bettingDetailDTO.getProduct().getIsBlind()){
+            bettingDetailDTO.setUser(null);
+        }
         bettingDetailDTO.setProductImages(bettingImageQueryRepository.findByBettingId(id));
         bettingDetailDTO.setOptions(bettingOptionQueryRepository.findByBettingId(id));
         return bettingDetailDTO;

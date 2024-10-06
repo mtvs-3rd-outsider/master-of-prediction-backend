@@ -32,7 +32,11 @@ public class BettingViewDTO {
 
     private Boolean isBlind;
 
-    public BettingViewDTO(Long userID, String userName, String displayName, String tierName, String userImg, String title, Long bettingId, Boolean isBlind) {
+    private String blindName;
+
+    public BettingViewDTO(Long userID, String userName, String displayName,
+                          String tierName, String userImg, String title,
+                          Long bettingId, Boolean isBlind) {
         this.userID = userID;
         this.userName = userName;
         this.displayName = displayName;
@@ -42,6 +46,20 @@ public class BettingViewDTO {
         this.imgUrls = new ArrayList<>();
         this.bettingId = bettingId;
         this.isBlind = isBlind;
+    }
+    public BettingViewDTO(Long userID, String userName, String displayName,
+                          String tierName, String userImg, String title,
+                          Long bettingId, Boolean isBlind, String blindName) {
+        this.userID = userID;
+        this.userName = userName;
+        this.displayName = displayName;
+        this.tierName = tierName;
+        this.userImg = userImg;
+        this.title = title;
+        this.imgUrls = new ArrayList<>();
+        this.bettingId = bettingId;
+        this.isBlind = isBlind;
+        this.blindName = blindName;
     }
 
     public void addImgUrl(String imgUrl){

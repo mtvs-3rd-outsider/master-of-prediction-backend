@@ -46,9 +46,14 @@ public class BettingProductAndOptionDTO {
     @NotNull(message = "isBlind is required")
     private Boolean isBlind;
 
+    private String blindName;
+
     private List<BettingProductOptionDTO> options;
 
-    public BettingProductAndOptionDTO(String title, String content, Long userId, Long categoryCode, LocalDateTime deadLineDateTime, LocalDate deadlineDate, LocalTime deadlineTime, List<MultipartFile> mainImgUrl, Boolean isBlind, List<BettingProductOptionDTO> options) {
+    public BettingProductAndOptionDTO(String title, String content, Long userId, Long categoryCode,
+                                      LocalDateTime deadLineDateTime, LocalDate deadlineDate, LocalTime deadlineTime,
+                                      List<MultipartFile> mainImgUrl, Boolean isBlind,
+                                      String blindName, List<BettingProductOptionDTO> options) {
         this.title = title;
         this.content = content;
         this.userId = userId;
@@ -59,5 +64,6 @@ public class BettingProductAndOptionDTO {
         this.mainImgUrl = mainImgUrl;
         this.isBlind = isBlind;
         this.options = options;
+        this.blindName = blindName;
     }
 }

@@ -40,7 +40,7 @@ public class BettingProductController {
     @PostMapping("/api/v1/betting-products")
     @Operation(summary = "배팅 상품 등록")
     public ResponseEntity<?> save(
-           @Valid @ModelAttribute BettingProductAndOptionDTO bettingProductAndOptionDTO,
+               @Valid @ModelAttribute BettingProductAndOptionDTO bettingProductAndOptionDTO,
            @Valid @ModelAttribute BettingProductOptionFormDTO bettingProductOptionFormDTO,
             BindingResult bindingResult,
             @UserId CustomUserInfoDTO customUserInfo
