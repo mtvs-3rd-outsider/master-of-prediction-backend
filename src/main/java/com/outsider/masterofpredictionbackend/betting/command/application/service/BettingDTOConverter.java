@@ -45,7 +45,8 @@ class BettingDTOConverter {
                 bettingProductAndOptionDTO.getCategoryCode(),
                 bettingProductAndOptionDTO.getDeadlineDate(),
                 bettingProductAndOptionDTO.getDeadlineTime(),
-                bettingProductAndOptionDTO.getIsBlind()
+                bettingProductAndOptionDTO.getIsBlind(),
+                bettingProductAndOptionDTO.getBlindName()
         );
     }
 

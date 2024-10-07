@@ -36,12 +36,30 @@ public class BettingDummyConfig {
         this.resourceLoader = resourceLoader;
     }
 
-    private BettingProductAndOptionDTO createBettingProductAndOptionDTO() throws IOException {
+    private List<BettingProductAndOptionDTO> createBettingProductAndOptionDTO() throws IOException {
         String IMAGE_URL = "classpath:static/images";
         String CAT = "/cat.jpg";
         String DOG = "/dog.jpg";
 
-        return new BettingProductAndOptionDTO(
+        return List.of(new BettingProductAndOptionDTO(
+                "title",
+                "content",
+                1L,
+                1L,
+                LocalDateTime.now(),
+                LocalDate.now().plusMonths(1),
+                LocalTime.now(),
+                List.of(getImage(IMAGE_URL + CAT), getImage(IMAGE_URL + DOG)),
+                false,
+                null,
+                List.of(new BettingProductOptionDTO(
+                        "dog",
+                        getImage(IMAGE_URL + DOG)
+                ), new BettingProductOptionDTO(
+                        "cat",
+                        getImage(IMAGE_URL + CAT)
+                ))
+        ), new BettingProductAndOptionDTO(
                 "title",
                 "content",
                 1L,
@@ -51,6 +69,7 @@ public class BettingDummyConfig {
                 LocalTime.now(),
                 List.of(getImage(IMAGE_URL + CAT), getImage(IMAGE_URL + DOG)),
                 true,
+                "blindName",
                 List.of(new BettingProductOptionDTO(
                         "dog",
                         getImage(IMAGE_URL + DOG)
@@ -58,14 +77,17 @@ public class BettingDummyConfig {
                         "cat",
                         getImage(IMAGE_URL + CAT)
                 ))
-        );
+        ));
     }
 
     @Bean
     public CommandLineRunner initBettingDummyData() throws IOException {
         return args -> {
             if (bettingProductRepository.findAll().isEmpty()) {
-                productCommandService.save(createBettingProductAndOptionDTO());
+                List<BettingProductAndOptionDTO> bettingProductAndOptionDTOS = createBettingProductAndOptionDTO();
+                for (BettingProductAndOptionDTO bettingProductAndOptionDTO : bettingProductAndOptionDTOS) {
+                    productCommandService.save(bettingProductAndOptionDTO);
+                }
             }
         };
     }

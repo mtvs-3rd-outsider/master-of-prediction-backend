@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,14 +42,22 @@ public class BettingProduct  {
     @Column(nullable = false)
     private boolean isBlind;
 
+    @Column(nullable = true)
+    private String blindName;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
+    @Column
+    private LocalDateTime updatedAt;
+
     protected BettingProduct() {
     }
 
-    public BettingProduct(String title, String content, long userId ,long categoryCode, LocalDate deadlineDate, LocalTime deadlineTime, boolean isBlind) {
+    public BettingProduct(String title, String content, long userId ,long categoryCode,
+                          LocalDate deadlineDate, LocalTime deadlineTime, boolean isBlind, String blindName) {
         this.title = title;
         this.content = content;
         this.userId = userId;
@@ -56,6 +65,7 @@ public class BettingProduct  {
         this.deadlineDate = deadlineDate;
         this.deadlineTime = deadlineTime;
         this.isBlind = isBlind;
+        this.blindName = blindName;
     }
 
 }

@@ -40,7 +40,8 @@ public class BettingProductServiceTest {
                         1,
                         LocalDate.now(),
                         LocalTime.now(),
-                        false
+                        false,
+                        null
                 ), List.of(new BettingProductImage(
                             1,
                             "test"
@@ -60,7 +61,8 @@ public class BettingProductServiceTest {
                         1,
                         LocalDate.now(),
                         LocalTime.now(),
-                        false
+                        false,
+                        null
                 ), List.of(new BettingProductImage(
                         1,
                         "test"
@@ -104,7 +106,7 @@ public class BettingProductServiceTest {
                 1,
                 LocalDate.now(),
                 LocalTime.now().minusHours(1),
-                false
+                false,null
         );
         BettingProduct bettingProduct2 = new BettingProduct(
                 "title",
@@ -113,7 +115,7 @@ public class BettingProductServiceTest {
                 1,
                 LocalDate.now().plusMonths(1),
                 LocalTime.now().plusHours(1),
-                false
+                false,null
         );
 
         bettingProductRepository.save(bettingProduct);

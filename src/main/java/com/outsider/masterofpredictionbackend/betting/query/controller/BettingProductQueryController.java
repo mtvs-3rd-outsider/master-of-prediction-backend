@@ -25,8 +25,8 @@ public class BettingProductQueryController {
 
     @GetMapping("/api/v1/betting-products")
     @Operation(summary = "배팅 상품 조회")
-    public ResponseEntity<?> getBettingProducts(){
-        return ResponseEntity.ok(bettingProductQueryService.all());
+    public ResponseEntity<?> getBettingProducts(@PageableDefault(page = 0, size = 10,  direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok(bettingProductQueryService.all(pageable));
     }
 
     @GetMapping("/api/v1/betting-products/user")
@@ -34,6 +34,7 @@ public class BettingProductQueryController {
     public ResponseEntity<?> getBettingProductsByUserId(@RequestParam Long userId){
         return ResponseEntity.ok(bettingProductQueryService.allByUserId(userId));
     }
+
     @GetMapping("/api/v1/betting-products/user/v2")
     @Operation(summary = "특정 유저의 상품 조회")
     public ResponseEntity<?> getBettingProductsByUserId(
