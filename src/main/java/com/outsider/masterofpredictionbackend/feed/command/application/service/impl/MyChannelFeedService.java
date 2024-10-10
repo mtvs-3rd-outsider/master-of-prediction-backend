@@ -1,6 +1,8 @@
-package com.outsider.masterofpredictionbackend.feed.command.application.service;
+package com.outsider.masterofpredictionbackend.feed.command.application.service.impl;
 
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.DTOConverterFacade;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.FeedsReadService;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.repository.FeedRepository;
 import com.outsider.masterofpredictionbackend.feed.command.domain.vo.MyChannelParams;

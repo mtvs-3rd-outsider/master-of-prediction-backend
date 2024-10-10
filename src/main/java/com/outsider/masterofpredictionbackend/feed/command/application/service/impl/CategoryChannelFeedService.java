@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.feed.command.application.service;
+package com.outsider.masterofpredictionbackend.feed.command.application.service.impl;
 
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.DTOConverterFacade;
@@ -8,7 +8,6 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.repository.Fee
 import com.outsider.masterofpredictionbackend.feed.command.domain.vo.CategoryChannelParams;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
