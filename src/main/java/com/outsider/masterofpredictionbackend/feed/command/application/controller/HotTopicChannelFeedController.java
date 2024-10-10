@@ -12,12 +12,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/feeds")
-public class HotTopicFeedController {
+public class HotTopicChannelFeedController {
 
     private final FeedReadFacadeService feedReadFacadeService;
 
     @Autowired
-    public HotTopicFeedController(FeedReadFacadeService feedReadFacadeService) {
+    public HotTopicChannelFeedController(FeedReadFacadeService feedReadFacadeService) {
         this.feedReadFacadeService = feedReadFacadeService;
     }
 

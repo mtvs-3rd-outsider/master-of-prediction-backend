@@ -1,7 +1,8 @@
-package com.outsider.masterofpredictionbackend.feed.command.application.service;
+package com.outsider.masterofpredictionbackend.feed.command.application.service.impl;
 
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
-import com.outsider.masterofpredictionbackend.feed.command.application.service.converter.FeedsResponseDTOConverter;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.DTOConverterFacade;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.FeedsReadService;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.FeedConstants;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class HotTopicChannelFeedService implements FeedsReadService<HotTopicParams>{
+public class HotTopicChannelFeedService implements FeedsReadService<HotTopicParams> {
 
     private final FeedRepository feedRepository;
     private final DTOConverterFacade converterFacade;
