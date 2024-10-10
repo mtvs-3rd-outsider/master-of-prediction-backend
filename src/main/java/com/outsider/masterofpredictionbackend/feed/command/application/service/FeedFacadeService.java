@@ -20,30 +20,24 @@ public class FeedFacadeService {
     private final FeedDeleteService feedDeleteService;
     private final ExternalCommentService externalCommentService;
     private final ExternalReplyService externalReplyService;
-    private final FileService fileService;
 
     public FeedFacadeService(FeedCreateService feedCreateService,
                              FeedReadService feedReadService,
                              FeedUpdateService feedUpdateService,
                              FeedDeleteService feedDeleteService,
                              ExternalCommentService externalCommentService,
-                             ExternalReplyService externalReplyService,
-                             FileService fileService) {
+                             ExternalReplyService externalReplyService) {
         this.feedCreateService = feedCreateService;
         this.feedReadService = feedReadService;
         this.feedUpdateService = feedUpdateService;
         this.feedDeleteService = feedDeleteService;
         this.externalCommentService = externalCommentService;
         this.externalReplyService = externalReplyService;
-        this.fileService = fileService;
     }
 
-    @Transactional
+    // Feed 생성 메서드
     public Long createFeed(FeedCreateDTO feedCreateDTO, List<MultipartFile> files, List<String> youtubeUrls) throws Exception {
-        List<String> fileUrls = uploadFiles(files);
-        feedCreateDTO.setMediaFileUrls(fileUrls);
-        feedCreateDTO.setYoutubeUrls(youtubeUrls);
-        return feedCreateService.createFeed(feedCreateDTO);
+        return feedCreateService.createFeed(feedCreateDTO,files,youtubeUrls);
     }
 
     // Feed 조회 메서드
@@ -52,33 +46,10 @@ public class FeedFacadeService {
     }
 
     // Feed 업데이트 메서드
-    @Transactional
     public void updateFeed(Long feedId, FeedUpdateDTO feedUpdateDTO, List<MultipartFile> files, List<String> youtubeUrls) throws Exception {
-        FeedResponseDTO existingFeed = getFeed(feedId);
-        validateUpdatePermission(existingFeed, feedUpdateDTO);
-
         feedUpdateService.updateFeed(feedId, feedUpdateDTO, files, youtubeUrls);
     }
 
-    private List<String> uploadFiles(List<MultipartFile> files) throws Exception {
-        List<String> fileUrls = new ArrayList<>();
-        if (files != null && !files.isEmpty()) {
-            for (MultipartFile file : files) {
-                String fileUrl = fileService.uploadFile(file);
-                fileUrls.add(fileUrl);
-            }
-        }
-        return fileUrls;
-    }
-
-    private void validateUpdatePermission(FeedResponseDTO existingFeed, FeedUpdateDTO feedUpdateDTO) {
-        if(existingFeed.getAuthorType() == AuthorType.GUEST) {
-            if(!(existingFeed.getGuest().getGuestId().equals(feedUpdateDTO.getGuest().getGuestId()))
-                    || !(existingFeed.getGuest().getGuestPassword().equals(feedUpdateDTO.getGuest().getGuestPassword()))) {
-                throw new AccessDeniedException("아이디 혹은 비밀번호가 틀립니다.");
-            }
-        }
-    }
 
     // Feed 삭제 메서드
     public void deleteFeed(Long feedId) {

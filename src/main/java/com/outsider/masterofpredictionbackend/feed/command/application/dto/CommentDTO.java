@@ -9,7 +9,7 @@ import java.util.List;
 public class CommentDTO {
     private Long id;
     private String content;
-    private Long userId;
+    private UserDTO user;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
