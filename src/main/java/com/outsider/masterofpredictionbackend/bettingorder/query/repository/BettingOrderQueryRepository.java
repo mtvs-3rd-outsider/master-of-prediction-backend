@@ -2,9 +2,14 @@ package com.outsider.masterofpredictionbackend.bettingorder.query.repository;
 
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
 import com.outsider.masterofpredictionbackend.bettingorder.query.dto.*;
+import com.outsider.masterofpredictionbackend.bettingorder.query.dto.TotalPointsUntilAgo;
+import jakarta.persistence.SqlResultSetMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface BettingOrderQueryRepository extends JpaRepository<BettingOrder, Long> {
@@ -71,4 +76,15 @@ public interface BettingOrderQueryRepository extends JpaRepository<BettingOrder,
             "ORDER BY " +
             "    gb.bettingOptionId")
     List<RatioDTO> findBettingProductOptionsRatio(Long bettingId);
+
+    @Query("SELECT new com.outsider.masterofpredictionbackend.bettingorder.query.dto.TotalPointsUntilAgo(" +
+            "       bo.bettingOptionId, " +
+            "       SUM(bo.point)) " +
+            "FROM BettingOrder bo " +
+            "WHERE (bo.orderDate < DATE(:filterDate) OR " +  // 날짜 비교
+            "       (bo.orderDate = DATE(:filterDate) AND bo.orderTime <= (:filterTime))) " +  // 시간 비교
+            "AND bo.bettingId = :bettingId " +
+            "GROUP BY bo.bettingOptionId")
+    List<TotalPointsUntilAgo> totalPointsSumUntilOneHourAgo(Long bettingId, LocalDate filterDate, LocalTime filterTime);
+
 }
