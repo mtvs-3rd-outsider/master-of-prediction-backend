@@ -1,17 +1,15 @@
 package com.outsider.masterofpredictionbackend.bettingorder.query.service;
 
-import com.google.api.gax.rpc.NotFoundException;
+import com.outsider.masterofpredictionbackend.betting.query.dto.BettingOptionDTO;
+import com.outsider.masterofpredictionbackend.betting.query.repository.BettingOptionQueryRepository;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingQueryRepository;
-import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
-import com.outsider.masterofpredictionbackend.bettingorder.query.dto.ActivityDTO;
-import com.outsider.masterofpredictionbackend.bettingorder.query.dto.BettingOrderStatisticsDTO;
-import com.outsider.masterofpredictionbackend.bettingorder.query.dto.RatioDTO;
-import com.outsider.masterofpredictionbackend.bettingorder.query.dto.TopHolderDTO;
+import com.outsider.masterofpredictionbackend.bettingorder.query.dto.*;
 import com.outsider.masterofpredictionbackend.bettingorder.query.repository.BettingOrderQueryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -27,11 +25,13 @@ public class BettingOrderQueryService {
     private final BettingOrderQueryRepository bettingOrderQueryRepository;
     private final BettingQueryRepository bettingQueryRepository;
     private final BettingOrderStatistics bettingOrderStatistics;
+    private final BettingOptionQueryRepository bettingOptionQueryRepository;
 
-    public BettingOrderQueryService(BettingOrderQueryRepository bettingOrderQueryRepository, BettingQueryRepository bettingQueryRepository, BettingOrderStatistics bettingOrderStatistics) {
+    public BettingOrderQueryService(BettingOrderQueryRepository bettingOrderQueryRepository, BettingQueryRepository bettingQueryRepository, BettingOrderStatistics bettingOrderStatistics, BettingOptionQueryRepository bettingOptionQueryRepository, BettingOptionQueryRepository bettingOptionQueryRepository1) {
         this.bettingOrderQueryRepository = bettingOrderQueryRepository;
         this.bettingQueryRepository = bettingQueryRepository;
         this.bettingOrderStatistics = bettingOrderStatistics;
+        this.bettingOptionQueryRepository = bettingOptionQueryRepository1;
     }
 
     public Object findUserOrderHistory(Long userId, Long bettingId){
@@ -66,8 +66,38 @@ public class BettingOrderQueryService {
         // List<BettingOrderStatisticsDTO> bettingOrders = bettingOrderQueryRepository.findBettingOrderHistory(bettingId);
         List<BettingOrderStatisticsDTO> bettingOrders = bettingOrderStatistics.findBettingOrderHistory(bettingId);
         Map<Long, List<BettingOrderStatisticsDTO>> organizedOrders = organizeOptions(bettingOrders);
+        if (organizedOrders.isEmpty()) {
+            return initBettingData(timeSlots, bettingId);
+        }
         Map<Long, List<BettingOrderStatisticsDTO>> result = fillMissingTimeDataInMap(organizedOrders, timeSlots);
         calculateAndSetRatios(result);
+        return result;
+    }
+
+    /**
+     * 주문 데이터가 없을 경우 초기화된 데이터를 반환합니다
+     * @param timeSlots 시간 슬롯
+     * @param bettingId 배팅 ID
+     * @return 초기화된 주문 데이터
+     */
+    private Map<Long, List<BettingOrderStatisticsDTO>> initBettingData(List<LocalDateTime> timeSlots, Long bettingId) {
+        // List<BettingOption>
+        List<BettingOptionDTO> arr = bettingOptionQueryRepository.findByBettingId(bettingId);
+        Map<Long, List<BettingOrderStatisticsDTO>> result = new HashMap<>();
+        int ratio = 100 / arr.size();
+        for (BettingOptionDTO bettingOptionDTO : arr) {
+            List<BettingOrderStatisticsDTO> list = new ArrayList<>();
+            for (LocalDateTime timeSlot : timeSlots) {
+                BettingOrderStatisticsDTO bettingOrderStatisticsDTO = new BettingOrderStatisticsDTO();
+                bettingOrderStatisticsDTO.setBettingOptionId(bettingOptionDTO.getOptionId());
+                bettingOrderStatisticsDTO.setOrderDate(timeSlot.toLocalDate());
+                bettingOrderStatisticsDTO.setOrderTime(timeSlot.toLocalTime());
+                bettingOrderStatisticsDTO.setTotalPoints(BigDecimal.ZERO);
+                bettingOrderStatisticsDTO.setRatio(ratio);
+                list.add(bettingOrderStatisticsDTO);
+            }
+            result.put(bettingOptionDTO.getOptionId(), list);
+        }
         return result;
     }
 
@@ -135,6 +165,14 @@ public class BettingOrderQueryService {
 
             // dayTimeSlots 순회
             for (LocalDateTime timeSlot : dayTimeSlots) {
+
+                if (index == 0){
+                    // 첫번째 슬롯에 데이터가 없으면 100 / 옵션의 개수 으로 채움
+                    BettingOrderStatisticsDTO currentOrder = orderStatisticsList.get(index);
+                    currentOrder.setRatio(100 / orders.entrySet().size());
+                    index++;
+                    continue;
+                }
                 // 현재 슬롯에 맞는 데이터가 있는지 확인
                 if (index < orderStatisticsList.size()) {
                     BettingOrderStatisticsDTO currentOrder = orderStatisticsList.get(index);
@@ -181,7 +219,6 @@ public class BettingOrderQueryService {
             // 키가 존재하면 해당 리스트에 추가, 없으면 새 리스트를 만들어 추가
             result.computeIfAbsent(bettingOrder.getBettingOptionId(), k -> new ArrayList<>()).add(bettingOrder);
         }
-        log.info(result.toString());
         return result;
     }
 
@@ -192,12 +229,11 @@ public class BettingOrderQueryService {
      */
     public List<LocalDateTime> createFiveMinuteTimeSlots(LocalDateTime startDateTime) {
         // 현재 시간 가져오기
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime currentDateTime = LocalDateTime.now().withNano(0);
 
         // 5분 단위로 생성된 시간을 담을 리스트
         List<LocalDateTime> timeIntervals = new ArrayList<>();
 
-        // 시작 시간을 5분 단위로 내림 (ex: 08:23 -> 08:20)
         startDateTime = startDateTime.truncatedTo(ChronoUnit.MINUTES).minusMinutes(startDateTime.getMinute() % 5);
 
         // 5분씩 증가하며 리스트에 추가
@@ -206,6 +242,14 @@ public class BettingOrderQueryService {
             startDateTime = startDateTime.plusMinutes(5);
         }
 
+        if (!startDateTime.isEqual(currentDateTime)) {
+            timeIntervals.add(currentDateTime);
+        }
+
         return timeIntervals;
+    }
+
+    public Map<Long, Map<LocalDate, List<StatisticsTimeDTO>>> findBettingOrderHistoryInLastHour(Long bettingId) {
+        return bettingOrderStatistics.findBettingOrderHistoryInLastHour(bettingId);
     }
 }

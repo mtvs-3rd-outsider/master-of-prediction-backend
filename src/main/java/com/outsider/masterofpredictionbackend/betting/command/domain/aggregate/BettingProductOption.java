@@ -13,7 +13,7 @@ public class BettingProductOption {
     private long id;
 
     @Column
-    private long bettingId;
+    private Long bettingId;
 
     @Column
     private String content;

@@ -54,4 +54,10 @@ public class BettingOrderQueryController {
     public ResponseEntity<?> getBettingProductOptions(@RequestParam Long bettingId){
         return ResponseEntity.ok(bettingOrderQueryService.findBettingProductOptionsRatio(bettingId));
     }
+
+    @GetMapping("/api/v1/betting-products/options/last-hour-statistics")
+    @Operation(summary = "배팅 상품 옵션 1시간 통계 조회")
+    public ResponseEntity<?> getBettingProductOptionsStatistics(@RequestParam Long bettingId){
+        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistoryInLastHour(bettingId));
+    }
 }
