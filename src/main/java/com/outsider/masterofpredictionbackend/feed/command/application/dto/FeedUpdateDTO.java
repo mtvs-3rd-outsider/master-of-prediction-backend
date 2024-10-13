@@ -19,21 +19,8 @@ public class FeedUpdateDTO {
     private String title;
     private String content;
     private LocalDate updateAt;
-    private ChannelType channelType;
-    private User user;
-    private Guest guest;
+    private UserDTO user;
+    private GuestDTO guest;
     private List<MediaFile> mediaFiles;
     private List<YouTubeVideo> youTubeVideos;
-
-    public Feed updateFeed(Feed feed) {
-        feed.setAuthorType(this.getAuthorType());
-        feed.setTitle(this.getTitle());
-        feed.setContent(this.getContent());
-        feed.setUpdatedAt(LocalDateTime.now()); // 현재 시간으로 업데이트
-        feed.setChannelType(this.getChannelType());
-        feed.setUser(this.getUser());
-        feed.setGuest(this.getGuest());
-
-        return feed;
-    }
 }

@@ -17,8 +17,8 @@ public class JpaExternalUserService implements ExternalUserService {
         this.userInfoService = userInfoService;
     }
     @Override
-    public UserDTO getUser(String userId) {
-        Optional<UserInfoResponseDTO> optionalDTO = userInfoService.getUserInfoById(Long.parseLong(userId));
+    public UserDTO getUser(Long userId) {
+        Optional<UserInfoResponseDTO> optionalDTO = userInfoService.getUserInfoById(userId);
         if(optionalDTO.isPresent()) {
             UserInfoResponseDTO dto = optionalDTO.get();
             UserDTO userDTO = new UserDTO();

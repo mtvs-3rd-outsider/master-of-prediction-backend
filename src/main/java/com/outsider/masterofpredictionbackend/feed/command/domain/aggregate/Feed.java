@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Channel;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
@@ -43,10 +44,6 @@ public class Feed {
     @Column(name = "feed_updated_at")
     private LocalDateTime updatedAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "feed_channel_type", nullable = false)
-    private ChannelType channelType; // mychannel 또는 categorychannel
-
     @Column(name = "feed_view_count", nullable = false)
     private int viewCount = 0;
 
@@ -65,8 +62,11 @@ public class Feed {
     @Embedded
     private Guest guest;
 
+    @Embedded
+    private Channel channel;
+
     @Column(name = "feed_like")
-    private boolean like;
+    private boolean isLike;
 
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JsonManagedReference
@@ -76,34 +76,22 @@ public class Feed {
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<YouTubeVideo> youtubeVideos = new ArrayList<>();
 
-    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, ChannelType channelType, int viewCount, int likesCount, int commentsCount, int quoteCount, User user, Guest guest, boolean like, List<MediaFile> mediaFiles, List<YouTubeVideo> youtubeVideos) {
+    public Feed(AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, int likesCount, int commentsCount, int quoteCount, User user, Guest guest, Channel channel, boolean isLike, List<MediaFile> mediaFiles, List<YouTubeVideo> youtubeVideos) {
         this.authorType = authorType;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.channelType = channelType;
         this.viewCount = viewCount;
         this.likesCount = likesCount;
         this.commentsCount = commentsCount;
         this.quoteCount = quoteCount;
         this.user = user;
         this.guest = guest;
-        this.like = like;
+        this.channel = channel;
+        this.isLike = isLike;
         this.mediaFiles = mediaFiles;
         this.youtubeVideos = youtubeVideos;
-    }
-
-    public void incrementViewCount() {
-        this.viewCount++;
-    }
-
-    public void decrementLikesCount() {
-        this.likesCount--;
-    }
-
-    public void incrementLikesCount() {
-        this.likesCount++;
     }
 
     @Override
@@ -115,15 +103,15 @@ public class Feed {
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", channelType=" + channelType +
                 ", viewCount=" + viewCount +
                 ", likesCount=" + likesCount +
                 ", commentsCount=" + commentsCount +
                 ", quoteCount=" + quoteCount +
                 ", user=" + user +
                 ", guest=" + guest +
-                ", like=" + like +
-                ", imageFiles=" + mediaFiles +
+                ", channel=" + channel +
+                ", isLike=" + isLike +
+                ", mediaFiles=" + mediaFiles +
                 ", youtubeVideos=" + youtubeVideos +
                 '}';
     }
