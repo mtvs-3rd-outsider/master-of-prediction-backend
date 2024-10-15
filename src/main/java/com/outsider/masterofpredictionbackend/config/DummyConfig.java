@@ -109,24 +109,24 @@ public class DummyConfig {
                 Long ownerId = userIds.get(0); // Set the first user as the owner of the category channel
                 List<CategoryChannelRegistRequestDTO> channelsToCreate = new ArrayList<>();
 
-                // 30개의 더미 채널을 생성
-                for (int i = 1; i <= 30; i++) {
-                    channelsToCreate.add(new CategoryChannelRegistRequestDTO(
-                            "Channel " + i,
-                            "Description for channel " + i,
-                            "[\"No spamming\", \"Be respectful\"]",
-                            CategoryChannelStatus.APPLY
-                    ));
-                }
+//                // 30개의 더미 채널을 생성
+//                for (int i = 1; i <= 30; i++) {
+//                    channelsToCreate.add(new CategoryChannelRegistRequestDTO(
+//                            "Channel " + i,
+//                            "Description for channel " + i,
+//                            "[\"No spamming\", \"Be respectful\"]",
+//                            CategoryChannelStatus.APPLY
+//                    ));
+//                }
 
-                for (int i = 0; i < channelsToCreate.size(); i++) {
-                    CategoryChannelRegistRequestDTO channelDto = channelsToCreate.get(i);
-                    System.out.println("Creating category channel " + (i + 1));
-                    MultipartFile representativeImageFile = null; // You can add dummy files if needed
-                    MultipartFile bannerImageFile = null;
-                    categoryChannelRegistService.registerCategoryChannelWithManualId(channelDto, representativeImageFile, bannerImageFile, 2L, (long) i + 1);
-                    categoryChannelIds.add((long) i + 1); // Track category channel ID
-                }
+//                for (int i = 0; i < channelsToCreate.size(); i++) {
+//                    CategoryChannelRegistRequestDTO channelDto = channelsToCreate.get(i);
+//                    System.out.println("Creating category channel " + (i + 1));
+//                    MultipartFile representativeImageFile = null; // You can add dummy files if needed
+//                    MultipartFile bannerImageFile = null;
+//                    categoryChannelRegistService.registerCategoryChannelWithManualId(channelDto, representativeImageFile, bannerImageFile, 2L, (long) i + 1);
+//                    categoryChannelIds.add((long) i + 1); // Track category channel ID
+//                }
             }
             // 특정 사용자에 대한 추가 작업
             if (userIds.size() >= 3) {

@@ -71,7 +71,6 @@ public class DevSecurityConfig {
                         .requestMatchers("/**").permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
-
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
