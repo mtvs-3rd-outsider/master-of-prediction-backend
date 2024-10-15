@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.channelsubscribe.command.application.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.service.ChannelSubscribeService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.UserId;
@@ -20,9 +21,9 @@ public class ChannelSubscribeController {
 
     // 구독 관리 API: subscribe, unsubscribe, renew 모두 처리
     @PostMapping("/subscription")
-    public void manageSubscription(@RequestBody ChannelSubscribeRequestDTO dto, @UserId CustomUserInfoDTO userInfoDTO) {
+    public void manageSubscription(@RequestBody ChannelSubscribeRequestDTO dto, @UserId CustomUserInfoDTO userInfoDTO) throws JsonProcessingException {
 
         dto.setUserId(userInfoDTO.getUserId());
-        channelSubscribeService.manageSubscription(dto);
+        channelSubscribeService.startSubscriptionSaga(dto);
     }
 }

@@ -27,4 +27,5 @@ public class UserQueryService {
     public Page<UserSearchModel> findAllUsers(Pageable pageable) {
         return userSearchRepository.findAll(pageable);
     }
+
 }

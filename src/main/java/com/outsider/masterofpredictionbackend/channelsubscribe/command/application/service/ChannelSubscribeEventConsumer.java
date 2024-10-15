@@ -47,7 +47,7 @@ public class ChannelSubscribeEventConsumer {
 
 
             // 팔로워 수 증가 또는 감소
-            channelSubscribeService.manageSubscription(dto);
+            channelSubscribeService.startSubscriptionSaga(dto);
             ack.acknowledge();
 
         } catch (JsonProcessingException e) {
