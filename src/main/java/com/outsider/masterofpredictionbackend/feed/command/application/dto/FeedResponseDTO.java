@@ -29,11 +29,12 @@ public class FeedResponseDTO {
     private List<YouTubeVideo> youTubeVideos;
     private List<CommentDTO> commentDTOS;
     private List<ReplyDTO> replyDTOS;
+    private boolean isLike;
     private int likesCount;
     private int commentsCount;
     private int quoteCount;
 
-    public FeedResponseDTO(long id, AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, UserDTO user, GuestDTO guest, List<MediaFile> mediaFiles, List<YouTubeVideo> youTubeVideos, List<CommentDTO> commentDTOS, List<ReplyDTO> replyDTOS, int likesCount, int commentsCount, int quoteCount) {
+    public FeedResponseDTO(long id, AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, UserDTO user, GuestDTO guest, List<MediaFile> mediaFiles, List<YouTubeVideo> youTubeVideos, List<CommentDTO> commentDTOS, List<ReplyDTO> replyDTOS, boolean isLike, int likesCount, int commentsCount, int quoteCount) {
         this.id = id;
         this.authorType = authorType;
         this.title = title;
@@ -47,6 +48,7 @@ public class FeedResponseDTO {
         this.youTubeVideos = youTubeVideos;
         this.commentDTOS = commentDTOS;
         this.replyDTOS = replyDTOS;
+        this.isLike = isLike;
         this.likesCount = likesCount;
         this.commentsCount = commentsCount;
         this.quoteCount = quoteCount;

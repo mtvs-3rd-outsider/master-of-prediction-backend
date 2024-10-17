@@ -6,9 +6,7 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.vo.MyChannelPa
 
 public enum ChannelType {
     MY_CHANNEL(MyChannelParams.class),
-    CATEGORY(CategoryChannelParams.class),
-    HOT_TOPIC(HotTopicParams.class);
-
+    CATEGORY(CategoryChannelParams.class);
     private final Class<?> paramsClass;
 
     ChannelType(Class<?> paramsClass) {
