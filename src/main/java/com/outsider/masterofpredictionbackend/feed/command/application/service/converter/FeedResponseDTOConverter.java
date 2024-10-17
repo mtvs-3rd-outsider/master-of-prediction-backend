@@ -38,6 +38,7 @@ public class FeedResponseDTOConverter implements DTOConverter<FeedResponseDTO, F
                 feed.getYoutubeVideos(),
                 null,
                 null,
+                false,
                 feed.getLikesCount(),
                 feed.getCommentsCount(),
                 feed.getQuoteCount()

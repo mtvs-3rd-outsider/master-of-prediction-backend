@@ -54,6 +54,7 @@ public class FeedsResponseDTOConverter implements DTOConverter<FeedsResponseDTO,
         dto.setYoutubeUrls(feed.getYoutubeVideos().stream()
                 .map(YouTubeVideo::getYoutubeUrl)
                 .collect(Collectors.toList()));
+
         dto.setLikesCount(feed.getLikesCount());
         dto.setCommentsCount(feed.getCommentsCount());
         dto.setQuoteCount(feed.getQuoteCount());
