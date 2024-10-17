@@ -1,10 +1,14 @@
 package com.outsider.masterofpredictionbackend.feed.command.application.controller;
 
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
-import com.outsider.masterofpredictionbackend.feed.command.application.service.FeedReadFacadeService;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.impl.HotTopicChannelFeedService;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.vo.HotTopicParams;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,27 +18,17 @@ import java.util.List;
 @RequestMapping("/api/v1/feeds")
 public class HotTopicChannelFeedController {
 
-    private final FeedReadFacadeService feedReadFacadeService;
+    private final HotTopicChannelFeedService hotTopicChannelFeedService;
 
     @Autowired
-    public HotTopicChannelFeedController(FeedReadFacadeService feedReadFacadeService) {
-        this.feedReadFacadeService = feedReadFacadeService;
+    public HotTopicChannelFeedController(HotTopicChannelFeedService hotTopicChannelFeedService) {
+        this.hotTopicChannelFeedService = hotTopicChannelFeedService;
     }
 
     @GetMapping("/hot-topic")
-    public ResponseEntity<List<FeedsResponseDTO>> getInitialHotTopicFeeds(
-            @RequestParam(defaultValue = "10") int size) {
-        HotTopicParams params = new HotTopicParams();
-        List<FeedsResponseDTO> hotTopicFeeds = feedReadFacadeService.getInitialFeeds(ChannelType.HOT_TOPIC, params, size);
-        return ResponseEntity.ok(hotTopicFeeds);
-    }
-
-    @GetMapping("/hot-topic/next")
-    public ResponseEntity<List<FeedsResponseDTO>> getNextHotTopicFeeds(
-            @RequestParam Long lastId,
-            @RequestParam(defaultValue = "10") int size) {
-        HotTopicParams params = new HotTopicParams();
-        List<FeedsResponseDTO> hotTopicFeeds = feedReadFacadeService.getNextFeeds(ChannelType.HOT_TOPIC, params, lastId, size);
+    public ResponseEntity<Page<FeedsResponseDTO>> getHottopicFeeds(
+            @PageableDefault(page = 0, size = 10, sort = "viewCount", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<FeedsResponseDTO> hotTopicFeeds = hotTopicChannelFeedService.getFeeds(pageable);
         return ResponseEntity.ok(hotTopicFeeds);
     }
 }

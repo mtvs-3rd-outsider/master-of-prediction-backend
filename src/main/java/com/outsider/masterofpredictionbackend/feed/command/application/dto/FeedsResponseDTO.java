@@ -18,6 +18,7 @@ public class FeedsResponseDTO {
     private int viewCount;
     private UserDTO user;
     private GuestDTO guest;
+    private boolean isLike;
     private List<String> mediaFileUrls;
     private List<String> youtubeUrls;
     private int likesCount;
