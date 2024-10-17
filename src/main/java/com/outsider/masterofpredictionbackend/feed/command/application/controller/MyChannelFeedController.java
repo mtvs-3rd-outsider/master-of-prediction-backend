@@ -17,17 +17,9 @@ public class MyChannelFeedController {
     public MyChannelFeedController(FeedReadFacadeService feedReadFacadeService) {
         this.feedReadFacadeService = feedReadFacadeService;
     }
-    @GetMapping("/mychannel/{channelId}")
-    public ResponseEntity<List<FeedsResponseDTO>> getInitialMyChannelFeeds(
-            @RequestParam(defaultValue = "10") int size,
-            @PathVariable long channelId) {
-        MyChannelParams params = new MyChannelParams(channelId);
-        List<FeedsResponseDTO> myChannelFeeds = feedReadFacadeService.getInitialFeeds(ChannelType.MY_CHANNEL, params, size);
-        return ResponseEntity.ok(myChannelFeeds);
-    }
 
-    @GetMapping("/hot-mychannel/{channelId}/next")
-    public ResponseEntity<List<FeedsResponseDTO>> getNextMyChannelFeeds(
+    @GetMapping("/hot-mychannel/{channelId}")
+    public ResponseEntity<List<FeedsResponseDTO>> getMyChannelFeeds(
             @RequestParam Long lastId,
             @RequestParam(defaultValue = "10") int size,
             @PathVariable long channelId) {
