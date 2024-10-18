@@ -21,6 +21,7 @@ public class UserPointImpl implements UserPoint {
 
     @Override
     public BigDecimal find(Long userId) {
+        System.out.println("TEST: " + userId);
         return userCommandRepository.findById(userId).orElseThrow().getPoints();
     }
 

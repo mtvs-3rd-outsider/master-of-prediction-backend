@@ -45,51 +45,56 @@ public class BettingOrderDummyConfig {
             if (test) {
                 List<BettingProduct> bettingProducts = productRepository.findAll();
                 System.out.println("??? : " + bettingProducts);
-                if (bettingProducts.isEmpty()) {
+                if (!bettingProducts.isEmpty()) {
                     Long bettingId = bettingProducts.getFirst().getId();
-                    bettingOrderRepository.saveAll(Arrays.asList(
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(5)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(6)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(8)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(10)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(11)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(14)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(15)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(16)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(20)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(22)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(29)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(35)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(40)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(10)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(94)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(69)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(100)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(120)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now().plusDays(1), LocalTime.now().withNano(0).plusMinutes(130)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(5)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(6)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(8)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(10)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(11)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(14)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(15)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(16)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(20)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(22)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(29)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(35)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(40)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(10)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(94)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(69)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(100)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(120)),
-                                    new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now().plusDays(1), LocalTime.now().withNano(0).plusMinutes(130))
-                            )
-                    );
+                    if (bettingOrderRepository.findByBettingId(bettingId).isEmpty()) {
+
+                        bettingOrderRepository.saveAll(Arrays.asList(
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(5)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(6)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(8)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(10)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(11)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(14)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(15)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(16)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(20)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(22)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(29)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(35)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(40)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(10)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(94)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(69)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(100)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(120)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now().plusDays(1), LocalTime.now().withNano(0).plusMinutes(130)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(5)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(6)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(8)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(10)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(11)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(14)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(15)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(16)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(20)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(22)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(29)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(35)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(40)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(10)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(94)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(69)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(100)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(120)),
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now().plusDays(1), LocalTime.now().withNano(0).plusMinutes(130))
+                                )
+
+                        );
+                    }
+
                 }
             }
         };

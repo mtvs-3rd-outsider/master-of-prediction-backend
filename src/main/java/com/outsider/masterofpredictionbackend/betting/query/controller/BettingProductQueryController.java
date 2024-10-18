@@ -4,8 +4,10 @@ package com.outsider.masterofpredictionbackend.betting.query.controller;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO;
 import com.outsider.masterofpredictionbackend.betting.query.service.BettingProductQueryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,7 +27,10 @@ public class BettingProductQueryController {
 
     @GetMapping("/api/v1/betting-products")
     @Operation(summary = "배팅 상품 조회")
-    public ResponseEntity<?> getBettingProducts(@PageableDefault(page = 0, size = 10,  direction = Sort.Direction.DESC) Pageable pageable){
+    @Parameter(name = "sort", in = ParameterIn.QUERY, hidden = true)
+    public ResponseEntity<?> getBettingProducts(
+            @Parameter(description = "페이지 정보", schema = @Schema(type = "object", defaultValue = "{\n \"page\": 0,\n \"size\": 10\n}"))
+            @PageableDefault(page = 0, size = 10,  direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseEntity.ok(bettingProductQueryService.all(pageable));
     }
 
