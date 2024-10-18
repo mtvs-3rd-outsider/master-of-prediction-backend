@@ -26,12 +26,12 @@ public class UserInfoController {
         this.userService = userService;
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserInfoResponseDTO> getUserInfo(@UserId CustomUserInfoDTO id, @PathVariable Long userId) {
-        //TODO: 권한에 따른 정보 조회 결과 변경
-         Optional<UserInfoResponseDTO> userInfoRequestDTO= userService.getUserInfoById(userId);
-        return userInfoRequestDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
+//    @GetMapping("/me")
+//    public ResponseEntity<UserInfoResponseDTO> getUserInfo(@UserId CustomUserInfoDTO userId) {
+//        //TODO: 권한에 따른 정보 조회 결과 변경
+//        UserInfoResponseDTO userInfoRequestDTO= userService.getUserInfoById(userId.getUserId());
+//        return userInfoRequestDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+//    }
 
 
 

@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.query.application.controller;
 
 import com.outsider.masterofpredictionbackend.common.constant.CustomHttpStatus;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.LoginRequestDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.service.AuthService;
@@ -52,23 +53,16 @@ public class AuthQueryController {
         // HTTP 200 OK 상태 코드 설정
 //        response.setStatus(HttpServletResponse.SC_OK);
         String email = request.getEmail();
-        Optional<UserInfoResponseDTO> userInfo = userService.getUserInfoByEmail(email);
-        if (userInfo.isPresent()) {
-            userInfo.get().setToken(token);
-            return ResponseEntity.ok(userInfo.get());
-        }else
-        {
-            return ResponseEntity.status(CustomHttpStatus.LOGIN_ERROR.value())
-                    .body(CustomHttpStatus.LOGIN_ERROR.getMessage(messageSource));
-        }
+        UserInfoResponseDTO userInfo = userService.getUserInfoByEmail(email);
+        userInfo.setToken(token);
+        return ResponseEntity.ok(userInfo);
+
     }
     @GetMapping("users")
-    public  ResponseEntity<UserInfoResponseDTO> getMemberProfile(@UserId Long userId
-    ) throws IOException {
-        System.out.println(userId);
-        Optional<UserInfoResponseDTO> userInfo = userService.getUserInfoById(userId);
-        return userInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-
+    public  ResponseEntity<UserInfoResponseDTO> getMemberProfile(@UserId CustomUserInfoDTO userId
+    ){
+        UserInfoResponseDTO userInfo = userService.getUserInfoById(userId.getUserId());
+        return ResponseEntity.ok(userInfo);
     }
 
 }

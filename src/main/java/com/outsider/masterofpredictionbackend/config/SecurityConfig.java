@@ -61,13 +61,16 @@ public class SecurityConfig {
     private final UserCommandRepository userCommandRepository;
     private final GetOrFullAuthorizationManager customAuthorizationManager;
     private final UserRegistService userRegistService;
-
-    public SecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    public SecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint) {
         this.userRegistService = userRegistService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtUtil = jwtUtil;
         this.userCommandRepository = userMapper;
         this.customAuthorizationManager = customAuthorizationManager;
+        this.accessDeniedHandler = accessDeniedHandler;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Bean
@@ -85,7 +88,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll()
-                        .requestMatchers("/**").access(customAuthorizationManager)
+//                        .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
@@ -93,6 +96,11 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable
                 ).
                 httpBasic(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable).exceptionHandling(
+                        handler->handler
+                                .accessDeniedHandler(accessDeniedHandler) // 403 발생 시 커스텀 핸들러 사용
+                                .authenticationEntryPoint(authenticationEntryPoint) // 401 발생 시 커스텀 핸들러 사용
+                )
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
 
@@ -130,6 +138,10 @@ public class SecurityConfig {
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
         config.addAllowedOrigin("https://master-of-prediction.shop");
+        config.addAllowedOrigin("https://master-of-prediction.shop");
+        config.addAllowedOrigin("https://master-of-prediction.shop:3334");
+        config.addAllowedOrigin("https://master-of-prediction-frontend-psxd.vercel.app/");
+        config.addAllowedOrigin("https://master-of-prediction-frontend.vercel.app");
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));

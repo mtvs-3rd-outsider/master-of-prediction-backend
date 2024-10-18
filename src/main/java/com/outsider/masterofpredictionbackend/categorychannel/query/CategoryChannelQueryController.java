@@ -28,7 +28,6 @@ public class CategoryChannelQueryController {
         this.categoryChannelQueryService = categoryChannelQueryService;
         this.categoryChannelRepository = categoryChannelRepository;
     }
-
     // 모든 카테고리 채널을 페이지네이션으로 조회 (DTO로 변환 후 반환)
     @GetMapping
     public ResponseEntity<Page<CategoryChannelDTO>> getAllCategoryChannels(

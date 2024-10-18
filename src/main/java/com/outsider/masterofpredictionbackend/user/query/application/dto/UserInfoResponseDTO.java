@@ -21,16 +21,6 @@ public class UserInfoResponseDTO {
     private  String token;
     private LocalDate birthday;
     private String avatarUrl;
-    public UserInfoResponseDTO(Long id, String email, String userName, int age, Gender gender, Location location, Authority authority,LocalDate birthday, String avatarUrl ,String displayName) {
-        this.id = id;
-        this.email = email;
-        this.userName = userName;
-        this.age = age;
-        this.gender = gender;
-        this.location = location;
-        this.authority = authority;
-        this.birthday = birthday;
-        this.avatarUrl= avatarUrl;
-        this.displayName = displayName;
-    }
+    private Boolean isWithdrawal;
+
 }
