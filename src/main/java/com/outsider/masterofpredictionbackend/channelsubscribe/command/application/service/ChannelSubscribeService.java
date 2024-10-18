@@ -74,9 +74,7 @@ public class ChannelSubscribeService {
         try {
             // JSON 문자열을 ChannelSubscriptionEvent 객체로 역직렬화
             ChannelSubscriptionEvent event = objectMapper.readValue(message, ChannelSubscriptionEvent.class);
-            ChannelSubscribeRequestDTO dto = event.getDto();
-
-            if (event.isValidationSuccess()) {
+            ChannelSubscribeRequestDTO dto = event.getDto();if (event.isValidationSuccess()) {
                 // 검증 성공 시 구독 처리 진행
                 producer.sendValidationRequestChannelPart(dto);
                 // 팔로워 및 팔로잉 수 업데이트 이벤트 발행

@@ -84,7 +84,7 @@ public class CategoryChannelRegistService {
                 CategoryChannelStatus.APPLY
         );
         categoryChannel.setCategoryChannelId(IdGenerator.generateId());
-        channelSubscribeClient.publish(userId,categoryChannel.getCategoryChannelId(), false,"subscribe");
+        channelSubscribeClient.publish(userId,categoryChannel.getId(), false,"subscribe");
 
         try {
             // 대표 이미지 업로드 및 URL 설정

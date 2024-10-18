@@ -31,6 +31,12 @@ public class ChannelSubscriptionProducer {
                 false
         );
         String eventJson = objectMapper.writeValueAsString(event);
-        kafkaTemplate.send("user-channel-validation-request-channel-part", eventJson);
+        if(dto.getIsUserChannel())
+        {
+            kafkaTemplate.send("user-channel-validation-request-channel-part", eventJson);
+        }else
+        {
+            kafkaTemplate.send("category-channel-validation-request-channel-part", eventJson);
+        }
     }
 }

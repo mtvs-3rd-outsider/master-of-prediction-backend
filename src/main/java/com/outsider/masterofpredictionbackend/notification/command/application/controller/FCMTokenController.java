@@ -3,8 +3,10 @@ package com.outsider.masterofpredictionbackend.notification.command.application.
 
 
 import com.outsider.masterofpredictionbackend.notification.command.application.dto.FCMTokenRequest;
+import com.outsider.masterofpredictionbackend.notification.command.application.dto.NotificationDTO;
 import com.outsider.masterofpredictionbackend.notification.command.application.service.FCMService;
 import com.outsider.masterofpredictionbackend.notification.command.application.service.FCMTokenService;
+import com.outsider.masterofpredictionbackend.notification.command.domain.aggregate.NotificationType;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.UserId;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +30,11 @@ public class FCMTokenController {
     }
 
     @PostMapping()
-    public ResponseEntity<Map<String, String>> registerToken(@UserId CustomUserInfoDTO customUserInfoDTO, @RequestBody FCMTokenRequest token) {
+    public ResponseEntity<Map<String, String>> registerToken(@UserId CustomUserInfoDTO customUserInfoDTO, @RequestBody FCMTokenRequest tokenRequest) {
         String userId = customUserInfoDTO.getUserId().toString();
-        // Redis에 토큰과 이메일을 저장하는 로직
-        tokenService.saveToken(userId , token.getToken());
-        Set<String> tokens=tokenService.getTokens(userId);
-        tokens.forEach(token2 ->fcmService.sendNotificationToUser(userId, token2, "알림 설정 완료", "로그인시에만 유지 됩니다.") );
+        tokenService.saveToken(userId, tokenRequest.getToken());
+        NotificationDTO notificationDTO = new NotificationDTO( "로그인시에만 유지 됩니다.","알림 설정 완료",Long.parseLong(userId), NotificationType.SYSTEM);
+        fcmService.sendNotification(notificationDTO,tokenRequest.getToken());
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
         return ResponseEntity.ok(response);

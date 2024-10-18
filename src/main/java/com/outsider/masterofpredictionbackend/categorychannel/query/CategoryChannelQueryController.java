@@ -30,12 +30,12 @@ public class CategoryChannelQueryController {
     }
     // 모든 카테고리 채널을 페이지네이션으로 조회 (DTO로 변환 후 반환)
     @GetMapping
-    public ResponseEntity<Page<CategoryChannelDTO>> getAllCategoryChannels(
+    public ResponseEntity<Page<CategoryChannelDTO>> getAllApprovedCategoryChannels(
             @PageableDefault(page = 0, size = 10, sort = "categoryChannelUserCounts", direction = Sort.Direction.ASC) Pageable pageable
     )
 
     {
-        Page<CategoryChannelDTO> channels = categoryChannelQueryService.getAllCategoryChannels(pageable);
+        Page<CategoryChannelDTO> channels = categoryChannelQueryService.getAllApprovedCategoryChannels(pageable);
         return ResponseEntity.ok(channels);
     }
 

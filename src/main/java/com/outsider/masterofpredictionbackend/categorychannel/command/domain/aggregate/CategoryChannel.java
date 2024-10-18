@@ -11,10 +11,10 @@ public class CategoryChannel {
 
     @Id
     @Column(name = "CATEGORY_CHANNEL_ID")
-    private long categoryChannelId;
+    private long id;
 
     public void setCategoryChannelId(long categoryChannelId) {
-        this.categoryChannelId = categoryChannelId;
+        this.id = categoryChannelId;
     }
 
     @Column(name = "DISPLAY_NAME")
@@ -63,8 +63,8 @@ public class CategoryChannel {
         this.categoryChannelStatus = categoryChannelStatus;
     }
 
-    public long getCategoryChannelId() {
-        return categoryChannelId;
+    public long getId() {
+        return id;
     }
 
     public String getDisplayName() {
@@ -102,7 +102,7 @@ public class CategoryChannel {
     @Override
     public String toString() {
         return "CategoryChannel{" +
-                "categoryChannelId=" + categoryChannelId +
+                "categoryChannelId=" + id +
                 ", displayName='" + displayName + '\'' +
                 ", ownerUserId=" + ownerUserId +
                 ", imageUrl='" + imageUrl + '\'' +

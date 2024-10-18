@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.categorychannel.query;
 
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.CategoryChannel;
+import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.repository.CategoryChannelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,11 +24,10 @@ public class CategoryChannelQueryService {
     }
 
     // 페이지네이션을 적용하여 모든 카테고리 채널을 DTO로 변환하여 조회
-    public Page<CategoryChannelDTO> getAllCategoryChannels(Pageable pageable) {
-        Page<CategoryChannel> channelPage = categoryChannelRepository.findAll(pageable);
+    public Page<CategoryChannelDTO> getAllApprovedCategoryChannels(Pageable pageable) {
+        Page<CategoryChannel> channelPage = categoryChannelRepository.findByCategoryChannelStatus(CategoryChannelStatus.APPROVED, pageable);
         return channelPage.map(this::convertToDTO);
     }
-
     // ID로 특정 카테고리 채널 조회 후 DTO로 변환
     public Optional<CategoryChannelDTO> getCategoryChannelById(Long channelId) {
         return categoryChannelRepository.findById(channelId).map(this::convertToDTO);
@@ -36,7 +36,7 @@ public class CategoryChannelQueryService {
     // 엔티티를 DTO로 변환하는 메서드
     private CategoryChannelDTO convertToDTO(CategoryChannel categoryChannel) {
         return new CategoryChannelDTO(
-                categoryChannel.getCategoryChannelId(),
+                categoryChannel.getId(),
                 categoryChannel.getDisplayName(),
                 categoryChannel.getDescription(),
                 categoryChannel.getCommunityRule().toJson(), // Use toJson() to return valid JSON

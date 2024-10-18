@@ -4,5 +4,6 @@ public enum NotificationType {
     MESSAGE,
     SYSTEM,
     ORDER,
+    RESULT,
     PROMOTION
 }
