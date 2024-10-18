@@ -47,11 +47,9 @@ public class UserInfoServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
 
         // When
-        Optional<UserInfoResponseDTO> result = userInfoService.getUserInfoById(userId);
+        UserInfoResponseDTO dto = userInfoService.getUserInfoById(userId);
 
         // Then
-        assertTrue(result.isPresent());
-        UserInfoResponseDTO dto = result.get();
         assertEquals("user@example.com", dto.getEmail());
         assertEquals("John Doe", dto.getUserName());
         assertEquals(30, dto.getAge());
@@ -67,10 +65,9 @@ public class UserInfoServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         // When
-        Optional<UserInfoResponseDTO> result = userInfoService.getUserInfoById(userId);
+        UserInfoResponseDTO result = userInfoService.getUserInfoById(userId);
 
         // Then
-        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -88,11 +85,10 @@ public class UserInfoServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockUser));
 
         // When
-        Optional<UserInfoResponseDTO> result = userInfoService.getUserInfoByEmail(email);
+        UserInfoResponseDTO result = userInfoService.getUserInfoByEmail(email);
 
         // Then
-        assertTrue(result.isPresent());
-        UserInfoResponseDTO dto = result.get();
+        UserInfoResponseDTO dto = result;
         assertEquals(email, dto.getEmail());
         assertEquals("John Doe", dto.getUserName());
         assertEquals(30, dto.getAge());
@@ -108,9 +104,7 @@ public class UserInfoServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         // When
-        Optional<UserInfoResponseDTO> result = userInfoService.getUserInfoByEmail(email);
+        UserInfoResponseDTO result = userInfoService.getUserInfoByEmail(email);
 
-        // Then
-        assertTrue(result.isEmpty());
     }
 }

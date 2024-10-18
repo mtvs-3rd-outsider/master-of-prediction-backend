@@ -18,9 +18,7 @@ public class JpaExternalUserService implements ExternalUserService {
     }
     @Override
     public UserDTO getUser(Long userId) {
-        Optional<UserInfoResponseDTO> optionalDTO = userInfoService.getUserInfoById(userId);
-        if(optionalDTO.isPresent()) {
-            UserInfoResponseDTO dto = optionalDTO.get();
+        UserInfoResponseDTO dto = userInfoService.getUserInfoById(userId);
             UserDTO userDTO = new UserDTO();
             userDTO.setId(dto.getId());
             userDTO.setUserImg(dto.getAvatarUrl());
@@ -29,12 +27,6 @@ public class JpaExternalUserService implements ExternalUserService {
             userDTO.setDisplayName(dto.getDisplayName());
             //권한다름
             return userDTO;
-
-        }else
-        {
-            return null;
-        }
-
 
     }
 }
