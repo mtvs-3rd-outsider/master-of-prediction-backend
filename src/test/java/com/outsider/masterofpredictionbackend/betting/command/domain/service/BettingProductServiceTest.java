@@ -5,7 +5,6 @@ import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.B
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductOption;
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;

@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.betting.command.application.dto.re
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionFormDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
+import com.outsider.masterofpredictionbackend.betting.command.domain.service.BettingProductService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.UserId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,10 +32,12 @@ import java.util.Map;
 public class BettingProductController {
 
     private final ProductCommandService productCommandService;
+    private final BettingProductService bettingProductService;
 
     @Autowired
-    public BettingProductController(ProductCommandService productCommandService) {
+    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService) {
         this.productCommandService = productCommandService;
+        this.bettingProductService = bettingProductService;
     }
 
     @PostMapping("/api/v1/betting-products")
@@ -83,5 +86,32 @@ public class BettingProductController {
             return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(productId, HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("/api/v1/betting-products/settlement")
+    @Operation(summary = "배팅 상품 정산")
+    public ResponseEntity<?> settlementBettingProduct(
+            @RequestParam Long productId,
+            @RequestParam Long optionId,
+            @UserId CustomUserInfoDTO customUserInfo,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getAllErrors().forEach(error -> {
+                String fieldName = ((FieldError) error).getField();
+                String errorMessage = error.getDefaultMessage();
+                errors.put(fieldName, errorMessage);
+            });
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        try{
+            bettingProductService.settlementBettingProduct(productId, customUserInfo.getUserId(), optionId);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().build();
     }
 }

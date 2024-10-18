@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.betting.command.application.service;
 
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionDTO;
+import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductState;
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductRepository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.*;
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductAndOptionDTO;
@@ -9,7 +10,6 @@ import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.B
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductOption;
 import com.outsider.masterofpredictionbackend.file.MinioService;
 import com.outsider.masterofpredictionbackend.utils.ImageRollbackHelper;
-import com.outsider.masterofpredictionbackend.utils.ImageStorageService;
 import com.outsider.masterofpredictionbackend.utils.InvalidImageException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -59,8 +59,8 @@ public class ProductCommandService {
             log.error("betting create image upload fail: {}", e.getMessage());
             throw new InvalidImageException("image upload fail");
         }
-
         BettingProduct bettingProduct = BettingDTOConverter.convertToBettingProduct(bettingProductAndOptionDTO);
+        bettingProduct.setState(BettingProductState.PROGRESS);
         BettingProduct saveBetting =  bettingProductRepository.save(bettingProduct);
         List<BettingProductImage> bettingProductImages = BettingDTOConverter.convertToBettingProductImage(saveBetting.getId(), mainImgUrls);
         List<BettingProductOption> bettingProductOptions = BettingDTOConverter.convertToBettingProductOption(saveBetting.getId(), bettingProductAndOptionDTO.getOptions(), optionImgUrls);

@@ -33,17 +33,12 @@ public class BettingOrderCommandService {
 
     @Transactional
     public BettingOrder buyBettingProduct(BettingOrderDTO bettingOrderDTO) {
-        // TODO: 임시 유저 번호
-        // bettingOrderDTO.setUserId(1L);
-        bettingOrderDTO.setUserId(userService.getUserId());
 
-        bettingOrderDTO.setOrderDate(LocalDate.now());
-        bettingOrderDTO.setOrderTime(LocalTime.now().withNano(0));
 
         validatePoint(bettingOrderDTO.getPoint(), bettingOrderDTO.getUserId());
         validateBettingProductStatus(bettingOrderDTO.getBettingId());
 
-        userPoint.pointUpdate(bettingOrderDTO.getUserId(), bettingOrderDTO.getPoint());
+        userPoint.pointUpdate(bettingOrderDTO.getUserId(), bettingOrderDTO.getPoint().negate());
         return bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
     }
 

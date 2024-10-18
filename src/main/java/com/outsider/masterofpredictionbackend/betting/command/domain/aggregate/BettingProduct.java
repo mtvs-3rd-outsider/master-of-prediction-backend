@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.betting.command.domain.aggregate;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,7 +29,7 @@ public class BettingProduct  {
     private String content;
 
     @Column
-    private long userId;
+    private Long userId;
 
     @Column(nullable = false)
     private long categoryCode;
@@ -44,6 +45,10 @@ public class BettingProduct  {
 
     @Column(nullable = true)
     private String blindName;
+
+    @Setter
+    @Column(nullable = false)
+    private BettingProductState state = BettingProductState.PROGRESS;
 
     @CreationTimestamp
     @Column(updatable = false)
