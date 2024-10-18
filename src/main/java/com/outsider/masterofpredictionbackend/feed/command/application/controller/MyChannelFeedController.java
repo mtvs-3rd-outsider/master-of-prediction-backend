@@ -24,11 +24,12 @@ public class MyChannelFeedController {
     }
     @GetMapping("/{channelType}/{channelId}")
     public ResponseEntity<Page<FeedsResponseDTO>> getChannelFeeds(
-            @PathVariable ChannelType channelType,
+            @PathVariable String channelType,
             @PathVariable Long channelId,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<FeedsResponseDTO> channelFeeds = myChannelFeedService.getFeeds(channelType, channelId, pageable);
+        ChannelType type = ChannelType.valueOf(channelType.toUpperCase());
+        Page<FeedsResponseDTO> channelFeeds = myChannelFeedService.getFeeds(type, channelId, pageable);
         return ResponseEntity.ok(channelFeeds);
     }
 }
