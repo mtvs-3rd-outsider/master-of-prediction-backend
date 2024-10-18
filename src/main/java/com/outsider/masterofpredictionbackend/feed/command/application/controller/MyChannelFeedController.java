@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/feeds")
+@RequestMapping("/api/v1/myfeeds")
 public class MyChannelFeedController {
     private final MyChannelFeedService myChannelFeedService;
 
