@@ -20,7 +20,6 @@ public class FeedCreateDTO {
     private AuthorType authorType;
     private String title;
     private String content;
-    private ChannelType channelType;
     private UserDTO user;
     private GuestDTO guest;
     private Channel channel;

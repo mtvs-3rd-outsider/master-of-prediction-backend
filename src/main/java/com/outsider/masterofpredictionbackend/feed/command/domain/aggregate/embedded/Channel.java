@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Channel {
     @Column(name = "feed_channel_id")
-    private long channelId;
+    private Long channelId = 1L;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "feed_channel_type", nullable = false)
-    private ChannelType channelType;
+    @Column(name = "feed_channel_type")
+    private ChannelType channelType = ChannelType.MYCHANNEL;;
 
     @Override
     public String toString() {

@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Guest {
 
-    @Column(name = "feed_guest_id")
+    @Column(name = "feed_guest_id",nullable =true)
     private String guestId;
 
-    @Column(name = "feed_guest_password")
+    @Column(name = "feed_guest_password",nullable =true)
     private String guestPassword;
 
     @Override

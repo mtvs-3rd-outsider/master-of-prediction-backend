@@ -66,7 +66,7 @@ public class Feed {
     private Channel channel;
 
     @Column(name = "feed_like")
-    private boolean isLike;
+    private Boolean isLike;
 
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JsonManagedReference

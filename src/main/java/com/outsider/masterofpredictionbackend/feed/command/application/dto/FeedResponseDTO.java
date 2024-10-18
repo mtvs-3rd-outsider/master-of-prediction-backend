@@ -29,7 +29,7 @@ public class FeedResponseDTO {
     private List<YouTubeVideo> youTubeVideos;
     private List<CommentDTO> commentDTOS;
     private List<ReplyDTO> replyDTOS;
-    private boolean isLike;
+    private Boolean isLike;
     private int likesCount;
     private int commentsCount;
     private int quoteCount;

@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class ChannelDTO {
-    private long channelId;
+    private Long channelId;
     private ChannelType channelType;
 }

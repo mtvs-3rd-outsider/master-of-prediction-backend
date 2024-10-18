@@ -4,6 +4,9 @@ import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedC
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.MediaFile;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Channel;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
 import com.outsider.masterofpredictionbackend.util.DTOConverter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +51,8 @@ public class FeedCreateDTOConverter implements DTOConverter<FeedCreateDTO, Feed>
                 0,
                 0,
                 userDTOConverter.toEntity(dto.getUser()),
-                guestDTOConverter.toEntity(dto.getGuest()),
-                dto.getChannel(),
+                new Guest(),//수정요청
+                new Channel(),//수정요청
                 false,
                 new ArrayList<>(),
                 new ArrayList<>()
