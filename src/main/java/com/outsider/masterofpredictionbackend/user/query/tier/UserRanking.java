@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_rankings", indexes = {
-        @Index(name = "rank_index", columnList = "rank")
+        @Index(name = "rank_index", columnList = "user_rank") // 변경된 컬럼 이름 반영
 })
 public class UserRanking {
 
@@ -17,7 +17,7 @@ public class UserRanking {
     @Column(nullable = false)
     private int points;
 
-    @Column(nullable = false)
+    @Column(name = "user_rank", nullable = false) // 컬럼 이름 변경
     private int rank;
 
     @Column(name = "last_updated", nullable = false)
