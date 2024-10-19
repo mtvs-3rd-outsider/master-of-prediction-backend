@@ -23,61 +23,61 @@ public class Tier {
         this.level = level;
     }
 
-    // Factory method to determine tier based on points and betting activity
-    public static Tier getTierByPointsAndBets(int points, int numberOfBets) {
+    // Factory method to determine tier based on percentile and betting activity
+    public static Tier getTierByPercentileAndBets(double percentile) {
         int minimumBetsRequired = 1;
-        if (points < 0 || numberOfBets < 0) {
-            throw new IllegalArgumentException("Points and number of bets cannot be negative");
+        if (percentile < 0 || percentile > 100 ) {
+            throw new IllegalArgumentException("Percentile must be between 0 and 100, and number of bets cannot be negative");
         }
 
         // Check if the user has made the minimum required bets, otherwise they are unranked
-        if (numberOfBets < minimumBetsRequired) {
-            return new Tier("UNRANKED", 0);
-        }
+//        if (numberOfBets < minimumBetsRequired) {
+//            return new Tier("UNRANKED", 0);
+//        }
 
-        // Determine the tier based on points if the betting requirement is met
-        if (points < 100) {
-            return new Tier("SEER", 1);
-        } else if (points < 200) {
-            return new Tier("SEER", 2);
-        } else if (points < 300) {
-            return new Tier("SEER", 3);
-        } else if (points < 400) {
-            return new Tier("SEER", 4);
-        } else if (points < 500) {
-            return new Tier("SEER", 5);
-        } else if (points < 600) {
-            return new Tier("NOVICE", 1);
-        } else if (points < 700) {
-            return new Tier("NOVICE", 2);
-        } else if (points < 800) {
-            return new Tier("NOVICE", 3);
-        } else if (points < 900) {
-            return new Tier("NOVICE", 4);
-        } else if (points < 1000) {
-            return new Tier("NOVICE", 5);
-        } else if (points < 1500) {
-            return new Tier("ORACLE", 1);
-        } else if (points < 2000) {
-            return new Tier("ORACLE", 2);
-        } else if (points < 2500) {
-            return new Tier("ORACLE", 3);
-        } else if (points < 3000) {
-            return new Tier("ORACLE", 4);
-        } else if (points < 3500) {
-            return new Tier("ORACLE", 5);
-        } else if (points < 4000) {
-            return new Tier("PROPHET", 1);
-        } else if (points < 4500) {
-            return new Tier("PROPHET", 2);
-        } else if (points < 5000) {
-            return new Tier("PROPHET", 3);
-        } else if (points < 6000) {
-            return new Tier("PROPHET", 4);
-        } else if (points < 7000) {
-            return new Tier("PROPHET", 5);
-        } else {
+        // Determine the tier based on percentile if the betting requirement is met
+        if (percentile >= 99) {
             return new Tier("NOSTRADAMUS", 1);
+        } else if (percentile >= 95) {
+            return new Tier("PROPHET", 5);
+        } else if (percentile >= 90) {
+            return new Tier("PROPHET", 4);
+        } else if (percentile >= 85) {
+            return new Tier("PROPHET", 3);
+        } else if (percentile >= 80) {
+            return new Tier("PROPHET", 2);
+        } else if (percentile >= 75) {
+            return new Tier("PROPHET", 1);
+        } else if (percentile >= 70) {
+            return new Tier("ORACLE", 5);
+        } else if (percentile >= 65) {
+            return new Tier("ORACLE", 4);
+        } else if (percentile >= 60) {
+            return new Tier("ORACLE", 3);
+        } else if (percentile >= 55) {
+            return new Tier("ORACLE", 2);
+        } else if (percentile >= 50) {
+            return new Tier("ORACLE", 1);
+        } else if (percentile >= 45) {
+            return new Tier("NOVICE", 5);
+        } else if (percentile >= 40) {
+            return new Tier("NOVICE", 4);
+        } else if (percentile >= 35) {
+            return new Tier("NOVICE", 3);
+        } else if (percentile >= 30) {
+            return new Tier("NOVICE", 2);
+        } else if (percentile >= 25) {
+            return new Tier("NOVICE", 1);
+        } else if (percentile >= 20) {
+            return new Tier("SEER", 5);
+        } else if (percentile >= 15) {
+            return new Tier("SEER", 4);
+        } else if (percentile >= 10) {
+            return new Tier("SEER", 3);
+        } else if (percentile >= 5) {
+            return new Tier("SEER", 2);
+        } else {
+            return new Tier("SEER", 1);
         }
     }
 
