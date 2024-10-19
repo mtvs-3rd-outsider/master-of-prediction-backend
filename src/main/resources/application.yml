@@ -19,6 +19,8 @@ server:
   tomcat:
     uri-encoding: UTF-8
 spring:
+  main:
+    allow-bean-definition-overriding: true
   messages:
     basename: messages
     encoding: UTF-8
