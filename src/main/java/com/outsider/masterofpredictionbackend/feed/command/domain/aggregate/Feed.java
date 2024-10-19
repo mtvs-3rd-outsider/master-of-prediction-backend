@@ -65,7 +65,7 @@ public class Feed {
     @Embedded
     private Channel channel;
 
-    @Column(name = "feed_like")
+    @Column(name = "feed_islike")
     private Boolean isLike;
 
     @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)

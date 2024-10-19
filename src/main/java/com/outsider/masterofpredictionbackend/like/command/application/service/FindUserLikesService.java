@@ -25,28 +25,15 @@ public class FindUserLikesService {
         this.likeRepository = likeRepository;
     }
 
-    @Cacheable(value = "userLikes", key = "#userId + '_' + #viewType + '_' + #targetId")
-    public boolean hasUserLiked(String userId, ViewType viewType, LikeType likeType, Long targetId) {
-        return likeRepository.existsByUserIdAndViewTypeAndLikeTypeAndTargetId(userId, viewType, likeType, targetId);
-    }
+    //유저가 해당 feed에 좋아요를 눌렀는지
+    public UserLikeDTO checkUserLike(Long userId,LikeType likeType, ViewType viewType, Long targetId) {
 
-    public List<UserLikeDTO> batchCheckUserLikes(String userId, ViewType viewType, List<Long> targetIds) {
-        List<UserLikeDTO> result = new ArrayList<>();
+        boolean likeExists = likeRepository.existsByUserIdAndViewTypeAndLikeTypeAndTargetId(userId, viewType, likeType, targetId);
 
-        for (LikeType likeType : LikeType.values()) {
-            List<Like> likes = likeRepository.findByUserIdAndViewTypeAndLikeTypeAndTargetIdIn(userId, viewType, likeType, targetIds);
-
-            Map<Long, Boolean> likeStatusMap = targetIds.stream()
-                    .collect(Collectors.toMap(
-                            id -> id,
-                            id -> likes.stream().anyMatch(like -> like.getTargetId().equals(id))
-                    ));
-
-            likeStatusMap.forEach((targetId, isLiked) ->
-                    result.add(new UserLikeDTO(likeType, targetId, isLiked))
-            );
-        }
-
-        return result;
+            if (likeExists) {
+                return new UserLikeDTO(likeType, targetId, true);
+            }else{
+                return new UserLikeDTO(likeType, targetId, false);
+            }
     }
 }

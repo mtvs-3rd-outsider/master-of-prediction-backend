@@ -10,7 +10,7 @@ public class UserDTOConverter implements DTOConverter<UserDTO, User> {
     @Override
     public User toEntity(UserDTO dto) {
         return new User(
-                dto.getId()
+                dto.getUserId()
         );
     }
 

@@ -33,7 +33,9 @@ public class FeedController {
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             @RequestParam(value = "youtubeUrls", required = false) List<String> youtubeUrls) {
         try {
+            System.out.println(feedDataJson);
             FeedCreateDTO feedCreateDTO = objectMapper.readValue(feedDataJson, FeedCreateDTO.class);
+            System.out.println(feedCreateDTO);
             Long feedId = feedFacadeService.createFeed(feedCreateDTO, files, youtubeUrls);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ResponseMessage("피드가 성공적으로 생성되었습니다.", feedId));

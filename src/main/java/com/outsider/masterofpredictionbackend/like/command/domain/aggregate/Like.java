@@ -11,9 +11,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "tbl_like",
-        indexes = @Index(name = "idx_user_view_like_target", columnList = "user_id, view_type, like_type, target_id"),
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "view_type", "like_type", "target_id"}))
+@Table(name = "tbl_like")
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,18 +22,17 @@ public class Like {
     @Column(name = "like_type")
     private LikeType likeType;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "view_type")
     private ViewType viewType;
 
     @Column(name = "user_id",nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(name = "target_id", nullable = false)
     private Long targetId;
 
-    public Like(LikeType likeType, ViewType viewType, String userId, Long targetId) {
+    public Like(LikeType likeType, ViewType viewType, Long userId, Long targetId) {
         this.likeType = likeType;
         this.viewType = viewType;
         this.userId = userId;

@@ -20,7 +20,7 @@ public class JpaExternalUserService implements ExternalUserService {
     public UserDTO getUser(Long userId) {
         UserInfoResponseDTO dto = userInfoService.getUserInfoById(userId);
             UserDTO userDTO = new UserDTO();
-            userDTO.setId(dto.getId());
+            userDTO.setUserId(dto.getId());
             userDTO.setUserImg(dto.getAvatarUrl());
             userDTO.setUserName(dto.getUserName());
             //티어넣어야함

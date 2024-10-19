@@ -7,7 +7,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 @Data
 public class UserDTO {
-    private Long id;
+    private Long userId;
     private String userName;
     private String displayName;
     private BigDecimal points;
