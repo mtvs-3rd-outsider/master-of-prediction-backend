@@ -13,8 +13,7 @@ public interface BettingOrderRepository extends JpaRepository<BettingOrder, Long
     Collection<Object> findByBettingId(Long bettingId);
 
 
-    @Query("select  bo.bettingOptionId, bo.userId, sum(bo.point) from BettingOrder bo where bo.bettingId = :productId group by bo.bettingOptionId, bo.userId")
-    List<Object[]> calculateUserOrderPointSumByProductId(Long productId);
 
+    @Query("SELECT bo.userId FROM BettingOrder bo WHERE bo.bettingId = :productId")
     List<Long> findUserIdsByBettingId(Long productId);
 }
