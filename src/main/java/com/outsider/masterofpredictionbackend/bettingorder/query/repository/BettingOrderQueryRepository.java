@@ -1,14 +1,13 @@
 package com.outsider.masterofpredictionbackend.bettingorder.query.repository;
 
+import com.outsider.masterofpredictionbackend.betting.command.infrastructure.service.BettingOrderSumPointDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
 import com.outsider.masterofpredictionbackend.bettingorder.query.dto.*;
 import com.outsider.masterofpredictionbackend.bettingorder.query.dto.TotalPointsUntilAgo;
-import jakarta.persistence.SqlResultSetMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -87,4 +86,9 @@ public interface BettingOrderQueryRepository extends JpaRepository<BettingOrder,
             "GROUP BY bo.bettingOptionId")
     List<TotalPointsUntilAgo> totalPointsSumUntilOneHourAgo(Long bettingId, LocalDate filterDate, LocalTime filterTime);
 
+
+    @Query("select new com.outsider.masterofpredictionbackend.betting.command.infrastructure.service.BettingOrderSumPointDTO(" +
+            " bo.bettingOptionId, bo.userId, sum(bo.point) " +
+            ") from BettingOrder bo where bo.bettingId = :productId group by bo.bettingOptionId, bo.userId")
+    List<BettingOrderSumPointDTO> calculateUserOrderPointSumByProductId(Long productId);
 }

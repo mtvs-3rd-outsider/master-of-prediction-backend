@@ -6,15 +6,12 @@ import com.outsider.masterofpredictionbackend.user.command.infrastructure.servic
 import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.service.UserInfoService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
