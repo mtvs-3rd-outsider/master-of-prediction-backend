@@ -44,7 +44,7 @@ public class BettingCommentService {
         long userNo = loginInfo.getUserId();
         String writer;
         if(dto.isAnonymous()){
-            writer = policy.generateAnonymousName();
+            writer = policy.generateAnonymousName(dto.getBettingId(), loginInfo.getUserId());
         }else{// 익명이 아닌 경우
             writer = loginInfo.getUsername();
         }

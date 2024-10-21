@@ -7,5 +7,5 @@ public interface BettingChannelCommentPolicy {
 
     boolean isMatchUserInfo(BettingChannelComment comment, CustomUserInfoDTO loginUserInfo);
 
-    String generateAnonymousName();
+    String generateAnonymousName(Long bettingId, Long userId);
 }
