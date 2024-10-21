@@ -14,6 +14,6 @@ public interface BettingOrderRepository extends JpaRepository<BettingOrder, Long
 
 
 
-    @Query("SELECT bo.userId FROM BettingOrder bo WHERE bo.bettingId = :productId")
+    @Query("SELECT bo.userId FROM BettingOrder bo WHERE bo.bettingId = :productId group by bo.userId")
     List<Long> findUserIdsByBettingId(Long productId);
 }
