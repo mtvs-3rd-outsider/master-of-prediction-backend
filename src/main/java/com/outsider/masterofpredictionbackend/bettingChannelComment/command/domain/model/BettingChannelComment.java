@@ -39,6 +39,11 @@ public class BettingChannelComment extends BaseEntity {
     private Content content;
 
     /**
+     * 익명 댓글인지 여부
+     * */
+    private boolean isAnonymous;
+
+    /**
      * 해당 댓글을 좋아요 한 수
      * */
     private int likeCnt;
@@ -56,12 +61,13 @@ public class BettingChannelComment extends BaseEntity {
      * @param content 댓글 정보
      * @param writer  작성자 정보
      */
-    public BettingChannelComment(Long channelId, Content content, WriterInfo writer) {
+    public BettingChannelComment(Long channelId, Content content, WriterInfo writer, boolean isAnonymous) {
         this.bettingChannelId = channelId;
         this.content = content;
         this.writer = writer;
         this.likeCnt = 0;
         this.replyCnt = 0;
+        this.isAnonymous = isAnonymous;
     }
 
     public void setContent(Content content) {

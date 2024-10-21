@@ -17,6 +17,8 @@ public class WriterInfo {
      * */
     private Long writerNo;
 
+    private String writerName;
+
 
     protected WriterInfo() {}
 
@@ -25,7 +27,8 @@ public class WriterInfo {
      *
      * @param writerNo  댓글 작성자 고유 번호
      */
-    public WriterInfo(Long writerNo) {
+    public WriterInfo(Long writerNo, String writerName) {
         this.writerNo = writerNo;
+        this.writerName = writerName;
     }
 }

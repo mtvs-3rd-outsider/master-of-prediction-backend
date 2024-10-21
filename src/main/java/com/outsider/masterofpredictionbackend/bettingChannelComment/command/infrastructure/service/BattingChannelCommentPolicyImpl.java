@@ -35,4 +35,9 @@ public class BattingChannelCommentPolicyImpl implements BettingChannelCommentPol
 
         return false;
     }
+
+    @Override
+    public String generateAnonymousName() {
+        return "익명댓글1";
+    }
 }

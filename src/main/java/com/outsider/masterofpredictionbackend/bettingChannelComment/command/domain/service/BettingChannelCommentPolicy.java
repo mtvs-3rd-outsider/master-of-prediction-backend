@@ -6,4 +6,6 @@ import com.outsider.masterofpredictionbackend.user.command.application.dto.Custo
 public interface BettingChannelCommentPolicy {
 
     boolean isMatchUserInfo(BettingChannelComment comment, CustomUserInfoDTO loginUserInfo);
+
+    String generateAnonymousName();
 }
