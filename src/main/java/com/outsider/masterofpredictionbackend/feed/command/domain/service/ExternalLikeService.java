@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface ExternalLikeService {
     int getLikeCount(LikeDTO dto);
-    UserLikeDTO checkUserLike(Long userId, LikeType likeType, ViewType viewType, Long targetId);
+    boolean checkUserLike(Long userId, LikeType likeType, ViewType viewType, Long targetId);
     void saveLikeCount(LikeCountIdDTO likeCountIdDTO);
 }

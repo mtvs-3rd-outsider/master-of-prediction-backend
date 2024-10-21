@@ -26,14 +26,7 @@ public class FindUserLikesService {
     }
 
     //유저가 해당 feed에 좋아요를 눌렀는지
-    public UserLikeDTO checkUserLike(Long userId,LikeType likeType, ViewType viewType, Long targetId) {
-
-        boolean likeExists = likeRepository.existsByUserIdAndViewTypeAndLikeTypeAndTargetId(userId, viewType, likeType, targetId);
-
-            if (likeExists) {
-                return new UserLikeDTO(likeType, targetId, true);
-            }else{
-                return new UserLikeDTO(likeType, targetId, false);
-            }
+    public boolean checkUserLike(Long userId, LikeType likeType, ViewType viewType, Long targetId) {
+        return likeRepository.existsByUserIdAndLikeTypeAndViewTypeAndTargetId(userId, likeType, viewType, targetId);
     }
 }

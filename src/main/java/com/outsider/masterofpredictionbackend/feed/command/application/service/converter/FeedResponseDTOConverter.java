@@ -3,26 +3,24 @@ package com.outsider.masterofpredictionbackend.feed.command.application.service.
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalUserService;
-import com.outsider.masterofpredictionbackend.util.DTOConverter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FeedResponseDTOConverter implements DTOConverter<FeedResponseDTO, Feed> {
-    private final UserDTOConverter userDTOConverter;
-    private final GuestDTOConverter guestDTOConverter;
+public class FeedResponseDTOConverter {
+    private final ExternalUserService externalUserService;
 
-    public FeedResponseDTOConverter(UserDTOConverter userDTOConverter, GuestDTOConverter guestDTOConverter) {
-        this.userDTOConverter = userDTOConverter;
-        this.guestDTOConverter = guestDTOConverter;
+
+    public FeedResponseDTOConverter(ExternalUserService externalUserService) {
+        this.externalUserService = externalUserService;
     }
 
 
-    @Override
+
     public Feed toEntity(FeedResponseDTO dto) {
         return null;
     }
 
-    @Override
+
     public FeedResponseDTO fromEntity(Feed feed) {
         return new FeedResponseDTO(
                 feed.getId(),
@@ -32,21 +30,16 @@ public class FeedResponseDTOConverter implements DTOConverter<FeedResponseDTO, F
                 feed.getCreatedAt(),
                 feed.getUpdatedAt(),
                 feed.getViewCount(),
-                feed.getUser().getUserId() != null ?userDTOConverter.fromEntity(feed.getUser()) : null,
-                guestDTOConverter.fromEntity(feed.getGuest()),
+                feed.getUser().getUserId() != null ?  externalUserService.getUser(feed.getUser().getUserId()): null,
+                null,
                 feed.getMediaFiles(),
                 feed.getYoutubeVideos(),
                 null,
                 null,
-                false,
+                feed.getIsLike(),
                 feed.getLikesCount(),
                 feed.getCommentsCount(),
                 feed.getQuoteCount()
         );
-    }
-
-    @Override
-    public Class<FeedResponseDTO> getDtoClass() {
-        return FeedResponseDTO.class;
     }
 }

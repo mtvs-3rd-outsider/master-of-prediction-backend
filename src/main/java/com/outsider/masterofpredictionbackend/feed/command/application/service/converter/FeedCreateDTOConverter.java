@@ -6,8 +6,6 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Medi
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Channel;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
-import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
-import com.outsider.masterofpredictionbackend.util.DTOConverter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,9 +13,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-
 @Component
-public class FeedCreateDTOConverter implements DTOConverter<FeedCreateDTO, Feed> {
+public class FeedCreateDTOConverter {
 
     private final UserDTOConverter userDTOConverter;
     private final GuestDTOConverter guestDTOConverter;
@@ -28,12 +25,12 @@ public class FeedCreateDTOConverter implements DTOConverter<FeedCreateDTO, Feed>
         this.guestDTOConverter = guestDTOConverter;
     }
 
-    @Override
+
     public Feed toEntity(FeedCreateDTO dto) {
         return getFeed(dto);
     }
 
-    @Override
+
     public FeedCreateDTO fromEntity(Feed entity) {
         return null;
     }
@@ -72,8 +69,4 @@ public class FeedCreateDTOConverter implements DTOConverter<FeedCreateDTO, Feed>
         return feed;
     }
 
-    @Override
-    public Class<FeedCreateDTO> getDtoClass(){
-        return FeedCreateDTO.class;
-    }
 }

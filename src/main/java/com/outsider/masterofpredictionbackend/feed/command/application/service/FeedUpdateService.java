@@ -32,9 +32,9 @@ public class FeedUpdateService {
     }
 
     @Transactional
-    public void updateFeed(Long feedId, FeedUpdateDTO feedUpdateDTO, List<MultipartFile> files, List<String> youtubeUrls)throws Exception {
+    public void updateFeed(Long feedId, FeedUpdateDTO feedUpdateDTO, List<MultipartFile> files, List<String> youtubeUrls,Long userId)throws Exception {
 
-        FeedResponseDTO existingFeed = feedReadService.getFeed(feedId);
+        FeedResponseDTO existingFeed = feedReadService.getFeed(feedId,feedUpdateDTO.getUser().getUserId());
         validateUpdatePermission(existingFeed, feedUpdateDTO);
 
         Feed feed = feedRepository.findById(feedId)

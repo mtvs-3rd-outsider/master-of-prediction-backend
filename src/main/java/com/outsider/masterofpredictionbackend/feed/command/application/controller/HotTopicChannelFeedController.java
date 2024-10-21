@@ -4,6 +4,8 @@ import com.outsider.masterofpredictionbackend.feed.command.application.dto.Feeds
 import com.outsider.masterofpredictionbackend.feed.command.application.service.impl.HotTopicChannelFeedService;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.vo.HotTopicParams;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.masterofpredictionbackend.util.UserId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +29,9 @@ public class HotTopicChannelFeedController {
 
     @GetMapping("/hot-topic")
     public ResponseEntity<Page<FeedsResponseDTO>> getHottopicFeeds(
-            @PageableDefault(page = 0, size = 10, sort = "viewCount", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<FeedsResponseDTO> hotTopicFeeds = hotTopicChannelFeedService.getFeeds(pageable);
+            @PageableDefault(page = 0, size = 10, sort = "viewCount", direction = Sort.Direction.DESC) Pageable pageable,
+            @UserId CustomUserInfoDTO customUserInfoDTO) {
+        Page<FeedsResponseDTO> hotTopicFeeds = hotTopicChannelFeedService.getFeeds(pageable,customUserInfoDTO.getUserId());
         return ResponseEntity.ok(hotTopicFeeds);
     }
 }
