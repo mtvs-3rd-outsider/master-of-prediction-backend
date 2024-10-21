@@ -41,13 +41,13 @@ public class FeedFacadeService {
     }
 
     // Feed 조회 메서드
-    public FeedResponseDTO getFeed(Long feedId) {
-        return feedReadService.getFeed(feedId);
+    public FeedResponseDTO getFeed(Long feedId,Long userId) {
+        return feedReadService.getFeed(feedId,userId);
     }
 
     // Feed 업데이트 메서드
-    public void updateFeed(Long feedId, FeedUpdateDTO feedUpdateDTO, List<MultipartFile> files, List<String> youtubeUrls) throws Exception {
-        feedUpdateService.updateFeed(feedId, feedUpdateDTO, files, youtubeUrls);
+    public void updateFeed(Long feedId, FeedUpdateDTO feedUpdateDTO, List<MultipartFile> files, List<String> youtubeUrls,Long userId) throws Exception {
+        feedUpdateService.updateFeed(feedId, feedUpdateDTO, files, youtubeUrls,userId);
     }
 
 

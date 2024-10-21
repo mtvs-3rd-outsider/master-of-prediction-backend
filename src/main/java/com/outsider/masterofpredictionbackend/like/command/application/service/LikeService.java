@@ -8,6 +8,7 @@ import com.outsider.masterofpredictionbackend.like.command.domain.service.Extern
 import com.outsider.masterofpredictionbackend.like.query.application.dto.LikeCountIdDTO;
 import com.outsider.masterofpredictionbackend.like.query.domain.aggregate.entity.LikeCountId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LikeService {
@@ -18,17 +19,26 @@ public class LikeService {
         this.likeRepository = likeRepository;
         this.externalLikeCountService = externalLikeCountService;
     }
+    @Transactional
+    public boolean isLike(LikeDTO dto) {
+        LikeCountIdDTO likeCountIdDto = new LikeCountIdDTO(dto.getTargetId(), dto.getLikeType());
 
-    public boolean isLike(LikeDTO dto){
-        Like like = LikeDTOConverter.toEntity(dto);
-        LikeCountIdDTO likeCountIdDto = new LikeCountIdDTO(dto.getTargetId(),dto.getLikeType());
-        if(likeRepository.existsByUserIdAndViewTypeAndLikeTypeAndTargetId(dto.getUserId(),dto.getViewType(),dto.getLikeType(),dto.getTargetId())){
-            likeRepository.delete(like);
-            externalLikeCountService.updateLikeCount(likeCountIdDto,false);
+        boolean exists = likeRepository.existsByUserIdAndLikeTypeAndViewTypeAndTargetId(
+                dto.getUserId(), dto.getLikeType(), dto.getViewType(), dto.getTargetId()
+        );
+
+        if (exists) {
+            // 좋아요가 이미 존재하면 삭제
+            likeRepository.deleteByUserIdAndLikeTypeAndViewTypeAndTargetId(
+                    dto.getUserId(), dto.getLikeType(), dto.getViewType(), dto.getTargetId()
+            );
+            externalLikeCountService.updateLikeCount(likeCountIdDto, false);
             return false;
-        }else{
+        } else {
+            // 좋아요가 존재하지 않으면 추가
+            Like like = LikeDTOConverter.toEntity(dto);
             likeRepository.save(like);
-            externalLikeCountService.updateLikeCount(likeCountIdDto,true);
+            externalLikeCountService.updateLikeCount(likeCountIdDto, true);
             return true;
         }
     }

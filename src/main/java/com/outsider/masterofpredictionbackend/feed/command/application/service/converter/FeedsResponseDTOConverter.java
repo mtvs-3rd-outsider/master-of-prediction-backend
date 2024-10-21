@@ -6,13 +6,12 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.MediaFile;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalUserService;
-import com.outsider.masterofpredictionbackend.util.DTOConverter;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
-public class FeedsResponseDTOConverter implements DTOConverter<FeedsResponseDTO, Feed> {
+public class FeedsResponseDTOConverter{
 
     private final ExternalUserService externalUserService;
     private final GuestDTOConverter guestDTOConverter;
@@ -23,12 +22,10 @@ public class FeedsResponseDTOConverter implements DTOConverter<FeedsResponseDTO,
     }
 
 
-    @Override
     public Feed toEntity(FeedsResponseDTO dto) {
         return null;
     }
 
-    @Override
     public FeedsResponseDTO fromEntity(Feed feed) {
         FeedsResponseDTO dto = new FeedsResponseDTO();
         dto.setId(feed.getId());
@@ -38,7 +35,7 @@ public class FeedsResponseDTOConverter implements DTOConverter<FeedsResponseDTO,
         dto.setCreatedAt(feed.getCreatedAt());
         dto.setUpdatedAt(feed.getUpdatedAt());
         dto.setViewCount(feed.getViewCount());
-
+        dto.setIsLike(feed.getIsLike());
         if (feed.getUser() != null && feed.getUser().getUserId() != null) {
             dto.setUser(externalUserService.getUser(feed.getUser().getUserId()));
         }
@@ -59,10 +56,5 @@ public class FeedsResponseDTOConverter implements DTOConverter<FeedsResponseDTO,
         dto.setCommentsCount(feed.getCommentsCount());
         dto.setQuoteCount(feed.getQuoteCount());
         return dto;
-    }
-
-    @Override
-    public Class<FeedsResponseDTO> getDtoClass() {
-        return FeedsResponseDTO.class;
     }
 }

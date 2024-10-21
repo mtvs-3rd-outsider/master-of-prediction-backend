@@ -8,7 +8,6 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.service.Extern
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalLikeService;
 import com.outsider.masterofpredictionbackend.like.command.domain.aggregate.enumtype.LikeType;
 import com.outsider.masterofpredictionbackend.like.query.application.dto.LikeCountIdDTO;
-import com.outsider.masterofpredictionbackend.util.DTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +19,12 @@ import java.util.List;
 public class FeedCreateService {
     private final FeedRepository feedRepository;
     private final ExternalFileService externalFileService;
-    private final DTOConverterFacade converterFacade;
+    private final FeedCreateDTOConverter converterFacade;
     private final ExternalLikeService externalLikeService;
     @Autowired
     public FeedCreateService(FeedRepository feedRepository,
                              ExternalFileService externalFileService,
-                             DTOConverterFacade converterFacade,
+                             FeedCreateDTOConverter converterFacade,
                              ExternalLikeService externalLikeService) {
         this.feedRepository = feedRepository;
         this.externalFileService = externalFileService;

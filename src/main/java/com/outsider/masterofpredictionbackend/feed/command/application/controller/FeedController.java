@@ -6,6 +6,9 @@ import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedC
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedUpdateDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.FeedFacadeService;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.masterofpredictionbackend.util.UserId;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,9 +49,9 @@ public class FeedController {
     }
 
     @GetMapping("/{feedId}")
-    public ResponseEntity<FeedResponseDTO> getFeed(@PathVariable Long feedId) {
+    public ResponseEntity<FeedResponseDTO> getFeed(@PathVariable Long feedId, @UserId CustomUserInfoDTO userInfoDTO) {
         try {
-            FeedResponseDTO feed = feedFacadeService.getFeed(feedId);
+            FeedResponseDTO feed = feedFacadeService.getFeed(feedId,userInfoDTO.getUserId());
             return ResponseEntity.ok(feed);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -64,9 +67,10 @@ public class FeedController {
             @PathVariable Long feedId,
             @RequestPart("feedData") FeedUpdateDTO feedUpdateDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
-            @RequestPart(value = "youtubeUrls", required = false) List<String> youtubeUrls) {
+            @RequestPart(value = "youtubeUrls", required = false) List<String> youtubeUrls,
+            @UserId CustomUserInfoDTO customUserInfoDTO) {
         try {
-            feedFacadeService.updateFeed(feedId, feedUpdateDTO, files, youtubeUrls);
+            feedFacadeService.updateFeed(feedId, feedUpdateDTO, files, youtubeUrls,customUserInfoDTO.getUserId());
             return ResponseEntity.ok(new ResponseMessage("피드가 성공적으로 수정되었습니다."));
         } catch (AccessDeniedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)

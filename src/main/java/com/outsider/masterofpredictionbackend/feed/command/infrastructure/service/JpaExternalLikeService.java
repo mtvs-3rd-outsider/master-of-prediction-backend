@@ -29,7 +29,7 @@ public class JpaExternalLikeService implements ExternalLikeService {
     }
 
     @Override
-    public UserLikeDTO checkUserLike(Long userId, LikeType likeType, ViewType viewType, Long targetId) {
+    public boolean checkUserLike(Long userId, LikeType likeType, ViewType viewType, Long targetId) {
         return findUserLikesService.checkUserLike(userId,likeType,viewType,targetId);
     }
 
