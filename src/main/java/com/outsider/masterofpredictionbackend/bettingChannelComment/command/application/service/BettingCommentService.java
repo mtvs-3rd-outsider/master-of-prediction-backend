@@ -42,6 +42,12 @@ public class BettingCommentService {
 
         /*사용자 정보 추출*/
         long userNo = loginInfo.getUserId();
+        String writer;
+        if(dto.isAnonymous()){
+            writer = policy.generateAnonymousName(dto.getBettingId(), loginInfo.getUserId());
+        }else{// 익명이 아닌 경우
+            writer = loginInfo.getUsername();
+        }
 
         /*배팅 댓글 객체 생성*/
         BettingChannelComment comment = new BettingChannelComment(
@@ -51,8 +57,10 @@ public class BettingCommentService {
                         dto.getImageUrl()
                 ),
                 new WriterInfo(
-                        userNo
-                )
+                        userNo,
+                        writer
+                ),
+                dto.isAnonymous()
         );
 
         BettingChannelComment result = repository.save(comment);

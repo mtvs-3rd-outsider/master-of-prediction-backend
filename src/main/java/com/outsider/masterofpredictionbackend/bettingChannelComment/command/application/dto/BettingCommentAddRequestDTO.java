@@ -19,4 +19,7 @@ public class BettingCommentAddRequestDTO {
 
     @Schema(description = "이미지 url")
     private String imageUrl;// 이미지 혹은 이모티콘 url
+    
+    @Schema(description = "익명댓글 여부")
+    private boolean isAnonymous;
 }
