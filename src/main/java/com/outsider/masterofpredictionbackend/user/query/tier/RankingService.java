@@ -24,8 +24,7 @@ public class RankingService {
     @Transactional
     public void updateRanking(Long userId, int newPoints) {
         // 사용자 랭킹 조회 또는 신규 생성
-        Optional<UserRanking> optionalRanking = rankingRepository.findById(userId);
-        UserRanking ranking = optionalRanking.orElse(new UserRanking(userId));
+       UserRanking ranking = rankingRepository.findById(userId).orElse(new UserRanking(userId));
 
         int oldRank = ranking.getRank();
         int newRank = calculateRank(newPoints);
