@@ -155,6 +155,12 @@ public class BettingProductService {
         bettingProduct.setState(BettingProductState.SETTLING);
         bettingRepository.save(bettingProduct);
 
+        List<Long> userIds = bettingOrderService.findUserIdsByProductId(productId);
+        List<User> users = userService.findUsersByIds(userIds);
+        for (User user : users) {
+            log.info("send settlement notification to user: {}", user.getId());
+            bettingKafkaService.sendRankEvent(users);
+        }
         /*
          * 배팅을 주문한 사용자에게 알림 전송
          */
