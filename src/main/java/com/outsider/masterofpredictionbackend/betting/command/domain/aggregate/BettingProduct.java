@@ -58,6 +58,10 @@ public class BettingProduct  {
     @Column
     private LocalDateTime updatedAt;
 
+    @Setter
+    @Column(nullable = true)
+    private Long winningOption;
+
     protected BettingProduct() {
     }
 

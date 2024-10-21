@@ -130,6 +130,7 @@ public class BettingProductService {
             }
         }
 
+        bettingProduct.setWinningOption(optionId);
         bettingProduct.setState(BettingProductState.SETTLING);
         bettingRepository.save(bettingProduct);
 

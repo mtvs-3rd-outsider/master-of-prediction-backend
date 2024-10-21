@@ -19,4 +19,15 @@ public class BettingContentDTO {
     private String content;
     private Long userId;
     private String blindName;
+    private Long winningOption;
+
+    public BettingContentDTO(LocalDate deadlineDate, LocalTime deadlineTime, Boolean isBlind, String title, String content, Long userId, String blindName) {
+        this.deadlineDate = deadlineDate;
+        this.deadlineTime = deadlineTime;
+        this.isBlind = isBlind;
+        this.title = title;
+        this.content = content;
+        this.userId = userId;
+        this.blindName = blindName;
+    }
 }
