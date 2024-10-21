@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.bettingorder.query.service;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingOptionQueryRepository;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingQueryRepository;
+import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
 import com.outsider.masterofpredictionbackend.bettingorder.query.dto.*;
 import com.outsider.masterofpredictionbackend.bettingorder.query.repository.BettingOrderQueryRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class BettingOrderQueryService {
                 ));
     }
 
+
     public List<RatioDTO> findBettingProductOptionsRatio(Long bettingId) {
         return bettingOrderQueryRepository.findBettingProductOptionsRatio(bettingId);
     }
@@ -57,6 +59,7 @@ public class BettingOrderQueryService {
     public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistory(Long bettingId) {
         LocalDateTime startDateTime = null;
         try{
+            // startDateTime = bettingQueryRepository.findById(bettingId).get().getCreatedAt();
             startDateTime = bettingQueryRepository.findById(bettingId).get().getCreatedAt();
         }catch (Exception e){
             log.error("findBettingOrderHistory error", e);

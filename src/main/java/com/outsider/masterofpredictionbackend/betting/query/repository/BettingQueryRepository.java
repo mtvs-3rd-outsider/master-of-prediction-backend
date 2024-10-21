@@ -14,7 +14,7 @@ public interface BettingQueryRepository extends JpaRepository<BettingProduct, Lo
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO(" +
             " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind, bp.blindName)  FROM BettingProduct bp " +
-            "JOIN User u ON bp.userId = u.id ORDER BY bp.id")
+            "JOIN User u ON bp.userId = u.id ORDER BY bp.id DESC")
     Page<BettingViewDTO> findBetting(Pageable pageable);
 
 
@@ -32,7 +32,7 @@ public interface BettingQueryRepository extends JpaRepository<BettingProduct, Lo
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO(" +
             " new com.outsider.masterofpredictionbackend.betting.query.dto.BettingUserDTO(u.id, u.userName, u.displayName, u.tier.name, u.userImg), " +
-            " new com.outsider.masterofpredictionbackend.betting.query.dto.BettingContentDTO(bp.deadlineDate, bp.deadlineTime, bp.isBlind, bp.title, bp.content, bp.userId, bp.blindName) " +
+            " new com.outsider.masterofpredictionbackend.betting.query.dto.BettingContentDTO(bp.deadlineDate, bp.deadlineTime, bp.isBlind, bp.title, bp.content, bp.userId, bp.blindName, bp.winningOption) " +
             ") FROM BettingProduct bp JOIN User u ON bp.userId = u.id WHERE bp.id = :id")
     BettingDetailDTO findBettingById(Long id);
 
