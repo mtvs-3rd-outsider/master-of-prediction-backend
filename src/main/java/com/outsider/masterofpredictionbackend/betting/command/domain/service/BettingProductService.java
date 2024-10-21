@@ -20,7 +20,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -109,9 +111,22 @@ public class BettingProductService {
         List<BettingOrderSumPointDTO> info = bettingOrderService.calculateUserOrderPointSumByProductId(productId, optionId);
         BigDecimal totalPoint = BigDecimal.ZERO;
         BigDecimal choiceOptionTotalPoint = BigDecimal.ZERO;
+        Map<Long, BigDecimal> userPointMap = new HashMap<>();
+        // 전체 포인트 합계와 선택된 옵션의 포인트 합계
         for (BettingOrderSumPointDTO bettingOrderSumPointDTO : info) {
+
             if (optionId.equals(bettingOrderSumPointDTO.getBettingOptionId())){
                 choiceOptionTotalPoint = choiceOptionTotalPoint.add(bettingOrderSumPointDTO.getOrderPoint());
+            }
+
+            // 옵션이 같지 않으면 유저의 포인트를 -로 기록
+            else{
+                // userPointMap 에 userId가 없다면 put으로 넣고 존재한다면 add로 더한다.
+                if (userPointMap.containsKey(bettingOrderSumPointDTO.getUserId())){
+                    userPointMap.put(bettingOrderSumPointDTO.getUserId(), userPointMap.get(bettingOrderSumPointDTO.getUserId()).subtract(bettingOrderSumPointDTO.getOrderPoint()));
+                } else {
+                    userPointMap.put(bettingOrderSumPointDTO.getUserId(), bettingOrderSumPointDTO.getOrderPoint().negate());
+                }
             }
             totalPoint = totalPoint.add(bettingOrderSumPointDTO.getOrderPoint());
         }
@@ -124,6 +139,12 @@ public class BettingProductService {
                     BigDecimal point = bettingOrderSumPointDTO.getOrderPoint()
                             .divide(choiceOptionTotalPoint, 5, RoundingMode.HALF_UP) // 소수점 5자리까지 반올림
                             .multiply(totalPoint);
+                    // 유저의 손익률을 +로 기록
+                    if (userPointMap.containsKey(bettingOrderSumPointDTO.getUserId())){
+                        userPointMap.put(bettingOrderSumPointDTO.getUserId(), userPointMap.get(bettingOrderSumPointDTO.getUserId()).add(point));
+                    } else {
+                        userPointMap.put(bettingOrderSumPointDTO.getUserId(), point);
+                    }
                     log.info("totalPoint: {}, point: {}", totalPoint, point);
                     userService.pointUpdate(bettingOrderSumPointDTO.getUserId(), point);
                 }
@@ -137,11 +158,9 @@ public class BettingProductService {
         /*
          * 배팅을 주문한 사용자에게 알림 전송
          */
-        List<Long> userIds = bettingOrderService.findUserIdsByProductId(productId);
-        List<User> users = userService.findUsersByIds(userIds);
-        for (User user : users) {
-            log.info("send settlement notification to user: {}", user.getId());
-            bettingKafkaService.sendSettlementEvent(users);
+        for (Map.Entry<Long, BigDecimal> entry : userPointMap.entrySet()) {
+            log.info("send settlement event: userId: {}, newPoints: {}", entry.getKey(), entry.getValue());
+            bettingKafkaService.sendSettlementEvent(entry.getKey(), entry.getValue());
         }
     }
 }
