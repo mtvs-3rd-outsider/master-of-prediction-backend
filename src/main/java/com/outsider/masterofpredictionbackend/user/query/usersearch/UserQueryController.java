@@ -35,11 +35,5 @@ public class UserQueryController {
         return userQueryService.searchByUserName(q, pageable);
     }
 
-    // 모든 유저를 페이징과 기본값으로 검색
-    @GetMapping("/all")
-    public Page<UserSearchModel> findAllUsers(
-            @PageableDefault(page = 0, size = 10, sort = "userName", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        return userQueryService.findAllUsers(pageable);
-    }
 }
