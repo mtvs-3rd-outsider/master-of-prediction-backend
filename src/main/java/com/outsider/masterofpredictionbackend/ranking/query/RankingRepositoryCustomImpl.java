@@ -1,8 +1,6 @@
-package com.outsider.masterofpredictionbackend.user.query.tier.query;
+package com.outsider.masterofpredictionbackend.ranking.query;
 
-import com.outsider.masterofpredictionbackend.user.query.tier.command.UserRanking;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
@@ -16,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.outsider.masterofpredictionbackend.user.command.domain.aggregate.QUser.user;
-import static com.outsider.masterofpredictionbackend.user.query.tier.command.QUserRanking.userRanking;
+import static com.outsider.masterofpredictionbackend.user.query.ranking.command.QUserRanking.userRanking;
 
 @Repository
 @Transactional

@@ -1,6 +1,8 @@
-package com.outsider.masterofpredictionbackend.user.query.tier.command;
+package com.outsider.masterofpredictionbackend.ranking.command.application.service;
 
 import com.outsider.masterofpredictionbackend.exception.NotExistException;
+import com.outsider.masterofpredictionbackend.ranking.command.domain.aggregate.UserRanking;
+import com.outsider.masterofpredictionbackend.ranking.command.domain.repository.UserRankingRepository;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Tier;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;

@@ -3,7 +3,7 @@ package com.outsider.masterofpredictionbackend.notification.command.application.
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.outsider.masterofpredictionbackend.user.query.tier.command.UserPointsProfitEvent;
+import com.outsider.masterofpredictionbackend.notification.command.application.dto.UserPointsProfitEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;

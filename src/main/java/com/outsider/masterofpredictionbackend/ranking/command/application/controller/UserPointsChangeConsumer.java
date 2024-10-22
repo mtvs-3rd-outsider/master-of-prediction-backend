@@ -1,7 +1,9 @@
-package com.outsider.masterofpredictionbackend.user.query.tier.command;
+package com.outsider.masterofpredictionbackend.ranking.command.application.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.outsider.masterofpredictionbackend.ranking.command.application.dto.UserPointsChangeEvent;
+import com.outsider.masterofpredictionbackend.ranking.command.application.service.RankingService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
