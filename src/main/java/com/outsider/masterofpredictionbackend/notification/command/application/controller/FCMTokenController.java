@@ -40,10 +40,14 @@ public class FCMTokenController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity<String> removeToken(@UserId CustomUserInfoDTO customUserInfoDTO, @RequestBody FCMTokenRequest token) {
-        tokenService.deleteToken(customUserInfoDTO.getUserId().toString(),token.getToken());
-        return ResponseEntity.ok("FCM token removed successfully");
+        if (customUserInfoDTO != null && customUserInfoDTO.getUserId() != null) {
+            tokenService.deleteToken(customUserInfoDTO.getUserId().toString(), token.getToken());
+            return ResponseEntity.ok("FCM token removed successfully");
+        } else {
+            return ResponseEntity.badRequest().body("User ID is missing or invalid");
+        }
     }
 
 
