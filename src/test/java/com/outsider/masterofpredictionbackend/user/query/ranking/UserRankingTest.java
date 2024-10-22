@@ -1,11 +1,11 @@
-package com.outsider.masterofpredictionbackend.user.query.tier;
+package com.outsider.masterofpredictionbackend.user.query.ranking;
 
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Tier;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
-import com.outsider.masterofpredictionbackend.user.query.tier.command.UserRankingRepository;
-import com.outsider.masterofpredictionbackend.user.query.tier.command.RankingService;
-import com.outsider.masterofpredictionbackend.user.query.tier.command.UserRanking;
+import com.outsider.masterofpredictionbackend.ranking.command.domain.repository.UserRankingRepository;
+import com.outsider.masterofpredictionbackend.ranking.command.application.service.RankingService;
+import com.outsider.masterofpredictionbackend.ranking.command.domain.aggregate.UserRanking;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;

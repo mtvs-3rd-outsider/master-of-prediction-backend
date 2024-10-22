@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.outsider.masterofpredictionbackend.ranking.command.domain.aggregate.QUserRanking.userRanking;
 import static com.outsider.masterofpredictionbackend.user.command.domain.aggregate.QUser.user;
-import static com.outsider.masterofpredictionbackend.user.query.ranking.command.QUserRanking.userRanking;
 
 @Repository
 @Transactional
