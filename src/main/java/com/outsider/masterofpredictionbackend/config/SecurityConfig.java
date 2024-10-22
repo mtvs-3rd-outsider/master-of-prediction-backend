@@ -135,10 +135,13 @@ public class SecurityConfig {
         config.addAllowedOrigin("https://*.google.com");
         config.addAllowedOrigin("https://lh3.googleusercontent.com");
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://localhost:3000");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
         config.addAllowedOrigin("https://master-of-prediction.shop");
         config.addAllowedOrigin("https://master-of-prediction.shop");
+        config.addAllowedOrigin("https://*.master-of-prediction.shop");
+        config.addAllowedOrigin("https://app.master-of-prediction.shop");
         config.addAllowedOrigin("https://master-of-prediction.shop:3334");
         config.addAllowedOrigin("https://master-of-prediction-frontend-psxd.vercel.app/");
         config.addAllowedOrigin("https://master-of-prediction-frontend.vercel.app");
