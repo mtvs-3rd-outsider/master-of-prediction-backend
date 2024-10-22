@@ -1,7 +1,7 @@
-package com.outsider.masterofpredictionbackend.user.query.tier.query;
+package com.outsider.masterofpredictionbackend.ranking.query;
 
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
-import com.outsider.masterofpredictionbackend.user.query.tier.command.UserRanking;
+import com.outsider.masterofpredictionbackend.ranking.command.domain.aggregate.UserRanking;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

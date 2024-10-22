@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.user.query.tier.command;
+package com.outsider.masterofpredictionbackend.ranking.command.application.dto;
 
 
 import lombok.Data;

@@ -1,13 +1,11 @@
-package com.outsider.masterofpredictionbackend.user.query.tier.query;
+package com.outsider.masterofpredictionbackend.ranking.query;
 
 import com.outsider.masterofpredictionbackend.exception.NotExistException;
-import com.outsider.masterofpredictionbackend.user.query.tier.command.UserRankingRepository;
+import com.outsider.masterofpredictionbackend.ranking.command.domain.repository.UserRankingRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class UserRankingQueryService {

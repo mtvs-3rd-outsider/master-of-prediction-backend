@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.user.query.tier.query;
+package com.outsider.masterofpredictionbackend.ranking.query;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

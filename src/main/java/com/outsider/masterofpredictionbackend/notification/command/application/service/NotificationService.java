@@ -5,7 +5,7 @@ import com.outsider.masterofpredictionbackend.notification.command.domain.aggreg
 import com.outsider.masterofpredictionbackend.notification.command.domain.aggregate.NotificationType;
 import com.outsider.masterofpredictionbackend.notification.command.domain.repository.NotificationRepository;
 import com.outsider.masterofpredictionbackend.notification.command.application.dto.NotificationDTO;
-import com.outsider.masterofpredictionbackend.user.query.tier.command.UserPointsProfitEvent;
+import com.outsider.masterofpredictionbackend.notification.command.application.dto.UserPointsProfitEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,6 +1,7 @@
-package com.outsider.masterofpredictionbackend.user.query.tier.command;
+package com.outsider.masterofpredictionbackend.ranking.command.domain.repository;
 
-import com.outsider.masterofpredictionbackend.user.query.tier.query.RankingRepositoryCustom;
+import com.outsider.masterofpredictionbackend.ranking.command.domain.aggregate.UserRanking;
+import com.outsider.masterofpredictionbackend.ranking.query.RankingRepositoryCustom;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
