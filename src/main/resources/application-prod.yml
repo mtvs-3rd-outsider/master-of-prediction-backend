@@ -5,7 +5,7 @@ google:
     secret: ${GOOGLE_CLIENT_SECRET}
   redirect:
     uri: ${GOOGLE_REDIRECT_URI}
-    successfulUri: https://master-of-prediction.shop:3334/
+    successfulUri: https://master-of-prediction-frontend.vercel.app/
 firebase:
   config:
     path: src/main/resources/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json

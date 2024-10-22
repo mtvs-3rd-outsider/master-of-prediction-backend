@@ -80,6 +80,12 @@ dependencies {
 	annotationProcessor  'org.mapstruct:mapstruct-processor:1.6.2'
 	testAnnotationProcessor   'org.mapstruct:mapstruct-processor:1.6.2'
 	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+
+	// Querydsl 추가
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }
 
 tasks.named('test') {

@@ -1,7 +1,8 @@
-package com.outsider.masterofpredictionbackend.user.query.tier;
+package com.outsider.masterofpredictionbackend.user.query.tier.command;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,7 +16,7 @@ public class UserRanking {
     private Long userId;
 
     @Column(nullable = false)
-    private int points;
+    private BigDecimal points;  // BigDecimal로 변경
 
     @Column(name = "user_rank", nullable = false) // 컬럼 이름 변경
     private int rank;
@@ -23,10 +24,9 @@ public class UserRanking {
     @Column(name = "last_updated", nullable = false)
     private LocalDateTime lastUpdated;
 
-
     // 기본 생성자
     public UserRanking() {
-        this.points = 0;
+        this.points = BigDecimal.ZERO;  // 초기값 수정
         this.rank = Integer.MAX_VALUE; // 초기 순위 설정
         this.lastUpdated = LocalDateTime.now();
     }
@@ -34,7 +34,7 @@ public class UserRanking {
     // 매개변수 있는 생성자
     public UserRanking(Long userId) {
         this.userId = userId;
-        this.points = 0;
+        this.points = BigDecimal.ZERO;  // 초기값 수정
         this.rank = Integer.MAX_VALUE; // 초기 순위 설정
         this.lastUpdated = LocalDateTime.now();
     }
@@ -44,7 +44,7 @@ public class UserRanking {
         return userId;
     }
 
-    public int getPoints() {
+    public BigDecimal getPoints() {  // BigDecimal로 변경
         return points;
     }
 
@@ -56,9 +56,7 @@ public class UserRanking {
         return lastUpdated;
     }
 
-
-
-    public void setPoints(int points) {
+    public void setPoints(BigDecimal points) {  // BigDecimal로 변경
         this.points = points;
     }
 
@@ -68,8 +66,7 @@ public class UserRanking {
 
     public void setLastUpdated(LocalDateTime lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
 
     // equals, hashCode 메소드 구현 필요
 }
-
-    }

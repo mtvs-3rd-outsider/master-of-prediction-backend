@@ -35,4 +35,11 @@ public class UserInfoService {
         User user = userRepository.findByEmail(email).orElseThrow(NotExistException::new);
         return userMapper.userToUserInfoDTO(user);
     }
+
+    public Page<UserInfoResponseDTO> getAllUsers(Pageable pageable) {
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        // User 엔티티를 UserInfoResponseDTO로 변환
+        return userPage.map(userMapper::userToUserInfoDTO);
+    }
 }

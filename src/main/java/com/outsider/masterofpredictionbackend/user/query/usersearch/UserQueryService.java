@@ -23,9 +23,5 @@ public class UserQueryService {
         return userSearchRepository.findByUserNameContaining(userName, pageable);
     }
 
-    // 페이징을 위한 메서드: 모든 유저 검색
-    public Page<UserSearchModel> findAllUsers(Pageable pageable) {
-        return userSearchRepository.findAll(pageable);
-    }
 
 }

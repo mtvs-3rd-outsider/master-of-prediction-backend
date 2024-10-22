@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.categorychannel.query.CategoryChan
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.service.UserInfoService;
+import com.outsider.masterofpredictionbackend.user.query.usersearch.UserSearchModel;
 import com.outsider.masterofpredictionbackend.util.UserId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,11 @@ public class UserInfoController {
 //        return userInfoRequestDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 //    }
 
-
+    @GetMapping
+    public ResponseEntity<Page<UserInfoResponseDTO>> getAllUsers(
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<UserInfoResponseDTO> users = userService.getAllUsers(pageable);
+        return ResponseEntity.ok(users);
+    }
 
 }

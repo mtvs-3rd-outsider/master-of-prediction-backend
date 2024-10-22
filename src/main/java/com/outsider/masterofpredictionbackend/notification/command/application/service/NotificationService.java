@@ -5,11 +5,9 @@ import com.outsider.masterofpredictionbackend.notification.command.domain.aggreg
 import com.outsider.masterofpredictionbackend.notification.command.domain.aggregate.NotificationType;
 import com.outsider.masterofpredictionbackend.notification.command.domain.repository.NotificationRepository;
 import com.outsider.masterofpredictionbackend.notification.command.application.dto.NotificationDTO;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.outsider.masterofpredictionbackend.user.query.tier.UserPointsProfitEvent;
+import com.outsider.masterofpredictionbackend.user.query.tier.command.UserPointsProfitEvent;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class NotificationService {
@@ -56,5 +54,11 @@ public class NotificationService {
         // Handle the notification (send it, store it, etc.)
         handleNotification(notification);
     }
-
+    @Transactional
+    public void updateNotificationIsRead(Long id, Boolean isRead) {
+        Notification notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
+        notification.setRead(isRead);
+        notificationRepository.save(notification);
+    }
 }

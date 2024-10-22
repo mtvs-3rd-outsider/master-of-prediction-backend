@@ -1,4 +1,4 @@
-package com.outsider.masterofpredictionbackend.user.query.tier;
+package com.outsider.masterofpredictionbackend.user.query.tier.command;
 
 
 import lombok.Data;

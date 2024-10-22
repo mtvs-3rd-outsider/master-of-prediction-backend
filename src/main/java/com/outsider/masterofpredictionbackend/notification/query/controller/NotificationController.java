@@ -1,7 +1,11 @@
 package com.outsider.masterofpredictionbackend.notification.query.controller;
 
+import com.outsider.masterofpredictionbackend.notification.command.application.dto.NotificationDTO;
 import com.outsider.masterofpredictionbackend.notification.command.domain.aggregate.Notification;
 import com.outsider.masterofpredictionbackend.notification.query.NotificationQueryService;
+import com.outsider.masterofpredictionbackend.notification.query.NotificationResponseDTO;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.masterofpredictionbackend.util.UserId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/api/v1/notifications")
 public class NotificationController {
 
     private final NotificationQueryService notificationService;
@@ -19,9 +23,9 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
     @GetMapping
-    public ResponseEntity<Page<Notification>> getUserNotifications(
-            @RequestParam("userId") String userId, Pageable pageable) {
-        Page<Notification> notifications = notificationService.getNotificationsByUserId(userId, pageable);
+    public ResponseEntity<Page<NotificationResponseDTO>> getUserNotifications(
+            @UserId CustomUserInfoDTO userId, Pageable pageable) {
+        Page<NotificationResponseDTO> notifications = notificationService.getNotificationsByUserId(userId.getUserId(), pageable);
         if (notifications.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
