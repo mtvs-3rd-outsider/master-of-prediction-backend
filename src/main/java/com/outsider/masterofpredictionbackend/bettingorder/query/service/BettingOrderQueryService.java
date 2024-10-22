@@ -57,24 +57,25 @@ public class BettingOrderQueryService {
     }
 
     public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistory(Long bettingId) {
-        LocalDateTime startDateTime = null;
-        try{
-            // startDateTime = bettingQueryRepository.findById(bettingId).get().getCreatedAt();
-            startDateTime = bettingQueryRepository.findById(bettingId).get().getCreatedAt();
-        }catch (Exception e){
-            log.error("findBettingOrderHistory error", e);
-            throw new RuntimeException("{error: not found betting id}");
-        }
-        List<LocalDateTime> timeSlots = createFiveMinuteTimeSlots(startDateTime);
-        // List<BettingOrderStatisticsDTO> bettingOrders = bettingOrderQueryRepository.findBettingOrderHistory(bettingId);
-        List<BettingOrderStatisticsDTO> bettingOrders = bettingOrderStatistics.findBettingOrderHistory(bettingId);
-        Map<Long, List<BettingOrderStatisticsDTO>> organizedOrders = organizeOptions(bettingOrders);
-        if (organizedOrders.isEmpty()) {
-            return initBettingData(timeSlots, bettingId);
-        }
-        Map<Long, List<BettingOrderStatisticsDTO>> result = fillMissingTimeDataInMap(organizedOrders, timeSlots);
-        calculateAndSetRatios(result);
-        return result;
+        return bettingOrderStatistics.findBettingOrderHistoryInLastHourFix(bettingId);
+        // LocalDateTime startDateTime = null;
+        // try{
+        //     // startDateTime = bettingQueryRepository.findById(bettingId).get().getCreatedAt();
+        //     startDateTime = bettingQueryRepository.findById(bettingId).get().getCreatedAt();
+        // }catch (Exception e){
+        //     log.error("findBettingOrderHistory error", e);
+        //     throw new RuntimeException("{error: not found betting id}");
+        // }
+        // List<LocalDateTime> timeSlots = createFiveMinuteTimeSlots(startDateTime);
+        // // List<BettingOrderStatisticsDTO> bettingOrders = bettingOrderQueryRepository.findBettingOrderHistory(bettingId);
+        // List<BettingOrderStatisticsDTO> bettingOrders = bettingOrderStatistics.findBettingOrderHistory(bettingId);
+        // Map<Long, List<BettingOrderStatisticsDTO>> organizedOrders = organizeOptions(bettingOrders);
+        // if (organizedOrders.isEmpty()) {
+        //     return initBettingData(timeSlots, bettingId);
+        // }
+        // Map<Long, List<BettingOrderStatisticsDTO>> result = fillMissingTimeDataInMap(organizedOrders, timeSlots);
+        // calculateAndSetRatios(result);
+        // return result;
     }
 
     /**
