@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.user.command.application.dto;
 import lombok.*;
 
 @Data
+@NoArgsConstructor
 public class EmailAuthDTO {
     private String code;
     private Boolean flag;

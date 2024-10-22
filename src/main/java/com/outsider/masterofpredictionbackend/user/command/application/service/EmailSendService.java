@@ -75,7 +75,6 @@ public class EmailSendService {
             e.printStackTrace(); // 에러 출력
         }
         // redis에 3분 동안 이메일과 인증 코드 저장
-        ValueOperations<String, Object> valOperations = redisConfig.redisTemplate().opsForValue();
         setData(toMail, new EmailAuthDTO( Integer.toString(authNumber),false));
     }
     private static final Pattern EMAIL_PATTERN = Pattern.compile(

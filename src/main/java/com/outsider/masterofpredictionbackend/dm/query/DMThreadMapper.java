@@ -15,6 +15,4 @@ public interface DMThreadMapper {
     @Mapping(source = "receiver.userImg", target = "receiverImg")
     @Mapping(source = "receiver.id", target = "receiverId")
     DMThreadDTO toDTO(DMThread dmThread, User sender, User receiver);
-
-
 }
