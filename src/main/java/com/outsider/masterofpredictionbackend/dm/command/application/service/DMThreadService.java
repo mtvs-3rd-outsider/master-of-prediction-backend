@@ -20,14 +20,29 @@ public class DMThreadService {
     private DMThreadRepository dmThreadRepository;
 
     // DMThread 생성 또는 가져오기
+// DMThread 생성 또는 가져오기
     public DMThread getOrCreateThread(Long senderId, Long receiverId) {
         DMThreadKey threadKey = new DMThreadKey(senderId, receiverId);
         Optional<DMThread> existingThread = dmThreadRepository.findById(threadKey);
-        return existingThread.orElseGet(() -> {
+
+        // 상대방의 DMThread도 생성
+        DMThreadKey reverseThreadKey = new DMThreadKey(receiverId, senderId);
+        Optional<DMThread> reverseExistingThread = dmThreadRepository.findById(reverseThreadKey);
+
+        DMThread thread = existingThread.orElseGet(() -> {
             DMThread newThread = new DMThread(threadKey);
             return dmThreadRepository.save(newThread);
         });
+
+        // 상대방용 쓰레드가 없을 경우 생성
+        reverseExistingThread.orElseGet(() -> {
+            DMThread newReverseThread = new DMThread(reverseThreadKey);
+            return dmThreadRepository.save(newReverseThread);
+        });
+
+        return thread;
     }
+
     // 특정 DMThread 조회
     public Optional<DMThread> getThread(Long senderId, Long receiverId) {
         DMThreadKey threadKey = new DMThreadKey(senderId, receiverId);

@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.user.command.application.controller;
 
+import com.outsider.masterofpredictionbackend.user.command.application.dto.EmailAuthDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.SignUpRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.service.AuthService;
 import com.outsider.masterofpredictionbackend.user.command.application.service.UserRegistService;
@@ -20,10 +21,10 @@ public class AuthCommandController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody SignUpRequestDTO user ) {
-//        EmailAuthDTO emailAuthDto = authService.getEmailAuth(user.getEmail());
-//        if (emailAuthDto == null || !emailAuthDto.getFlag()) {
-//            return ResponseEntity.badRequest().body("Invalid email address");
-//        }
+        EmailAuthDTO emailAuthDto = authService.getEmailAuth(user.getEmail());
+        if (emailAuthDto == null || !emailAuthDto.getFlag()) {
+            return ResponseEntity.badRequest().body("Invalid email address");
+        }
        Long userId =registUserService.registUser(user);
         return ResponseEntity.ok().body(userId.toString());
     }
