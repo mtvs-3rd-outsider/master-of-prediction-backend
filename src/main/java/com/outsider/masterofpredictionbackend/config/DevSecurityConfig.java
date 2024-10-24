@@ -68,7 +68,8 @@ public class DevSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()
+                        // .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register").permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )

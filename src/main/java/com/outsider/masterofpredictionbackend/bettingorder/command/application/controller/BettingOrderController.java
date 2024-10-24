@@ -55,6 +55,7 @@ public class BettingOrderController {
             return ResponseEntity.badRequest().body(errors);
         }
         log.debug("bettingOrderDTO: {}", bettingOrderDTO);
+
         bettingOrderDTO.setUserId(customUserInfoDTO.getUserId());
         bettingOrderDTO.setOrderDate(LocalDate.now());
         bettingOrderDTO.setOrderTime(LocalTime.now().withNano(0));

@@ -87,8 +87,9 @@ public class SecurityConfig {
                         .anyRequest().requiresSecure()
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/**").access(customAuthorizationManager)
+                        // .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register").permitAll()
+                        .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(

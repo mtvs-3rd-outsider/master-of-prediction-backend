@@ -62,6 +62,14 @@ public class BettingProduct  {
     @Column(nullable = true)
     private Long winningOption;
 
+    @Setter
+    @Column(nullable = true)
+    private BettingProductType type = BettingProductType.USER;
+
+    @Setter
+    @Column(nullable = true)
+    private String apiGameId;
+
     protected BettingProduct() {
     }
 

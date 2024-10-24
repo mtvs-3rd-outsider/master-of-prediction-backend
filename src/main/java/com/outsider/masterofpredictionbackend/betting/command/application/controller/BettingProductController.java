@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.betting.command.application.dto.re
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionFormDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.dto.request.BettingProductOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
+import com.outsider.masterofpredictionbackend.betting.command.domain.service.naver.ApiBettingProductService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.BettingProductService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.UserId;
@@ -33,11 +34,13 @@ public class BettingProductController {
 
     private final ProductCommandService productCommandService;
     private final BettingProductService bettingProductService;
+    private final ApiBettingProductService apiBettingProductService;
 
     @Autowired
-    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService) {
+    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService, ApiBettingProductService apiBettingProductService) {
         this.productCommandService = productCommandService;
         this.bettingProductService = bettingProductService;
+        this.apiBettingProductService = apiBettingProductService;
     }
 
     @PostMapping("/api/v1/betting-products")
@@ -78,7 +81,6 @@ public class BettingProductController {
         }
         // NOTE: 임시 데이터
         bettingProductAndOptionDTO.setUserId(customUserInfo.getUserId());
-        // bettingProductAndOptionDTO.setUserId(1L);
         Long productId;
         try {
             productId = productCommandService.save(bettingProductAndOptionDTO);
@@ -113,5 +115,31 @@ public class BettingProductController {
             return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/v1/betting-products/naver/kfootball")
+    @Operation(summary = "네이버 스포츠 축구 배팅 상품 등록")
+    public ResponseEntity<?> saveNaverKFootball(
+            // @UserId CustomUserInfoDTO customUserInfo,
+            // BindingResult bindingResult
+    ) {
+        // if (bindingResult.hasErrors()) {
+        //     Map<String, String> errors = new HashMap<>();
+        //     bindingResult.getAllErrors().forEach(error -> {
+        //         String fieldName = ((FieldError) error).getField();
+        //         String errorMessage = error.getDefaultMessage();
+        //         errors.put(fieldName, errorMessage);
+        //     });
+        //     return ResponseEntity.badRequest().body(errors);
+        // }
+
+        try{
+            return ResponseEntity.ok().body(
+                    // apiBettingProductService.naverKfootball(customUserInfo.getUserId())
+                    apiBettingProductService.apiKFootball(100L)
+            );
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 }
