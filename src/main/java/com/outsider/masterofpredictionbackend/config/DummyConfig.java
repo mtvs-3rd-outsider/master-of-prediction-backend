@@ -176,12 +176,12 @@ public class DummyConfig {
                         categoryChannelRepository.deleteById(id); // Hard delete category channels on shutdown
                     }
                 });
-                deleteKafkaTopics(adminClient, "dbserver1.*");
+                deleteKafkaTopics(adminClient);
                 adminClient.close();
             }));
         };
     }
-    private void deleteKafkaTopics(AdminClient adminClient, String topicPattern) {
+    private void deleteKafkaTopics(AdminClient adminClient) {
         try {
             // 1. 사용자 생성 토픽만 가져오기
             ListTopicsOptions options = new ListTopicsOptions();
@@ -189,12 +189,12 @@ public class DummyConfig {
             ListTopicsResult topicsResult = adminClient.listTopics();
 
             Set<String> topics = topicsResult.names().get();
-            Pattern pattern = Pattern.compile(topicPattern);
+//            Pattern pattern = Pattern.compile(topicPattern);
 
             // 2. "dbserver1"로 시작하는 토픽 찾기
             Set<String> topicsToDelete = new HashSet<>();
             for (String topic : topics) {
-                if (pattern.matcher(topic).matches()) {
+                if ( !topic.startsWith("my_connect")) {
                     topicsToDelete.add(topic);
                 }
             }
@@ -208,7 +208,7 @@ public class DummyConfig {
                 // 4. 토픽과 관련된 모든 Consumer 그룹의 오프셋 및 메타데이터 삭제
                 resetAllConsumerGroupOffsets(adminClient, topicsToDelete);
             } else {
-                System.out.println("No topics matched the pattern: " + topicPattern);
+//                System.out.println("No topics matched the pattern: " + topicPattern);
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
