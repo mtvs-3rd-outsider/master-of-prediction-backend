@@ -1,3 +1,7 @@
+api:
+  naver:
+    kfootball:
+      path: ${API_NAVER_KFOOTBALL_PATH}
 server:
   error:
     include-message: always

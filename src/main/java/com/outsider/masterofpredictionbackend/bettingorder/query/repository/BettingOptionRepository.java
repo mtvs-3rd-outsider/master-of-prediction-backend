@@ -10,4 +10,7 @@ public interface BettingOptionRepository extends JpaRepository<BettingProductOpt
 
     @Query("SELECT bo.id FROM BettingProductOption bo WHERE bo.bettingId = :bettingId")
     List<Long> findBettingOptionIdByBettingId(Long bettingId);
+
+    @Query("SELECT bo FROM BettingProductOption bo WHERE bo.bettingId = :id")
+    List<BettingProductOption> findByBettingId(long id);
 }

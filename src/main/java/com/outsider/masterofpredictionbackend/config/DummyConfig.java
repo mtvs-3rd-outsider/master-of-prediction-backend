@@ -73,7 +73,7 @@ public class DummyConfig {
         this.kafkaAdmin = kafkaAdmin;
     }
     @Bean()
-    @Order(Integer.MAX_VALUE)
+    @Order(100)
     @Transactional
     public CommandLineRunner init(ChannelSubscribeService channelSubscribeService) {
         return args -> {
@@ -84,7 +84,8 @@ public class DummyConfig {
             List<UserRegistDTO> usersToCreate = List.of(
                     new UserRegistDTO(defaultEmail, defaultPassword, defaultUserName, Authority.ROLE_USER),
                     new UserRegistDTO(defaultEmail + "1", defaultPassword, defaultUserName, Authority.ROLE_USER),
-                    new UserRegistDTO(defaultEmail + "2", defaultPassword, "User", Authority.ROLE_USER)
+                    new UserRegistDTO(defaultEmail + "2", defaultPassword, "User", Authority.ROLE_USER),
+                    new UserRegistDTO(defaultEmail + "100", defaultPassword, "Admin", Authority.ROLE_ADMIN)
             );
 
             // 사용자 생성 전에 기존 사용자 삭제
