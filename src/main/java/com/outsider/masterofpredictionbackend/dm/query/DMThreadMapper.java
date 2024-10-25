@@ -14,5 +14,8 @@ public interface DMThreadMapper {
     @Mapping(source = "receiver.displayName", target = "receiverDisplayName")
     @Mapping(source = "receiver.userImg", target = "receiverImg")
     @Mapping(source = "receiver.id", target = "receiverId")
+    @Mapping(source = "dmThread.lastMessage", target = "lastMessage")
+    @Mapping(source = "dmThread.lastMessageTime", target = "lastMessageTime")
+    @Mapping(source = "dmThread.lastMessageRead", target = "lastMessageRead")
     DMThreadDTO toDTO(DMThread dmThread, User sender, User receiver);
 }
