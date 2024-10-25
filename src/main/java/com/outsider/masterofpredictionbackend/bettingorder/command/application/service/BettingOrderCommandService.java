@@ -3,10 +3,12 @@ package com.outsider.masterofpredictionbackend.bettingorder.command.application.
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.UserService;
 import com.outsider.masterofpredictionbackend.bettingorder.command.application.dto.request.BettingOrderDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
+import com.outsider.masterofpredictionbackend.bettingorder.command.domain.repository.BettingOrderRepository;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.BettingOrderService;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.BettingProductValidator;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.UserPoint;
 import com.outsider.masterofpredictionbackend.util.UserId;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,22 +16,41 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
+@Slf4j
 public class BettingOrderCommandService {
 
     private final UserPoint userPoint;
     private final BettingOrderService bettingOrderService;
     private final BettingProductValidator bettingProductValidator;
     private final UserService userService;
+    private final BettingOrderRepository bettingOrderRepository;
 
     @Autowired
-    public BettingOrderCommandService(UserPoint userPoint, BettingOrderService bettingOrderService, BettingProductValidator bettingProductValidator, UserService userService) {
+    public BettingOrderCommandService(UserPoint userPoint, BettingOrderService bettingOrderService, BettingProductValidator bettingProductValidator, UserService userService, BettingOrderRepository bettingOrderRepository) {
         this.userPoint = userPoint;
         this.bettingOrderService = bettingOrderService;
         this.bettingProductValidator = bettingProductValidator;
         this.userService = userService;
+        this.bettingOrderRepository = bettingOrderRepository;
     }
+
+    @Transactional
+    public void refundPayment(Long bettingId){
+        if (!bettingProductValidator.validateProductExistenceAndStatus(bettingId)) {
+            throw new IllegalArgumentException("betting product is not exist or deadline is passed");
+        }
+        List<Object[]> bettingOrders = bettingOrderRepository.calculateUserOrderPointSumByBettingId(bettingId);
+        for (Object[] bettingOrder : bettingOrders) {
+            Long userId = (Long) bettingOrder[0];
+            BigDecimal point = (BigDecimal) bettingOrder[1];
+            userPoint.pointUpdate(userId, point);
+        }
+        log.info("bettingOrder refund: {}", bettingOrders);
+    }
+
 
     @Transactional
     public BettingOrder buyBettingProduct(BettingOrderDTO bettingOrderDTO) {

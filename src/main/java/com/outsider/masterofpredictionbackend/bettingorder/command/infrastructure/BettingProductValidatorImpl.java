@@ -16,6 +16,11 @@ public class BettingProductValidatorImpl implements BettingProductValidator {
     }
 
     @Override
+    public boolean isBettingProductExists(Long productId) {
+        return bettingProductService.findById(productId) != null;
+    }
+
+    @Override
     public boolean validateProductExistenceAndStatus(Long productId) {
         return bettingProductService.validateProductExistenceAndStatus(productId);
     }

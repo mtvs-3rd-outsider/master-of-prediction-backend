@@ -1,7 +1,12 @@
 api:
-  naver:
-    kfootball:
-      path: ${API_NAVER_KFOOTBALL_PATH}
+  path: ${API_BASE_PATH}
+  option:
+    korea-football: ${API_KOREA_FOOTBALL_OPTION}
+    global-football: ${API_GLOBAL_FOOTBALL_OPTION}
+    basketball: ${API_BASKETBALL_OPTION}
+    korea-baseball: ${API_KOREA_BASEBALL_OPTION}
+    global-baseball: ${API_GLOBAL_BASEBALL_OPTION}
+
 server:
   error:
     include-message: always
@@ -71,7 +76,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   data:
     mongodb:
       uri: mongodb://ohgiraffers:ohgiraffers@localhost:10001/forecasthub?authSource=admin

@@ -31,7 +31,7 @@ public class GameNaver {
     private boolean gameOnAir;
     private boolean widgetEnable;
     private String specialMatchInfo;
-    private String seriesOutcome;
+    // private String seriesOutcome;
     private String roundTournamentInfo;
     private String matchRound;
     private int leg;

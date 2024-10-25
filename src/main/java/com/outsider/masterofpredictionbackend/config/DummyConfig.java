@@ -102,7 +102,12 @@ public class DummyConfig {
             for (int i = 0; i < usersToCreate.size(); i++) {
                 UserRegistDTO dto = usersToCreate.get(i);
                 System.out.println("생성 " + (i + 1));
-                Long userId = userRegistService.registManualIdUser(dto, (long) i+1);
+                Long userId = null;
+                if (!"Admin".equals(dto.getUserName())) {
+                    userId = userRegistService.registManualIdUser(dto, (long) i+1);
+                } else {
+                    userId = userRegistService.registManualIdUser(dto, 100L);
+                }
                 userIds.add(userId);
             }
             // Category Channel creation

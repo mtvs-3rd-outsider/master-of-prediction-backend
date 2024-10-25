@@ -68,6 +68,10 @@ public class BettingProduct  {
 
     @Setter
     @Column(nullable = true)
+    private APIBettingProductCategory apiBettingProductCategory;
+
+    @Setter
+    @Column(nullable = true)
     private String apiGameId;
 
     protected BettingProduct() {
