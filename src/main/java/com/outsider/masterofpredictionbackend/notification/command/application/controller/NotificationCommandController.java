@@ -1,11 +1,8 @@
 package com.outsider.masterofpredictionbackend.notification.command.application.controller;
 
 
-import com.outsider.masterofpredictionbackend.notification.command.application.dto.NotificationDTO;
 import com.outsider.masterofpredictionbackend.notification.command.application.dto.UpdateIsReadRequestDTO;
-import com.outsider.masterofpredictionbackend.notification.command.application.service.NotificationService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.outsider.masterofpredictionbackend.notification.command.application.service.NotificationBettingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/notifications")
 public class NotificationCommandController {
 
-    private final NotificationService notificationService;
+    private final NotificationBettingService notificationService;
 
-    public NotificationCommandController(NotificationService notificationService) {
+    public NotificationCommandController(NotificationBettingService notificationService) {
         this.notificationService = notificationService;
     }
 
