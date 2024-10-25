@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class NotificationService {
+public class NotificationBettingService {
 
     private final NotificationRepository notificationRepository;
     private final FCMService fcmService;
     private final NotificationMapper notifcationMapper;
 
-    public NotificationService(NotificationRepository notificationRepository, FCMService fcmService, NotificationMapper notifcationMapper) {
+    public NotificationBettingService(NotificationRepository notificationRepository, FCMService fcmService, NotificationMapper notifcationMapper) {
         this.notificationRepository = notificationRepository;
         this.fcmService = fcmService;
         this.notifcationMapper = notifcationMapper;
