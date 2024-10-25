@@ -7,6 +7,7 @@ import com.outsider.masterofpredictionbackend.betting.command.application.servic
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.naver.ApiBettingProductService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.BettingProductService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.masterofpredictionbackend.util.AdminUserIdList;
 import com.outsider.masterofpredictionbackend.util.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,9 +119,9 @@ public class BettingProductController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/v1/betting-products/naver/kfootball")
-    @Operation(summary = "네이버 스포츠 축구 배팅 상품 등록")
-    public ResponseEntity<?> saveNaverKFootball(
+    @PostMapping("/api/v1/betting-products/auto-api")
+    @Operation(summary = "관리자용 api 배팅 자동 등록")
+    public ResponseEntity<?> saveAutoRegister(
             // @UserId CustomUserInfoDTO customUserInfo,
             // BindingResult bindingResult
     ) {
@@ -134,10 +136,8 @@ public class BettingProductController {
         // }
 
         try{
-            return ResponseEntity.ok().body(
-                    // apiBettingProductService.naverKfootball(customUserInfo.getUserId())
-                    apiBettingProductService.apiKFootball(100L)
-            );
+            apiBettingProductService.apiTotal(AdminUserIdList.ADMIN_USER_ID, LocalDate.now());
+            return ResponseEntity.ok().body(Map.of("message","success"));
         }catch (Exception e){
             return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
         }

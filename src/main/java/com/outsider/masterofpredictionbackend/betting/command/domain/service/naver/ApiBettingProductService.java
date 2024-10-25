@@ -1,19 +1,15 @@
 package com.outsider.masterofpredictionbackend.betting.command.domain.service.naver;
 
-import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
-import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductImage;
-import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductOption;
-import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductType;
+import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.*;
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductImageRepository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductOptionRepository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductRepository;
-import io.github.cdimascio.dotenv.Dotenv;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,33 +20,32 @@ import java.util.Objects;
 @Slf4j
 public class ApiBettingProductService {
 
-    private final Dotenv dotenv = Dotenv.load();
     private final WebClient webClient;
     private final BettingProductRepository bettingProductRepository;
     private final BettingProductImageRepository bettingProductImageRepository;
     private final BettingProductOptionRepository bettingProductOptionRepository;
-    @Value("${api.naver.kfootball.path}")
-    private String API_KEY;
+    private final APIOptionManagement apiOptionManagement;
 
     // WebClient 빌더를 주입받아 설정
-    public ApiBettingProductService(WebClient.Builder webClientBuilder, BettingProductRepository bettingProductRepository, BettingProductImageRepository bettingProductImageRepository, BettingProductOptionRepository bettingProductOptionRepository) {
-        this.webClient = webClientBuilder.baseUrl(API_KEY).build(); // 기본 URL 설정
+    public ApiBettingProductService(WebClient.Builder webClientBuilder, BettingProductRepository bettingProductRepository, BettingProductImageRepository bettingProductImageRepository, BettingProductOptionRepository bettingProductOptionRepository, APIOptionManagement apiOptionManagement) {
+        this.webClient = webClientBuilder.build(); // 기본 URL 설정
         this.bettingProductRepository = bettingProductRepository;
         this.bettingProductImageRepository = bettingProductImageRepository;
         this.bettingProductOptionRepository = bettingProductOptionRepository;
+        this.apiOptionManagement = apiOptionManagement;
     }
 
-    public ApiNaverResponse sendKFootballApi(LocalDate localDate) {
-        String date = "&fromDate=" + localDate + "&toDate=" + localDate;
-        API_KEY = API_KEY.replace("\"", "") + date;
-        // 정확한 경로로 변경
+    public ApiNaverResponse sendApi(LocalDate localDate, APIBettingProductCategory category) {
+        URI url = apiOptionManagement.getApi(category, localDate);
+        log.info("api url: {}", url);
         return webClient.get()
-                .uri(API_KEY) // 정확한 경로로 변경
+                .uri(apiOptionManagement.getApi(category, localDate))
                 .retrieve()
                 .bodyToMono(ApiNaverResponse.class).block();
     }
 
     /**
+     * 하루 뒤의 경기를 등록한다
      * 배팅 제목: awayTeamName vs homeTeamName
      * 배팅 내용: awayTeamName vs homeTeamName 승자는?
      * 배팅 마감시간: gameDateTime (yyyy-MM-ddTHH:mm:ss)
@@ -65,25 +60,18 @@ public class ApiBettingProductService {
      * 배팅 메인 이미지는 1과 2의 팀 사진으로 대체한다
      */
     @Transactional
-    public ApiNaverResponse apiKFootball(Long userId) {
-        // api 받아오기
-        ApiNaverResponse response = sendKFootballApi(LocalDate.now());
-        ApiNaverResponse.Result result = Objects.requireNonNull(response).getResult();
-
+    public void saveApiConvertBettingProduct(ApiNaverResponse.Result result, Long userId, APIBettingProductCategory category) {
         List<BettingProduct> bettingProductsContainer = new ArrayList<>();
         List<List<BettingOptionContainer>> bettingOptionContainer = new ArrayList<>();
 
         result.getGames().stream()
                 .filter(game -> !game.getHomeTeamName().isBlank() && !game.getAwayTeamName().isBlank())
                 .forEach(gameNaver -> {
-                    BettingProduct bettingProduct = createBettingProduct(gameNaver, userId);
+                    BettingProduct bettingProduct = createBettingProduct(gameNaver, userId, category);
                     List<BettingOptionContainer> bettingProductOptions = createBettingOptionContainers(gameNaver);
 
                     bettingProductsContainer.add(bettingProduct);
                     bettingOptionContainer.add(bettingProductOptions);
-
-                    log.info("naver api create bettingProduct: {}", bettingProduct);
-                    log.info("naver api create bettingProductOptions: {}", bettingProductOptions);
                 });
 
         bettingProductRepository.saveAll(bettingProductsContainer);
@@ -102,10 +90,42 @@ public class ApiBettingProductService {
         }
         bettingProductOptionRepository.saveAll(bettingProductOptionsContainer);
         bettingProductImageRepository.saveAll(bettingProductImagesContainer);
+    }
+
+    @Transactional
+    public void apiTotal(Long userId, LocalDate localDate) {
+        // api 받아오기
+        for (APIBettingProductCategory category : APIBettingProductCategory.values()) {
+            ApiNaverResponse response = sendApi(localDate, category);
+            log.info("api response: {}", response);
+            ApiNaverResponse.Result result = Objects.requireNonNull(response).getResult();
+            saveApiConvertBettingProduct(result, userId, category);
+        }
+    }
+
+    @Transactional
+    public ApiNaverResponse apiKFootball(Long userId, LocalDate localDate) {
+        // api 받아오기
+        ApiNaverResponse response = sendApi(localDate, APIBettingProductCategory.KOREA_FOOTBALL);
+        log.info("api response: {}", response);
+        ApiNaverResponse.Result result = Objects.requireNonNull(response).getResult();
+        saveApiConvertBettingProduct(result, userId, APIBettingProductCategory.KOREA_FOOTBALL);
+
         return response;
     }
 
-    private BettingProduct createBettingProduct(GameNaver gameNaver, Long userId) {
+    @Transactional
+    public ApiNaverResponse apiBasketball(Long userId, LocalDate localDate) {
+        // api 받아오기
+        ApiNaverResponse response = sendApi(localDate, APIBettingProductCategory.BASKETBALL);
+        log.info("api response: {}", response);
+        ApiNaverResponse.Result result = Objects.requireNonNull(response).getResult();
+        saveApiConvertBettingProduct(result, userId, APIBettingProductCategory.BASKETBALL);
+
+        return response;
+    }
+
+    private BettingProduct createBettingProduct(GameNaver gameNaver, Long userId, APIBettingProductCategory category) {
         LocalDateTime gameDateTime = LocalDateTime.parse(gameNaver.getGameDateTime());
         String matchTitle = gameNaver.getAwayTeamName() + " vs " + gameNaver.getHomeTeamName();
         StringBuilder content = new StringBuilder();
@@ -130,6 +150,7 @@ public class ApiBettingProductService {
         );
         bettingProduct.setType(BettingProductType.NAVER);
         bettingProduct.setApiGameId(gameNaver.getGameId());
+        bettingProduct.setApiBettingProductCategory(category);
 
         return bettingProduct;
     }

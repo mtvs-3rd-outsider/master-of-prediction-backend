@@ -39,9 +39,6 @@ public class BettingProductQueryService {
     public Page<BettingViewDTO> all(Pageable pageable) {
 
         Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBetting(pageable);
-        /**
-         * isBlind를 확인하여 세분화
-         */
 
         Map<Long, BettingViewDTO> maps = new HashMap<>();
         List<Long> ids = new ArrayList<>();
