@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping("/api/v1/messages")
 public class MessageController {
 
     private final MessageService messageService;
@@ -16,7 +16,7 @@ public class MessageController {
     }
 
     @GetMapping("/room/{roomId}")
-    public Page<Message> getMessages(
+    public Page<MessageVM> getMessages(
             @PathVariable String roomId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {

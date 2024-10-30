@@ -136,6 +136,7 @@ public class SecurityConfig {
         config.addAllowedOrigin("https://lh3.googleusercontent.com");
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("https://localhost:3000");
+        config.addAllowedOrigin("https://192.168.0.38:3000");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
         config.addAllowedOrigin("https://master-of-prediction.shop");
