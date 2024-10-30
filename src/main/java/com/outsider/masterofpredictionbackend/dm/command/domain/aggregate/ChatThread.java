@@ -41,6 +41,7 @@ public class ChatThread {
     // 기본 생성자
     public ChatThread() {
         this.createdAt = LocalDateTime.now();
+
     }
 
     public ChatThread(Long chatRoomId) {

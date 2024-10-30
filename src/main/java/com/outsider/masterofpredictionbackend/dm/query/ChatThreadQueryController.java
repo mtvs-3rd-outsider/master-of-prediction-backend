@@ -17,10 +17,10 @@ public class ChatThreadQueryController {
 
     private final ChatThreadService chatThreadService;
     // 특정 사용자가 참여한 채팅방 목록을 페이징 처리하여 조회하는 API
-    @GetMapping("/my-threads")
-    public ResponseEntity<Page<ChatThread>> getMyThreads(@UserId CustomUserInfoDTO userInfo, Pageable pageable) {
-        Page<ChatThread> threads = chatThreadService.getThreadsByUserId(userInfo.getUserId(), pageable);
-        return ResponseEntity.ok(threads);
-    }
+//    @GetMapping("/my-threads")
+//    public ResponseEntity<Page<ChatThread>> getMyThreads(@UserId CustomUserInfoDTO userInfo, Pageable pageable) {
+//        Page<ChatThread> threads = chatThreadService.getThreadsByUserId(userInfo.getUserId(), pageable);
+//        return ResponseEntity.ok(threads);
+//    }
 
 }
