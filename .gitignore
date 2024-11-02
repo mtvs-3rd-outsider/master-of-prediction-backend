@@ -48,7 +48,7 @@ mysql_data/
 **/ca_bundle.*
 **/certificate.*
 **/private.key
-
+/certs
 
 
 **/email-server-config/
