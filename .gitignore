@@ -39,8 +39,7 @@ out/
 /src/main/resources/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json
 /src/main/resources/keystore.p12
 /.env
-/.env.docker-compose
-/secrets.env
+
 ### mysqld ###
 mysql_data/
 /docker-compose
@@ -49,6 +48,7 @@ mysql_data/
 **/certificate.*
 **/private.key
 /certs
-
+**/.env.docker-compose
+**/secrets.env
 
 **/email-server-config/
