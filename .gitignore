@@ -48,7 +48,7 @@ mysql_data/
 **/certificate.*
 **/private.key
 /certs
-**/.env.docker-compose
-**/secrets.env
+.env.docker-compose
+secrets.env
 
 **/email-server-config/
