@@ -1,10 +1,18 @@
 secrets:
   keystore_p12:
     file: ./src/main/resources/keystore.p12
-  firebase_config:
+  spring_firebase_config:
     file: ./src/main/resources/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json
-  app_secrets:
+  spring_secrets:
     file: ./secrets.env
+  mail_secret:
+    file: ./email-server-config/custom-certs/privkey1.pem
+  mail_cert:
+    file: ./email-server-config/custom-certs/cert1.pem
+  minio_secret:
+    file: ./certs/private.key
+  minio_cert:
+    file: ./certs/public.crt
 services:
 
   initdb:
@@ -12,7 +20,7 @@ services:
     volumes:
       - ./init-scripts/my.cnf:/etc/mysql/my.cnf
     entrypoint: ["sh", "-c", "chmod 644 /etc/mysql/my.cnf"]
-    profiles: ["db", "required"]
+    profiles: ["db", "required","prod"]
   db:
     restart: always
     image: mysql:8.0
@@ -33,7 +41,7 @@ services:
       - mysql_data:/var/lib/mysql
       - ./init-scripts/my.cnf:/etc/mysql/my.cnf
       - ./init-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql  # SQL 스크립트 마운트
-    profiles: ["db", "required"]
+    profiles: ["db", "required","prod"]
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 20s
@@ -42,32 +50,31 @@ services:
       timeout: 120s
   app:
     image: dudnjsckrgo/master-of-prediction-backend:latest
-
     env_file:
-      - ./.env.docker-compose
-    secrets:
-      - app_secrets
-      - source: keystore_p12
-        target: /etc/keystore.p12
-      - source: firebase_config
-        target: /etc/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json
-    environment:
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      DB_USER_PASSWORD: ${DB_USER_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      DB_USER_NAME: ${DB_USER_NAME}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MONGO_DB_URL: ${MONGO_DB_URL}
-      SSL_KEY_STORE_PASSWORD: ${SSL_KEY_STORE_PASSWORD}
-      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+      - ./.env.k83
+#    secrets:
+#      - spring_secrets
+#      - keystore_p12
+#      - spring_firebase_config
+#    environment:
+#      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+#      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+#      DB_USER_PASSWORD: ${DB_USER_PASSWORD}
+#      JWT_SECRET: ${JWT_SECRET}
+#      DB_USER_NAME: ${DB_USER_NAME}
+#      MAIL_PASSWORD: ${MAIL_PASSWORD}
+#      MONGO_DB_URL: ${MONGO_DB_URL}
+#      SSL_KEY_STORE_PASSWORD: ${SSL_KEY_STORE_PASSWORD}
+#      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
     ports:
       - "8080:8080"
-#    volumes:
-#      - ./src/main/resources/keystore.p12:/etc/keystore.p12
-#      - ./src/main/resources/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json:/etc/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json
-    profiles: ["cache", "required"]
+    volumes:
+      - ./src/main/resources/keystore.p12:/etc/config/ssl/keystore.p12
+      - ./src/main/resources/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json:/etc/config/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json
+    profiles: ["prod"]
     depends_on:
+      mailserver:
+        condition: service_started
       db:
         condition: service_started
       elasticsearch:
@@ -85,7 +92,7 @@ services:
     container_name: "my-redis"
     ports:
       - "6379:6379"
-    profiles: ["cache", "required"]
+    profiles: ["cache", "required","prod"]
 #      - cache
 
   prometheus:
@@ -124,7 +131,7 @@ services:
 
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
-    hostname: email.master-of-prediction.shop
+#    hostname: email.master-of-prediction.shop
     container_name: mailserver
     env_file:
       - ./email-server-config/mailserver.env
@@ -134,22 +141,23 @@ services:
       - "465:465"  # ESMTP (implicit TLS)
       - "587:587"  # ESMTP (explicit TLS => STARTTLS)
       - "993:993"  # IMAP4 (implicit TLS)
+#    secrets:
+#      - mail_secret
+#      - mail_cert
     volumes:
       - maildata:/var/mail
       - mailstate:/var/mail-state
       - maillogs:/var/log/mail
-      - /etc/localtime:/etc/localtime:ro
+#      - /etc/localtime:/etc/localtime:ro
+      - ./email-server-config/custom-certs:/etc/config
       - ./email-server-config/setup.sh:/usr/local/bin/setup.sh
       - ./email-server-config/config/:/tmp/docker-mailserver/${SELINUX_LABEL}
-      - ./email-server-config/custom-certs:/tmp/dms/custom-certs/
     restart: always
     stop_grace_period: 1m
     cap_add:
       - NET_ADMIN
       - SYS_PTRACE
-    profiles:
-      - email
-
+    profiles: ["prod","email"]
   minio:
     restart: always
     image: minio/minio:latest
@@ -166,7 +174,26 @@ services:
 #      - ./certs:/root/.minio/certs # SSL 인증서 마운트
     profiles: ["storage", "required"]
 #      - storage
-
+  minio-ssl:
+    restart: always
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: MY-USER
+      MINIO_ROOT_PASSWORD: MY-PASSWORD
+    command: server /data --console-address ":9001"
+#    secrets:
+#      - source: minio_secret
+#        target: /root/.minio/certs/private.key
+#      - source: minio_cert
+#        target: /root/.minio/certs/public.crt
+    volumes:
+      - ./certs:/root/.minio/certs # SSL 인증서 마운트:
+      - minio-data:/data
+    profiles: ["prod","minio"]
   master:
     image: locustio/locust
     command: ["-f", "/mnt/locustfile.py", "--master"]
@@ -203,7 +230,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
 #    volumes:
 #      - zookeeper_data:/bitnami/zookeeper
-    profiles: ["kafka", "required"]
+    profiles: ["kafka", "required","prod"]
   debezium:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8083" ]
@@ -238,7 +265,7 @@ services:
       CONNECT_TOPIC_CREATION_DEFAULT_REPLICATION_FACTOR: 1
     volumes:
       - ./init-scripts/initialize.sh:/kafka/startup.sh
-    profiles: ["kafka", "required"]
+    profiles: ["kafka", "required","prod"]
   connect-init:
     image: debezium/connect:2.7.2.Final
     depends_on:
@@ -248,7 +275,7 @@ services:
       - ./init-scripts/startup.sh:/kafka/startup.sh  # 스크립트 추가
       - ./init-scripts/mysql-connector.json:/kafka/connectors/mysql-connector.json
     entrypoint: ["/bin/bash", "/kafka/startup.sh"]
-    profiles: ["kafka", "required"]
+    profiles: ["kafka", "required","prod"]
   kafka:
     healthcheck:
       test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9093", "--list"]
@@ -281,7 +308,7 @@ services:
 
     #      KAFKA_JMX_PORT: 9101
 #      KAFKA_JMX_HOSTNAME: kafka
-    profiles: ["kafka", "required"]
+    profiles: ["kafka", "required","prod"]
 
 
 
@@ -318,7 +345,7 @@ services:
       start_period: 30s
       timeout: 5s
     command: mongod --auth
-    profiles: ["mongo", "required"]
+    profiles: ["mongo", "required","prod"]
   mongo-express:
     image: mongo-express:1.0.2-18
     restart: always
@@ -349,7 +376,7 @@ services:
     ports:
       - 9200:9200
     restart: always
-    profiles: ["es", "required"]
+    profiles: ["es", "required","prod"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9200"]
       interval: 10s
