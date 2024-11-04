@@ -34,6 +34,4 @@ public class UserQueryController {
             @PageableDefault(page = 0, size = 10,  direction = Sort.Direction.ASC) Pageable pageable) {
         return userQueryService.searchByUserName(q, pageable);
     }
-
-
 }

@@ -22,10 +22,13 @@ public interface FeedRepository extends JpaRepository<Feed, Long>{
     @NotNull
     Page<Feed> findAll(@NotNull Pageable pageable);
 
+    Page<Feed> findAllByOrderByShortAtDesc(Pageable pageable);
+
     @Modifying
     @Query("UPDATE Feed f SET f.viewCount = f.viewCount + 1 WHERE f.id = :feedId")
     void incrementViewCount(@Param("feedId") Long feedId);
 
+    @Query("SELECT f FROM Feed f WHERE f.channel.channelType = :channelType AND f.channel.channelId = :channelId ORDER BY f.shortAt DESC")
     Page<Feed> findByChannel_ChannelTypeAndChannel_ChannelId(ChannelType channelType, Long channelId, Pageable pageable);
 }
 

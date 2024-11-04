@@ -3,6 +3,8 @@ package com.outsider.masterofpredictionbackend.feed.command.application.controll
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.impl.MyChannelFeedService;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
+import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.masterofpredictionbackend.util.UserId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,18 +20,25 @@ import java.util.List;
 public class MyChannelFeedController {
     private final MyChannelFeedService myChannelFeedService;
 
-
     public MyChannelFeedController(MyChannelFeedService myChannelFeedService) {
-        this.myChannelFeedService=myChannelFeedService;
+        this.myChannelFeedService = myChannelFeedService;
     }
+
     @GetMapping("/{channelType}/{channelId}")
     public ResponseEntity<Page<FeedsResponseDTO>> getChannelFeeds(
             @PathVariable String channelType,
             @PathVariable Long channelId,
-            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(page = 0, size = 10, sort = "shortAt", direction = Sort.Direction.DESC) Pageable pageable,
+            @UserId CustomUserInfoDTO userInfoDTO
     ) {
+        long userId;
+        if(userInfoDTO.getUserId()==null){
+            userId = -1L;
+        }else {
+            userId = userInfoDTO.getUserId();
+        }
         ChannelType type = ChannelType.valueOf(channelType.toUpperCase());
-        Page<FeedsResponseDTO> channelFeeds = myChannelFeedService.getFeeds(type, channelId, pageable);
+        Page<FeedsResponseDTO> channelFeeds = myChannelFeedService.getFeeds(type, channelId, pageable, userId);
         return ResponseEntity.ok(channelFeeds);
     }
 }
