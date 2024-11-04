@@ -7,14 +7,9 @@ db.auth("ohgiraffers", "ohgiraffers");
 db = db.getSiblingDB("forecasthub");
 
 // 필요한 컬렉션을 생성하거나 초기 데이터를 삽입 (필요에 따라 생략 가능)
-// db.createCollection("forecast_data");
+db.createCollection("dummy_collection");
 
-// // 예시 데이터 삽입 (필요에 따라 생략 가능)
-// db.forecast_data.insert({
-//     city: "Seoul",
-//     temperature: 22,
-//     condition: "Sunny"
-// });
+// 예시 데이터 삽입 (필요에 따라 생략 가능)
 
 print("Database and collection created, initial data inserted.");
 

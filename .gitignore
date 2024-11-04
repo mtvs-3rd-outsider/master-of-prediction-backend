@@ -42,12 +42,13 @@ out/
 
 ### mysqld ###
 mysql_data/
-
+/docker-compose
 ### email ###
 **/ca_bundle.*
 **/certificate.*
 **/private.key
-
-
+/certs
+.env.docker-compose
+secrets.env
 
 **/email-server-config/
