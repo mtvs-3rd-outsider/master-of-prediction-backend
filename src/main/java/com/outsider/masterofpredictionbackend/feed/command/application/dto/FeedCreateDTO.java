@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Data
 public class FeedCreateDTO {
-    private AuthorType authorType;
+    private AuthorType authorType = AuthorType.USER;  // 기본값 설정
     private String title;
     private String content;
     private UserDTO user;
@@ -25,4 +25,6 @@ public class FeedCreateDTO {
     private Channel channel;
     private List<String> mediaFileUrls;
     private List<String> youtubeUrls;
+    private Boolean isQuote = false;  // 인용 여부 추가
+    private QuoteFeedDTO quoteFeed;  // 인용된 피드 정보 추가
 }

@@ -3,9 +3,11 @@ package com.outsider.masterofpredictionbackend.feed.command.application.service.
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedCreateDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.MediaFile;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.QuoteFeed;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Channel;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.QuoteUser;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,8 +41,8 @@ public class FeedCreateDTOConverter {
     public Feed getFeed(FeedCreateDTO dto) {
         Feed feed = new Feed(
                 dto.getAuthorType(),
-                dto.getTitle(),
                 dto.getContent(),
+                LocalDateTime.now(),
                 LocalDateTime.now(),
                 null,
                 0,
@@ -50,10 +52,23 @@ public class FeedCreateDTOConverter {
                 userDTOConverter.toEntity(dto.getUser()),
                 new Guest(),//수정요청
                 new Channel(),//수정요청
-                false,
+                dto.getIsQuote(), // isQuote 추가
                 new ArrayList<>(),
                 new ArrayList<>()
         );
+
+        // 인용된 게시글 정보 설정
+        if (dto.getQuoteFeed() != null) {
+            QuoteFeed quoteFeed = new QuoteFeed(
+                    dto.getQuoteFeed().getQuoteId(),
+                    dto.getQuoteFeed().getQuoteContent(),
+                    dto.getQuoteFeed().getQuoteCreateAt(),
+                    new QuoteUser(dto.getQuoteFeed().getQuoteUser().getUserId()).getQuoteUserId(),
+                    dto.getQuoteFeed().getMediaFileUrls(),
+                    dto.getQuoteFeed().getYoutubeUrls()
+            );
+            feed.setQuoteFeed(quoteFeed);
+        }
 
         if (dto.getMediaFileUrls() != null) {
             feed.setMediaFiles(dto.getMediaFileUrls().stream()
@@ -68,5 +83,4 @@ public class FeedCreateDTOConverter {
         }
         return feed;
     }
-
 }

@@ -40,7 +40,6 @@ public class FeedUpdateService {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new EntityNotFoundException("Feed not found with id: " + feedId));
 
-        feed.setTitle(feedUpdateDTO.getTitle());
         feed.setContent(feedUpdateDTO.getContent());
 
         feed.getMediaFiles().clear();
