@@ -6,9 +6,9 @@ import java.util.List;
 
 public class TimeSlotGenerator {
 
-    public static List<LocalDateTime> generateMinuteIntervals(LocalDateTime endTime, int startMinutesAgo, int intervalMinutes) {
+    public static List<LocalDateTime> generateMinuteIntervals(LocalDateTime startTime, int intervalMinutes) {
         List<LocalDateTime> timeSlots = new ArrayList<>();
-        LocalDateTime startTime = endTime.minusMinutes(startMinutesAgo);
+        LocalDateTime endTime = LocalDateTime.now();
 
 
         while (!startTime.isAfter(endTime)) {
