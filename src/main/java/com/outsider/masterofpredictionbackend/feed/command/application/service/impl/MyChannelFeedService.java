@@ -21,7 +21,7 @@ public class MyChannelFeedService {
     }
 
     public Page<FeedsResponseDTO> getFeeds(ChannelType channelType, Long channelId, Pageable pageable, Long userId) {
-        Page<Feed> feedPage = feedRepository.findByChannel_ChannelTypeAndChannel_ChannelId(channelType, channelId, pageable);
+        Page<Feed> feedPage = feedRepository.findByChannel_ChannelTypeAndChannel_ChannelIdOrReuploadedBy(channelType, channelId, pageable);
         return feedPage.map(feed -> converterFacade.fromEntity(feed, userId));
     }
 }

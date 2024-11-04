@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Channel;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Guest;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.QuoteBetting;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
@@ -89,6 +90,13 @@ public class Feed {
     @Column(name = "user_id")
     private List<Long> reupLoadUsers = new ArrayList<>();
 
+//    @Column(name = "feed_is_quote_betting")
+//    private Boolean isQuoteBetting = false;
+//
+//    @Embedded
+//    private QuoteBetting quoteBetting;
+
+
     // reupLoadUsers 추가
     public void addReupLoadUser(Long userId) {
         if (!this.reupLoadUsers.contains(userId)) {
@@ -128,6 +136,8 @@ public class Feed {
         this.isLike = isLike;
         this.mediaFiles = mediaFiles;
         this.youtubeVideos = youtubeVideos;
+//        this.isQuoteBetting = isQuoteBetting;
+//        this.quoteBetting = quoteBetting;
     }
 
     @Override

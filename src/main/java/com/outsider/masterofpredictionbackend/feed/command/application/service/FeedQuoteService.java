@@ -10,12 +10,15 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embe
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.repository.FeedRepository;
+import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalFileService;
 import com.outsider.masterofpredictionbackend.user.query.application.eventhandler.ChannelRequestHandler;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,17 +26,15 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class FeedQuoteService {
     private final FeedRepository feedRepository;
-    private final ChannelRequestHandler channelRequestHandler;
+    private final ExternalFileService externalFileService;
 
-    @Autowired
-    public FeedQuoteService(FeedRepository feedRepository, ChannelRequestHandler channelRequestHandler) {
-        this.feedRepository = feedRepository;
-        this.channelRequestHandler = channelRequestHandler;
-    }
 
-    public Long quoteFeed(Long originalFeedId, FeedCreateDTO feedCreateDTO, Long userId) {
+
+    public Long quoteFeed(Long originalFeedId, FeedCreateDTO feedCreateDTO, Long userId,
+                          List<MultipartFile> files, List<String> youtubeUrls) throws Exception {
         Feed originalFeed = feedRepository.findById(originalFeedId)
                 .orElseThrow(() -> new EntityNotFoundException("Feed not found with id: " + originalFeedId));
 
@@ -44,12 +45,12 @@ public class FeedQuoteService {
         originalFeed.setShareCount(originalFeed.getShareCount() + 1);
         feedRepository.save(originalFeed);
 
-        // Create QuoteFeed with only userId
+        // Create QuoteFeed from original feed
         QuoteFeed quoteFeed = new QuoteFeed(
                 originalFeed.getId(),
                 originalFeed.getContent(),
                 originalFeed.getCreatedAt(),
-                originalFeed.getUser().getUserId(),  // userId만 저장
+                originalFeed.getUser().getUserId(),
                 getMediaFileUrls(originalFeed.getMediaFiles()),
                 getYoutubeUrls(originalFeed.getYoutubeVideos())
         );
@@ -63,8 +64,25 @@ public class FeedQuoteService {
         newFeed.setCreatedAt(LocalDateTime.now());
         newFeed.setShortAt(LocalDateTime.now());
         newFeed.setUser(new User(userId));
-//        newFeed.setChannel(feedCreateDTO.getChannel());
         newFeed.setChannel(feedCreateDTO.getChannel());
+
+        // Handle file uploads
+        if (files != null && !files.isEmpty()) {
+            List<String> fileUrls = externalFileService.uploadFiles(files);
+            List<MediaFile> mediaFiles = fileUrls.stream()
+                    .map(url -> new MediaFile(url, newFeed))
+                    .collect(Collectors.toList());
+            newFeed.setMediaFiles(mediaFiles);
+        }
+
+        // Handle YouTube URLs
+        if (youtubeUrls != null && !youtubeUrls.isEmpty()) {
+            List<YouTubeVideo> youTubeVideos = youtubeUrls.stream()
+                    .map(url -> new YouTubeVideo(url, newFeed))
+                    .collect(Collectors.toList());
+            newFeed.setYoutubeVideos(youTubeVideos);
+        }
+
         Feed savedFeed = feedRepository.save(newFeed);
         return savedFeed.getId();
     }

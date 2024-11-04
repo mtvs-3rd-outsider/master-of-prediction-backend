@@ -33,6 +33,7 @@ public class LikeCountService {
         }else{
             likeCount.setLikeCount(likeCount.getLikeCount() - 1);
         }
+        likeCountRepository.save(likeCount);
     }
 
     @Transactional(readOnly = true)

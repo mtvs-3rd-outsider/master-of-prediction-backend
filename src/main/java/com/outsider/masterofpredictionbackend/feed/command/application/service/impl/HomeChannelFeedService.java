@@ -33,10 +33,10 @@ public class HomeChannelFeedService {
 
     @Transactional
     public Page<FeedsResponseDTO> getFeeds(Pageable pageable, long userId) {
-        // 페이징된 데이터만 조회
-        Page<Feed> feedPage = feedRepository.findAllByOrderByShortAtDesc(pageable);
+        // pageable의 정렬 기준을 사용하여 데이터 조회
+        Page<Feed> feedPage = feedRepository.findAll(pageable);
 
-        // 페이징된 피드들만 좋아요 수 동기화
+        // 페이징된 피드들의 좋아요 수 동기화
         List<Feed> pagedFeeds = feedPage.getContent();
         for (Feed feed : pagedFeeds) {
             int likeCount = externalLikeService.getLikeCount(
@@ -46,7 +46,6 @@ public class HomeChannelFeedService {
         }
         feedRepository.saveAll(pagedFeeds);
 
-        // 동기화된 데이터로 DTO 변환
         return feedPage.map(feed -> {
             boolean isLiked = externalLikeService.checkUserLike(
                     userId,
@@ -56,11 +55,9 @@ public class HomeChannelFeedService {
             );
             feed.setIsLike(isLiked);
 
-            // feed의 isReupLoadedBy를 통해 현재 사용자의 share 여부 확인
             boolean isShared = feed.isReupLoadedBy(userId);
-
-            FeedsResponseDTO responseDTO = converterFacade.fromEntity(feed,userId);
-            responseDTO.setIsShare(isShared);  // FeedsResponseDTO에 setIsShare 메서드가 있다고 가정
+            FeedsResponseDTO responseDTO = converterFacade.fromEntity(feed, userId);
+            responseDTO.setIsShare(isShared);
 
             return responseDTO;
         });
