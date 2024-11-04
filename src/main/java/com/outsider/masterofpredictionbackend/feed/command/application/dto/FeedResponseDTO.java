@@ -18,9 +18,9 @@ import java.util.Map;
 public class FeedResponseDTO {
     private long id;
     private AuthorType authorType;
-    private String title;
     private String content;
     private LocalDateTime createdAt;
+    private LocalDateTime shortAt;  // shortAt 추가
     private LocalDateTime updatedAt;
     private int viewCount;
     private UserDTO user;
@@ -32,14 +32,22 @@ public class FeedResponseDTO {
     private Boolean isLike;
     private int likesCount;
     private int commentsCount;
-    private int quoteCount;
-
-    public FeedResponseDTO(long id, AuthorType authorType, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, UserDTO user, GuestDTO guest, List<MediaFile> mediaFiles, List<YouTubeVideo> youTubeVideos, List<CommentDTO> commentDTOS, List<ReplyDTO> replyDTOS, boolean isLike, int likesCount, int commentsCount, int quoteCount) {
+    private int shareCount;
+    private Boolean isShare;
+    private Boolean isQuote;  // 인용 여부 추가
+    private QuoteFeedDTO quoteFeed;  // 인용된 피드 정보
+    public FeedResponseDTO(long id, AuthorType authorType, String content,
+                           LocalDateTime createdAt, LocalDateTime shortAt, LocalDateTime updatedAt,
+                           int viewCount, UserDTO user, GuestDTO guest,
+                           List<MediaFile> mediaFiles, List<YouTubeVideo> youTubeVideos,
+                           List<CommentDTO> commentDTOS, List<ReplyDTO> replyDTOS,
+                           Boolean isLike, int likesCount, int commentsCount,
+                           int shareCount, Boolean isShare, Boolean isQuote, QuoteFeedDTO quoteFeed) {
         this.id = id;
         this.authorType = authorType;
-        this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+        this.shortAt = shortAt;
         this.updatedAt = updatedAt;
         this.viewCount = viewCount;
         this.user = user;
@@ -51,18 +59,9 @@ public class FeedResponseDTO {
         this.isLike = isLike;
         this.likesCount = likesCount;
         this.commentsCount = commentsCount;
-        this.quoteCount = quoteCount;
-    }
-
-    public void setCommentsWithReplies(Map<Long, List<CommentDTO>> commentsWithReplies) {
-        this.commentDTOS = new ArrayList<>();
-
-        for (Map.Entry<Long, List<CommentDTO>> entry : commentsWithReplies.entrySet()) {
-            CommentDTO parentComment = entry.getValue().get(0); // 첫 번째 요소는 부모 댓글
-            List<CommentDTO> replies = entry.getValue().subList(1, entry.getValue().size()); // 나머지는 답글들
-
-            parentComment.setReplies(replies);
-            this.commentDTOS.add(parentComment);
-        }
+        this.shareCount = shareCount;
+        this.isShare = isShare;
+        this.isQuote = isQuote;
+        this.quoteFeed = quoteFeed;
     }
 }

@@ -13,6 +13,8 @@ import com.outsider.masterofpredictionbackend.categoryChannelComment.command.exc
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.exception.CategoryChannelCommentPasswordMisMatchException;
 import com.outsider.masterofpredictionbackend.categoryChannelComment.command.exception.CategoryChannelCommentPasswordNotFoundException;
 import com.outsider.masterofpredictionbackend.common.exception.MisMatchUserException;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
+import com.outsider.masterofpredictionbackend.feed.command.domain.repository.FeedRepository;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +30,16 @@ import java.time.LocalDateTime;
 public class CategoryChannelCommentService {
     private final CategoryChannelCommentPolicy policy;
     private final CategoryChannelCommentRepository repository;
+    private final FeedRepository feedRepository;
 
     public Long addComment(CategoryChannelCommentAddRequestDTO comment, CustomUserInfoDTO userInfoDTO) {
         CategoryChannelComment saveComment = null;
+
+        Feed feed = feedRepository.findById(comment.getChannelId()).get();
+
+        feed.setCommentsCount(feed.getCommentsCount()+1);
+
+        feedRepository.save(feed);
 
         /*익명 사용자 댓글*/
         if(userInfoDTO == null) {
@@ -141,6 +150,15 @@ public class CategoryChannelCommentService {
     }
 
     public void deleteComment(CategoryChannelCommentDeleteRequestDTO deleteRequestDTO, CustomUserInfoDTO userInfoDTO) {
+
+
+        Feed feed = feedRepository.findById(deleteRequestDTO.getCommentId()).get();
+
+        feed.setCommentsCount(feed.getCommentsCount()-1);
+
+        feedRepository.save(feed);
+
+
 
         /*삭제할 댓글 객체 가져옴*/
         CategoryChannelComment deleted = policy.getCommentById(deleteRequestDTO.getCommentId(), userInfoDTO)

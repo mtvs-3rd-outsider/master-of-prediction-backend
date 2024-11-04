@@ -51,7 +51,14 @@ public class FeedController {
     @GetMapping("/{feedId}")
     public ResponseEntity<FeedResponseDTO> getFeed(@PathVariable Long feedId, @UserId CustomUserInfoDTO userInfoDTO) {
         try {
-            FeedResponseDTO feed = feedFacadeService.getFeed(feedId,userInfoDTO.getUserId());
+            long userId;
+            if(userInfoDTO.getUserId()==null){
+                userId = -1L;
+            }else {
+                userId = userInfoDTO.getUserId();
+            }
+
+            FeedResponseDTO feed = feedFacadeService.getFeed(feedId,userId);
             return ResponseEntity.ok(feed);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();

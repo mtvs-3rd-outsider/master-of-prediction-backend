@@ -40,7 +40,7 @@ public class FeedReadService {
                 .orElseThrow(() -> new EntityNotFoundException("Feed not found with id: " + feedId));
         feed.setIsLike(externalLikeService.checkUserLike(userId, LikeType.FEED, ViewType.HOTTOPICCHANNEL,feedId));
         feed.setLikesCount(externalLikeService.getLikeCount(new LikeDTO(LikeType.FEED,ViewType.HOTTOPICCHANNEL,userId,feedId)));
-        FeedResponseDTO feedResponseDTO = converterFacade.fromEntity(feed);
+        FeedResponseDTO feedResponseDTO = converterFacade.fromEntity(feed,userId);
 
         // 비동기적으로 조회수를 증가시킵니다.
         feedViewCountService.incrementViewCount(feedId);
