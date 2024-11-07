@@ -1,10 +1,10 @@
 ### Get existing forecast-connector
-GET http://localhost:8083/connectors/forecast-connector/status
+GET http://acbef0ec350c24c968224fa40951645e-690043959.ap-northeast-2.elb.amazonaws.com:8083/connectors/forecast-connector/status
 ### Delete existing forecast-connector
-DELETE http://localhost:8083/connectors/forecast-connector
+DELETE http://acbef0ec350c24c968224fa40951645e-690043959.ap-northeast-2.elb.amazonaws.com:8083/connectors/forecast-connector
 
 ### Create Debezium MySQL Connector
-POST http://localhost:8083/connectors
+POST http://acbef0ec350c24c968224fa40951645e-690043959.ap-northeast-2.elb.amazonaws.com:8083/connectors
 Content-Type: application/json
 
 {
@@ -13,7 +13,7 @@ Content-Type: application/json
     "connector.class": "io.debezium.connector.mysql.MySqlConnector",
     "tasks.max": "1",
     "database.hostname": "db",
-    "database.port": "3306",
+    "database.port": "9876",
     "database.user": "ohgiraffers",
     "database.password": "ohgiraffers",
     "database.server.id": "1",
@@ -30,5 +30,3 @@ Content-Type: application/json
 
 ### Restart Debezium MySQL Connector
 POST http://localhost:8083/connectors/forecast-connector/restart
-### Get existing forecast-connector
-GET http://localhost:8083/connectors/forecast-connector/status

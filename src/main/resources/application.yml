@@ -76,12 +76,12 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   data:
     mongodb:
       uri: ${MONGO_DB_URL}
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
   devtools:
     livereload:
