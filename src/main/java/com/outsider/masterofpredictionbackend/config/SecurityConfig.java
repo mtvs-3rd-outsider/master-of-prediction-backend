@@ -88,7 +88,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register").permitAll()
+                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/signup/email","/signup/emailAuth").permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
