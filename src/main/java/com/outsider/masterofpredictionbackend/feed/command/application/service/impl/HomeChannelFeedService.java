@@ -12,31 +12,54 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
-public class HotTopicChannelFeedService {
+public class HomeChannelFeedService {
 
     private final FeedRepository feedRepository;
     private final FeedsResponseDTOConverter converterFacade;
     private final ExternalLikeService externalLikeService;
 
     @Autowired
-    public HotTopicChannelFeedService(FeedRepository feedRepository, FeedsResponseDTOConverter converterFacade, ExternalLikeService externalLikeService) {
+    public HomeChannelFeedService(FeedRepository feedRepository, FeedsResponseDTOConverter converterFacade, ExternalLikeService externalLikeService) {
         this.feedRepository = feedRepository;
         this.converterFacade = converterFacade;
         this.externalLikeService = externalLikeService;
     }
 
-    public Page<FeedsResponseDTO> getFeeds(Pageable pageable,long userId) {
-        Page<Feed> feedPage = feedRepository.findAll(pageable);
-        return feedPage.map(feed -> {
-            int likeCount = externalLikeService.getLikeCount(new LikeDTO(LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getUser().getUserId(), feed.getId()));
-            boolean isLiked = externalLikeService.checkUserLike(userId, LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getId());
 
+    @Transactional
+    public Page<FeedsResponseDTO> getFeeds(Pageable pageable, long userId) {
+        // pageable의 정렬 기준을 사용하여 데이터 조회
+        Page<Feed> feedPage = feedRepository.findAll(pageable);
+
+        // 페이징된 피드들의 좋아요 수 동기화
+        List<Feed> pagedFeeds = feedPage.getContent();
+        for (Feed feed : pagedFeeds) {
+            int likeCount = externalLikeService.getLikeCount(
+                    new LikeDTO(LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getUser().getUserId(), feed.getId())
+            );
             feed.setLikesCount(likeCount);
+        }
+        feedRepository.saveAll(pagedFeeds);
+
+        return feedPage.map(feed -> {
+            boolean isLiked = externalLikeService.checkUserLike(
+                    userId,
+                    LikeType.FEED,
+                    ViewType.HOTTOPICCHANNEL,
+                    feed.getId()
+            );
             feed.setIsLike(isLiked);
 
-            return converterFacade.fromEntity(feed);
+            boolean isShared = feed.isReupLoadedBy(userId);
+            FeedsResponseDTO responseDTO = converterFacade.fromEntity(feed, userId);
+            responseDTO.setIsShare(isShared);
+
+            return responseDTO;
         });
     }
 }

@@ -2,6 +2,8 @@ package com.outsider.masterofpredictionbackend.feed.command.application.service;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedCreateDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.converter.FeedCreateDTOConverter;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.*;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.Channel;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.repository.FeedRepository;
 
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalFileService;
@@ -39,6 +41,7 @@ public class FeedCreateService {
         feedCreateDTO.setMediaFileUrls(fileUrls);
         feedCreateDTO.setYoutubeUrls(youtubeUrls);
         Feed feed =  converterFacade.toEntity(feedCreateDTO);
+
         Feed savedFeed = feedRepository.save(feed);
         LikeCountIdDTO likeCountIdDTO = new LikeCountIdDTO(feed.getId(), LikeType.FEED);
         externalLikeService.saveLikeCount(likeCountIdDTO);

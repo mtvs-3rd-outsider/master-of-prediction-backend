@@ -28,8 +28,9 @@ public class UserRankingQueryService {
 //    }
 public UserRankingDTO getUserRankingByUserId(Long userId) {
     return userRankingRepository.findUserRankingByUserId(userId)
-            .orElseThrow(() -> new NotExistException("UserRanking not found for userId: " + userId));
+            .orElse(new UserRankingDTO()); // UserRanking이 없을 경우 기본값 반환
 }
+
     // 전체 사용자 순위 조회 (페이징 처리)
     @Transactional(readOnly = true)
     public Page<UserRankingDTO> getAllUserRankings(Pageable pageable) {

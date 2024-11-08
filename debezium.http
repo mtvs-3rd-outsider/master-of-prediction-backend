@@ -30,3 +30,5 @@ Content-Type: application/json
 
 ### Restart Debezium MySQL Connector
 POST http://localhost:8083/connectors/forecast-connector/restart
+### Get existing forecast-connector
+GET http://localhost:8083/connectors/forecast-connector/status

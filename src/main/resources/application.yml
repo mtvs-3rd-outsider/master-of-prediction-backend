@@ -15,7 +15,7 @@ server:
     include-exception: true
   port: 8080
   ssl:
-    key-store: classpath:keystore.p12
+    key-store:  ${KEY_STORE_PATH}
     key-store-password: ${SSL_KEY_STORE_PASSWORD}
     key-store-type: PKCS12
     key-alias: tomcat
@@ -34,13 +34,13 @@ spring:
     basename: messages
     encoding: UTF-8
   elasticsearch:
-    uris: http://localhost:9200
+    uris: ${ELASTICSEARCH_URI}
   servlet:
     multipart:
       max-file-size: 1GB
       max-request-size: 1GB
   kafka:
-    bootstrap-servers: localhost:9093
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     admin:
       client-id: admin-client
     streams:
@@ -76,12 +76,12 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   data:
     mongodb:
-      uri: mongodb://ohgiraffers:ohgiraffers@localhost:10001/forecasthub?authSource=admin
+      uri: ${MONGO_DB_URL}
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
   devtools:
     livereload:
@@ -118,7 +118,7 @@ management:
     prometheus:
       enabled: true # Prometheus 엔드포인트 활성화
 minio:
-  url: http://125.132.216.190:9000
+  url: ${MINIO_URL}
   accessKey: MY-USER
   secretKey: MY-PASSWORD
   bucketName: user-files
@@ -140,3 +140,5 @@ logging:
       springframework:
         data:
           elasticsearch: DEBUG
+kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}

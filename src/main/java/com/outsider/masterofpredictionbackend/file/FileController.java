@@ -16,8 +16,8 @@ public class FileController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            minioService.uploadFile(file);
-            return ResponseEntity.ok("File uploaded successfully.");
+            String url= minioService.uploadFile(file);
+            return ResponseEntity.ok(url);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file.");
         }

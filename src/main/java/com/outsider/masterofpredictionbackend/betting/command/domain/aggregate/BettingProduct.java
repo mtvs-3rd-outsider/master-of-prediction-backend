@@ -11,6 +11,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "betting_product")

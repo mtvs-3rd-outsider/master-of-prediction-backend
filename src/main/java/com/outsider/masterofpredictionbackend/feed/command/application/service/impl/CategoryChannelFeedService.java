@@ -21,8 +21,8 @@ public class CategoryChannelFeedService {
         this.converterFacade = converterFacade;
     }
 
-    public Page<FeedsResponseDTO> getFeeds(ChannelType channelType, Long channelId, Pageable pageable) {
+    public Page<FeedsResponseDTO> getFeeds(ChannelType channelType, Long channelId, Pageable pageable, Long userId) {
         Page<Feed> feedPage = feedRepository.findByChannel_ChannelTypeAndChannel_ChannelId(channelType, channelId, pageable);
-        return feedPage.map(converterFacade::fromEntity);
+        return feedPage.map(feed -> converterFacade.fromEntity(feed, userId));
     }
 }
