@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s  # 스크랩 간격 설정
+
+scrape_configs:
+  - job_name: 'kubernetes-pods'  # 잡 이름 설정
+    metrics_path: '/actuator/prometheus'  # 메트릭 경로
+    scheme: https  # HTTPS 설정
+    tls_config:
+#      ca_file: ./cert/ca_bundle.crt
+#      cert_file: ./cert/certificate.crt
+#      key_file: ./cert/private.key
+      insecure_skip_verify: true
+    kubernetes_sd_configs:
+      - role: pod  # 파드 디스커버리
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: spring-boot  # 'spring-boot' 레이블이 있는 파드만 스크랩뛰려면 true로 설정 (권장되지 않음)
