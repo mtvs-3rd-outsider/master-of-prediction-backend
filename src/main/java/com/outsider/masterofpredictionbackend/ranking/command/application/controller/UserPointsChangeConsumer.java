@@ -23,4 +23,6 @@ public class UserPointsChangeConsumer {
         UserPointsChangeEvent userPointsChangeEvent = objectMapper.readValue(message, UserPointsChangeEvent.class);
         rankingService.updateRanking(userPointsChangeEvent.getUserId(), userPointsChangeEvent.getNewPoints());
     }
+
+
 }

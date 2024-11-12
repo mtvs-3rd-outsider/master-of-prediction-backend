@@ -1,5 +1,8 @@
 package com.outsider.masterofpredictionbackend.exception;
 
+import com.outsider.masterofpredictionbackend.notification.DiscordMessage;
+import com.outsider.masterofpredictionbackend.notification.DiscordNotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +18,13 @@ import java.util.Map;
 
 @ControllerAdvice
 @Profile("prod")
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    // NullPointerException 처리
+
+    private final DiscordNotificationService discordService;
+
+
+    // NullPointerException 처
     @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleNullPointerException(NullPointerException ex, WebRequest request) {
@@ -43,6 +51,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex, WebRequest request) {
+        // 에러 메시지 생성
+        String errorMessage = "An error occurred: " + ex.getMessage();
+
+        // Discord 알림 전송
+        DiscordMessage message = discordService.createMessage(ex, request);
+        discordService.sendAlarm(message);
+        // 응답 반환
+
         // 예외 로그 처리
         Map<String, String> response = new HashMap<>();
         response.put("message", "서버 오류가 발생했습니다.");

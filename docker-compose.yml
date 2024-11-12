@@ -101,7 +101,7 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./cert:/etc/prometheus/cert
-      - ./prometheus-data:/prometheus
+      -  prometheus-data:/prometheus
     ports:
       - "9090:9090"
     profiles:
@@ -148,10 +148,11 @@ services:
       - maildata:/var/mail
       - mailstate:/var/mail-state
       - maillogs:/var/log/mail
+      - ./email-server-config/config/postfix-accounts.cf:/tmp/docker-mailserver/
 #      - /etc/localtime:/etc/localtime:ro
       - ./email-server-config/custom-certs:/etc/config
       - ./email-server-config/setup.sh:/usr/local/bin/setup.sh
-      - ./email-server-config/config/:/tmp/docker-mailserver/${SELINUX_LABEL}
+#      - ./email-server-config/config/:/tmp/docker-mailserver/${SELINUX_LABEL}
     restart: always
     stop_grace_period: 1m
     cap_add:
@@ -405,3 +406,4 @@ volumes:
   zookeeper_data:
   kafka-data:
   es_data:
+  prometheus-data:
