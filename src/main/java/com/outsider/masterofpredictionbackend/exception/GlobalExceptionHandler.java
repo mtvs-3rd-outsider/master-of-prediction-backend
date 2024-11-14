@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +47,15 @@ public class GlobalExceptionHandler {
         errors.put("message", "유효성 검사에 실패했습니다.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
-
+    // 404 오류 처리 (Discord 알림 없이)
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Map<String, String>> handleNotFoundException(NoHandlerFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "요청한 리소스를 찾을 수 없습니다.");
+        response.put("details", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
     // 기타 예외 처리
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
