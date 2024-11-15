@@ -89,7 +89,9 @@ public class BettingOrderDummyConfig {
                                         new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(69)),
                                         new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(100)),
                                         new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now(), LocalTime.now().withNano(0).plusMinutes(120)),
-                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now().plusDays(1), LocalTime.now().withNano(0).plusMinutes(130))
+                                        new BettingOrder(1L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now().plusDays(1), LocalTime.now().withNano(0).plusMinutes(130)),
+                                        new BettingOrder(2L, bettingId, BigDecimal.valueOf(100), 2L, LocalDate.now().plusDays(1), LocalTime.now().withNano(0).plusMinutes(130)),
+                                        new BettingOrder(3L, bettingId, BigDecimal.valueOf(100), 1L, LocalDate.now().plusDays(1), LocalTime.now().withNano(0).plusMinutes(130))
                                 )
 
                         );
