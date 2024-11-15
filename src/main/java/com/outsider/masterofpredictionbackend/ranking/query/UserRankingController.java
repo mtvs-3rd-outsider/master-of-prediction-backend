@@ -22,13 +22,7 @@ public class UserRankingController {
         return ResponseEntity.ok(userRankingDTO); // 200 OK 반환
     }
 
-//    // 전체 사용자 순위 조회 (페이징 처리)
-//    @GetMapping
-//    public ResponseEntity<Page<UserRankingDTO>> getAllUserRankings(Pageable pageable) {
-//        Page<UserRankingDTO> rankingsPage = userRankingQueryService.getAllUserRankings(pageable);
-//        return ResponseEntity.ok(rankingsPage);
-//    }
-//
+
     @GetMapping
     public ResponseEntity<Page<UserRankingDTO>> getRankings(Pageable pageable) {
         return ResponseEntity.ok(userRankingQueryService.getUserRankingsWithUserName(pageable));
