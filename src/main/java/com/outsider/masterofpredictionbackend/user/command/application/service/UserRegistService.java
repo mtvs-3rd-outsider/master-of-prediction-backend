@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.user.command.application.service;
 
+import com.outsider.masterofpredictionbackend.common.exception.UserAlreadyExistsException;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.SignUpRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.UserRegistDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
@@ -38,7 +39,7 @@ public class UserRegistService {
     public Long registManualIdUser(UserRegistDTO userRegistRequestDTO,Long Id) {
         // 중복된 email 확인
         if (userRepository.findByEmail(userRegistRequestDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User with this email already exists.");
+            throw new UserAlreadyExistsException("이미 해당 이메일로 등록된 사용자가 있습니다.");
         }
 
         // 중복된 user_name 확인 및 처리
@@ -70,7 +71,7 @@ public class UserRegistService {
     public Long registUser(UserRegistDTO userRegistRequestDTO) {
         // 중복된 email 확인
         if (userRepository.findByEmail(userRegistRequestDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User with this email already exists.");
+            throw new UserAlreadyExistsException("이미 해당 이메일로 등록된 사용자가 있습니다.");
         }
 
         // 중복된 user_name 확인 및 처리
