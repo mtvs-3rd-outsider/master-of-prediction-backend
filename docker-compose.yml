@@ -410,7 +410,7 @@ services:
       - "8087:8086"  # InfluxDB API 및 관리 포트
     volumes:
       - influxdb_data:/var/lib/influxdb2                   # InfluxDB 데이터 볼륨 마운트
-    profiles: [ "db" ]
+    profiles: [ "db", "required" ]
 
 volumes:
   grafana-storage:
