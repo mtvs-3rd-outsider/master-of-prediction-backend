@@ -394,6 +394,24 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     profiles: ["es" ]
 
+
+  influxdb:
+    image: influxdb:2.0
+    container_name: influxdb
+    restart: always
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: root   # InfluxDB 초기 사용자 이름
+      DOCKER_INFLUXDB_INIT_PASSWORD: 123412341234 # 초기 사용자 비밀번호
+      DOCKER_INFLUXDB_INIT_ORG: master-of-prediction                   # InfluxDB 조직 이름
+      DOCKER_INFLUXDB_INIT_BUCKET: 1m_data                 # 기본 버킷 이름, 1분 단위 데이터를 저장할 버킷으로 설정
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: your_admin_token   # 관리용 토큰
+    ports:
+      - "8087:8086"  # InfluxDB API 및 관리 포트
+    volumes:
+      - influxdb_data:/var/lib/influxdb2                   # InfluxDB 데이터 볼륨 마운트
+    profiles: [ "db", "required" ]
+
 volumes:
   grafana-storage:
   maildata:
@@ -407,3 +425,4 @@ volumes:
   kafka-data:
   es_data:
   prometheus-data:
+  influxdb_data:

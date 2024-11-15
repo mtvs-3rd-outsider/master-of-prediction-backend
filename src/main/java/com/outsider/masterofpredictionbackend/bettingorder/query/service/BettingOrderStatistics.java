@@ -66,18 +66,16 @@ public class BettingOrderStatistics {
                 .collect(Collectors.toList());
     }
 
-    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistoryInLastHourFix(Long bettingId){
+    public Map<Long, List<BettingOrderStatisticsDTO>> getBettingOrderStatsByMinuteInterval(Long bettingId, LocalDateTime startDateTime, int intervalMinutes) {
         Map<Long, List<BettingOrderStatisticsDTO>> ret = new HashMap<>();
-
-        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
 
         // 옵션 조회
         List<Long> optionIds = bettingOptionRepository.findBettingOptionIdByBettingId(bettingId);
 
         // 현재시간 - 1시간 전부터 현재 시간까지 1분단위로 시간객체 생성
-        List<LocalDateTime> time_slot =  TimeSlotGenerator.generateMinuteIntervals(LocalDateTime.now(), 60, 1);
+        List<LocalDateTime> time_slot =  TimeSlotGenerator.generateMinuteIntervals(startDateTime, intervalMinutes);
 
-        List<TotalPointsUntilAgo> prev = bettingOrderQueryRepository.totalPointsSumUntilOneHourAgo(bettingId, oneHourAgo.toLocalDate(), oneHourAgo.toLocalTime());
+        List<TotalPointsUntilAgo> prev = bettingOrderQueryRepository.totalPointsSumUntilOneHourAgo(bettingId, startDateTime.toLocalDate(), startDateTime.toLocalTime());
 
         for (Long optionId : optionIds){
             BigDecimal totalPoints = prev.stream()
@@ -96,7 +94,7 @@ public class BettingOrderStatistics {
             ret.put(optionId, dtos);
         }
 
-        List<StatisticsDateTimeDTO> oneHour = orderFilter(bettingId, oneHourAgo.toLocalDate(), oneHourAgo.toLocalTime());
+        List<StatisticsDateTimeDTO> oneHour = orderFilter(bettingId, startDateTime.toLocalDate(), startDateTime.toLocalTime());
         for (StatisticsDateTimeDTO dto: oneHour){
             Long optionId = dto.getBettingOptionId();
             BigDecimal totalPoints = dto.getTotalPoints();
@@ -142,89 +140,89 @@ public class BettingOrderStatistics {
         return ret;
     }
 
-    /**
-     * 최근 1시간 동안의 베팅 주문 통계를 조회한다.
-     * @param bettingId 베팅 ID
-     * @return 1시간 베팅 주문 통계 목록
-     */
-    public Map<Long, Map<LocalDate, List<StatisticsTimeDTO>>> findBettingOrderHistoryInLastHour(Long bettingId) {
-        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
-
-        // 옵션 조회
-        List<Long> optionIds = bettingOptionRepository.findBettingOptionIdByBettingId(bettingId);
-
-        // 현재시간 - 1시간 전부터 현재 시간까지 1분단위로 시간객체 생성
-        List<LocalDateTime> time_slot =  TimeSlotGenerator.generateMinuteIntervals(LocalDateTime.now(), 60, 1);
-
-        // 1시간 전까지의 옵션별로 포인트 합계
-        List<TotalPointsUntilAgo> prev = bettingOrderQueryRepository.totalPointsSumUntilOneHourAgo(bettingId, oneHourAgo.toLocalDate(), oneHourAgo.toLocalTime());
-
-        Map<Long, Map<LocalDate, List<StatisticsTimeDTO>>>  retDTO = new HashMap<>();
-
-        // 옵션과 시간객체로 retDTO 초기화 및 1시간 전까지의 주문 포인트 총합 적용
-        for (Long optionId : optionIds){
-            BigDecimal totalPoints = prev.stream()
-                    .filter(dto -> dto.getBettingOptionId().equals(optionId))
-                    .map(TotalPointsUntilAgo::getTotalPoints)
-                    .findFirst()
-                    .orElse(BigDecimal.ZERO);
-            Map<LocalDate, List<StatisticsTimeDTO>> map = new HashMap<>();
-            for (LocalDateTime dateTime : time_slot){
-                LocalDate date = dateTime.toLocalDate();
-                LocalTime time = dateTime.toLocalTime();
-                if (map.containsKey(date)){
-                    map.get(date).add(new StatisticsTimeDTO(time, totalPoints));
-                } else {
-                    List<StatisticsTimeDTO> list = new ArrayList<>();
-                    list.add(new StatisticsTimeDTO(time, totalPoints));
-                    map.put(date, list);
-                }
-            }
-            retDTO.put(optionId, map);
-        }
-
-        // 최근 한 시간 주문데이터 불러오기
-        List<StatisticsDateTimeDTO> oneHour = orderFilter(bettingId, oneHourAgo.toLocalDate(), oneHourAgo.toLocalTime());
-
-        // 이전 데이터에 최근 한 시간 데이터 적용
-        for (StatisticsDateTimeDTO dto : oneHour) {
-            Long optionId = dto.getBettingOptionId();
-            LocalDate date = dto.getTimeSlot().toLocalDate();
-            LocalTime time = dto.getTimeSlot().toLocalTime();
-            BigDecimal totalPoints = dto.getTotalPoints();
-
-            if (!retDTO.containsKey(optionId)) {
-                continue;
-            }
-
-            Map<LocalDate, List<StatisticsTimeDTO>> dateMap = retDTO.get(optionId);
-            if (!dateMap.containsKey(date)) {
-                continue;
-            }
-
-            List<StatisticsTimeDTO> list = dateMap.get(date);
-            for (int i = 0; i < list.size(); i++) {
-                StatisticsTimeDTO timeDTO = list.get(i);
-                if (isWithinOneMinute(timeDTO.getTimeSlot(), time)) {
-                    BigDecimal updatedPoints = timeDTO.getTotalPoints().add(totalPoints);
-
-
-                    if (i > 0 && list.get(i - 1).getTotalPoints().compareTo(timeDTO.getTotalPoints()) == 0) {
-                        updatedPoints = list.get(i - 1).getTotalPoints().add(totalPoints);
-                    }
-
-                    timeDTO.setTotalPoints(updatedPoints);
-                    for (int j = i + 1; j < list.size(); j++) {
-                        list.get(j).setTotalPoints(timeDTO.getTotalPoints());
-                    }
-                }
-            }
-        }
-
-        aggregateTotalPointsAndCalculateRatio(retDTO);
-
-        return  retDTO;
-    }
+    // /**
+    //  * 최근 1시간 동안의 베팅 주문 통계를 조회한다.
+    //  * @param bettingId 베팅 ID
+    //  * @return 1시간 베팅 주문 통계 목록
+    //  */
+    // public Map<Long, Map<LocalDate, List<StatisticsTimeDTO>>> findBettingOrderHistoryInLastHour(Long bettingId) {
+    //     LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+    //
+    //     // 옵션 조회
+    //     List<Long> optionIds = bettingOptionRepository.findBettingOptionIdByBettingId(bettingId);
+    //
+    //     // 현재시간 - 1시간 전부터 현재 시간까지 1분단위로 시간객체 생성
+    //     List<LocalDateTime> time_slot =  TimeSlotGenerator.generateMinuteIntervals(LocalDateTime.now(), 60, 1);
+    //
+    //     // 1시간 전까지의 옵션별로 포인트 합계
+    //     List<TotalPointsUntilAgo> prev = bettingOrderQueryRepository.totalPointsSumUntilOneHourAgo(bettingId, oneHourAgo.toLocalDate(), oneHourAgo.toLocalTime());
+    //
+    //     Map<Long, Map<LocalDate, List<StatisticsTimeDTO>>>  retDTO = new HashMap<>();
+    //
+    //     // 옵션과 시간객체로 retDTO 초기화 및 1시간 전까지의 주문 포인트 총합 적용
+    //     for (Long optionId : optionIds){
+    //         BigDecimal totalPoints = prev.stream()
+    //                 .filter(dto -> dto.getBettingOptionId().equals(optionId))
+    //                 .map(TotalPointsUntilAgo::getTotalPoints)
+    //                 .findFirst()
+    //                 .orElse(BigDecimal.ZERO);
+    //         Map<LocalDate, List<StatisticsTimeDTO>> map = new HashMap<>();
+    //         for (LocalDateTime dateTime : time_slot){
+    //             LocalDate date = dateTime.toLocalDate();
+    //             LocalTime time = dateTime.toLocalTime();
+    //             if (map.containsKey(date)){
+    //                 map.get(date).add(new StatisticsTimeDTO(time, totalPoints));
+    //             } else {
+    //                 List<StatisticsTimeDTO> list = new ArrayList<>();
+    //                 list.add(new StatisticsTimeDTO(time, totalPoints));
+    //                 map.put(date, list);
+    //             }
+    //         }
+    //         retDTO.put(optionId, map);
+    //     }
+    //
+    //     // 최근 한 시간 주문데이터 불러오기
+    //     List<StatisticsDateTimeDTO> oneHour = orderFilter(bettingId, oneHourAgo.toLocalDate(), oneHourAgo.toLocalTime());
+    //
+    //     // 이전 데이터에 최근 한 시간 데이터 적용
+    //     for (StatisticsDateTimeDTO dto : oneHour) {
+    //         Long optionId = dto.getBettingOptionId();
+    //         LocalDate date = dto.getTimeSlot().toLocalDate();
+    //         LocalTime time = dto.getTimeSlot().toLocalTime();
+    //         BigDecimal totalPoints = dto.getTotalPoints();
+    //
+    //         if (!retDTO.containsKey(optionId)) {
+    //             continue;
+    //         }
+    //
+    //         Map<LocalDate, List<StatisticsTimeDTO>> dateMap = retDTO.get(optionId);
+    //         if (!dateMap.containsKey(date)) {
+    //             continue;
+    //         }
+    //
+    //         List<StatisticsTimeDTO> list = dateMap.get(date);
+    //         for (int i = 0; i < list.size(); i++) {
+    //             StatisticsTimeDTO timeDTO = list.get(i);
+    //             if (isWithinOneMinute(timeDTO.getTimeSlot(), time)) {
+    //                 BigDecimal updatedPoints = timeDTO.getTotalPoints().add(totalPoints);
+    //
+    //
+    //                 if (i > 0 && list.get(i - 1).getTotalPoints().compareTo(timeDTO.getTotalPoints()) == 0) {
+    //                     updatedPoints = list.get(i - 1).getTotalPoints().add(totalPoints);
+    //                 }
+    //
+    //                 timeDTO.setTotalPoints(updatedPoints);
+    //                 for (int j = i + 1; j < list.size(); j++) {
+    //                     list.get(j).setTotalPoints(timeDTO.getTotalPoints());
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
+    //     aggregateTotalPointsAndCalculateRatio(retDTO);
+    //
+    //     return  retDTO;
+    // }
 
     public static void aggregateTotalPointsAndCalculateRatio(Map<Long, Map<LocalDate, List<StatisticsTimeDTO>>> bettingData) {
         // First, aggregate totalPoints across all options for each timeSlot

@@ -122,6 +122,14 @@ minio:
   accessKey: MY-USER
   secretKey: MY-PASSWORD
   bucketName: user-files
+
+influxdb:
+  url: http://localhost:8087  # InfluxDB의 URL
+  token: your_admin_token   # InfluxDB의 인증 토큰
+  org: master-of-prediction           # InfluxDB의 조직 이름
+  bucket: 1m_data              # 기본적으로 1분 데이터를 저장할 버킷 이름
+
+
 logging:
   level:
     com:

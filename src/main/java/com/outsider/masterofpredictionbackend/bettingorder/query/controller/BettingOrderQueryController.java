@@ -32,9 +32,9 @@ public class BettingOrderQueryController {
     }
 
     @GetMapping("/api/v1/betting-products/orders")
-    @Operation(summary = "배팅 상품 구매내역 조회")
-    public ResponseEntity<?> getBettingOrderHistory(@RequestParam Long bettingId){
-        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistory(bettingId));
+    @Operation(summary = "모든 배팅 상품 구매내역 조회(그래프)")
+    public ResponseEntity<?> getBettingOrderHistory(@RequestParam Long bettingId, @RequestParam String timeRange){
+        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistory(bettingId, timeRange));
     }
 
     @GetMapping("/api/v1/betting-products/activity")
@@ -55,9 +55,5 @@ public class BettingOrderQueryController {
         return ResponseEntity.ok(bettingOrderQueryService.findBettingProductOptionsRatio(bettingId));
     }
 
-    @GetMapping("/api/v1/betting-products/options/last-hour-statistics")
-    @Operation(summary = "배팅 상품 옵션 1시간 통계 조회")
-    public ResponseEntity<?> getBettingProductOptionsStatistics(@RequestParam Long bettingId){
-        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistoryInLastHour(bettingId));
-    }
+
 }

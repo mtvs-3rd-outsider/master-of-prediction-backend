@@ -21,4 +21,6 @@ public interface UserService {
      */
     List<User> findUsersByIds(List<Long> userIds);
 
+    Boolean isAdmin(Long userId);
+
 }

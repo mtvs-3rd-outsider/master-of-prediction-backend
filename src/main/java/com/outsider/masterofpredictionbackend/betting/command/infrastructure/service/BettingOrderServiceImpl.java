@@ -2,12 +2,10 @@ package com.outsider.masterofpredictionbackend.betting.command.infrastructure.se
 
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.BettingOrderService;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.repository.BettingOrderRepository;
-import com.outsider.masterofpredictionbackend.betting.command.infrastructure.service.BettingOrderSumPointDTO;
+import com.outsider.masterofpredictionbackend.bettingorder.query.dto.UserPredictionResultDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.query.repository.BettingOrderQueryRepository;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,6 +39,11 @@ public class BettingOrderServiceImpl implements BettingOrderService {
     @Override
     public List<Long> findUserIdsByProductId(Long productId) {
         return bettingOrderRepository.findUserIdsByBettingId(productId);
+    }
+
+    @Override
+    public List<UserPredictionResultDTO> findUserPredictionResult(Long productId, Long matchedOptionId) {
+        return bettingOrderQueryRepository.findUserPredictionResult(productId, matchedOptionId);
     }
 
 }

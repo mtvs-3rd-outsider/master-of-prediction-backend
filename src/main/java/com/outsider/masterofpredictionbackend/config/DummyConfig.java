@@ -169,22 +169,22 @@ public class DummyConfig {
             Pageable pageable = PageRequest.of(0, 10);
 
             // 애플리케이션 종료 시 사용자 삭제
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                userIds.forEach(id -> {
-                    if (id != null) {
-                        userCommandRepository.deleteById(id);
-                        myChannelCommandRepository.deleteById(id);
-                        // Hard delete on shutdown
-                    }
-                });
-                categoryChannelIds.forEach(id -> {
-                    if (id != null) {
-                        categoryChannelRepository.deleteById(id); // Hard delete category channels on shutdown
-                    }
-                });
-                deleteKafkaTopics(adminClient);
-                adminClient.close();
-            }));
+        //     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        //         userIds.forEach(id -> {
+        //             if (id != null) {
+        //                 userCommandRepository.deleteById(id);
+        //                 myChannelCommandRepository.deleteById(id);
+        //                 // Hard delete on shutdown
+        //             }
+        //         });
+        //         categoryChannelIds.forEach(id -> {
+        //             if (id != null) {
+        //                 categoryChannelRepository.deleteById(id); // Hard delete category channels on shutdown
+        //             }
+        //         });
+        //         deleteKafkaTopics(adminClient);
+        //         adminClient.close();
+        //     }));
         };
     }
     private void deleteKafkaTopics(AdminClient adminClient) {

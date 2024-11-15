@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.betting.command.infrastructure.se
 
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.UserService;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.service.UserInfoService;
@@ -53,5 +54,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findUsersByIds(List<Long> userIds) {
         return userRepository.findAllById(userIds);
+    }
+
+    @Override
+    public Boolean isAdmin(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return false;
+        }
+        return user.getAuthority() == Authority.ROLE_ADMIN;
     }
 }

@@ -106,6 +106,7 @@ public class DevSecurityConfig {
         config.addAllowedOrigin("https://*.google.com");
         config.addAllowedOrigin("https://lh3.googleusercontent.com");
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://localhost:3000");
         config.addAllowedOrigin("http://125.132.216.190:3301");
         config.addAllowedOrigin("http://125.132.216.190");
         config.addAllowedOrigin("http://master-of-prediction.shop:3334");

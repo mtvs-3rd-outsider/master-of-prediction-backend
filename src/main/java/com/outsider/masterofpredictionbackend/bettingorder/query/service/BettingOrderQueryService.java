@@ -1,16 +1,16 @@
 package com.outsider.masterofpredictionbackend.bettingorder.query.service;
 
+import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingOptionQueryRepository;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingQueryRepository;
-import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
 import com.outsider.masterofpredictionbackend.bettingorder.query.dto.*;
 import com.outsider.masterofpredictionbackend.bettingorder.query.repository.BettingOrderQueryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -56,26 +56,160 @@ public class BettingOrderQueryService {
         return bettingOrderQueryRepository.findBettingProductOptionsRatio(bettingId);
     }
 
-    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistory(Long bettingId) {
-        return bettingOrderStatistics.findBettingOrderHistoryInLastHourFix(bettingId);
-        // LocalDateTime startDateTime = null;
-        // try{
-        //     // startDateTime = bettingQueryRepository.findById(bettingId).get().getCreatedAt();
-        //     startDateTime = bettingQueryRepository.findById(bettingId).get().getCreatedAt();
-        // }catch (Exception e){
-        //     log.error("findBettingOrderHistory error", e);
-        //     throw new RuntimeException("{error: not found betting id}");
-        // }
-        // List<LocalDateTime> timeSlots = createFiveMinuteTimeSlots(startDateTime);
-        // // List<BettingOrderStatisticsDTO> bettingOrders = bettingOrderQueryRepository.findBettingOrderHistory(bettingId);
-        // List<BettingOrderStatisticsDTO> bettingOrders = bettingOrderStatistics.findBettingOrderHistory(bettingId);
-        // Map<Long, List<BettingOrderStatisticsDTO>> organizedOrders = organizeOptions(bettingOrders);
-        // if (organizedOrders.isEmpty()) {
-        //     return initBettingData(timeSlots, bettingId);
-        // }
-        // Map<Long, List<BettingOrderStatisticsDTO>> result = fillMissingTimeDataInMap(organizedOrders, timeSlots);
-        // calculateAndSetRatios(result);
-        // return result;
+    private BettingProduct getBettingProduct(Long bettingId) {
+        return bettingQueryRepository.findById(bettingId).orElseThrow(() -> new IllegalArgumentException("BettingProduct not found"));
+    }
+
+    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistory(Long bettingId, String timeRange) {
+        BettingProduct bettingProduct = getBettingProduct(bettingId);
+        LocalDateTime createdDateTime = bettingProduct.getCreatedAt();
+        Duration duration = Duration.between(createdDateTime, LocalDateTime.now());
+
+        LocalDateTime startDateTime;
+        int interval = getInterval(duration);
+
+        switch (timeRange) {
+            case "lastHour":
+                startDateTime = LocalDateTime.now().minusHours(1);
+                if (duration.toMinutes() < 60) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            case "last6Hour":
+                startDateTime = LocalDateTime.now().minusHours(6);
+                if (duration.toHours() < 6) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            case "oneDay":
+                startDateTime = LocalDateTime.now().minusDays(1L);
+                if (duration.toHours() < 24) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            case "oneWeek":
+                startDateTime = LocalDateTime.now().minusWeeks(1L);
+                if (duration.toDays() < 7) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            case "oneMonth":
+                startDateTime = LocalDateTime.now().minusMonths(1L);
+                if (duration.toDays() < 31) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            default:
+                startDateTime = createdDateTime;
+                break;
+        }
+        return bettingOrderStatistics.getBettingOrderStatsByMinuteInterval(bettingId, startDateTime, interval);
+    }
+
+
+    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistoryInLastHour(Long bettingId) {
+        BettingProduct bettingProduct = getBettingProduct(bettingId);
+        LocalDateTime createdDateTime = bettingProduct.getCreatedAt();
+        Duration duration = Duration.between(createdDateTime, LocalDateTime.now());
+
+        LocalDateTime startDateTime = LocalDateTime.now().minusHours(1);
+        int interval = 1;
+
+        // 한 시간 이내인지 체크
+        if (duration.toMinutes() < 60) {
+            startDateTime = createdDateTime;
+        }
+        return bettingOrderStatistics.getBettingOrderStatsByMinuteInterval(bettingId, startDateTime, interval);
+    }
+
+    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistoryInLast6Hour(Long bettingId) {
+        BettingProduct bettingProduct = getBettingProduct(bettingId);
+        LocalDateTime createdDateTime = bettingProduct.getCreatedAt();
+        Duration duration = Duration.between(createdDateTime, LocalDateTime.now());
+
+        LocalDateTime startDateTime = LocalDateTime.now().minusHours(6);
+        int interval = getInterval(duration);
+
+        if (duration.toHours() < 6) {
+            startDateTime = createdDateTime;
+        }
+        return bettingOrderStatistics.getBettingOrderStatsByMinuteInterval(bettingId, startDateTime, interval);
+    }
+
+    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistoryInOneDay(Long bettingId) {
+        BettingProduct bettingProduct = getBettingProduct(bettingId);
+        LocalDateTime createdDateTime = bettingProduct.getCreatedAt();
+        Duration duration = Duration.between(createdDateTime, LocalDateTime.now());
+
+        LocalDateTime startDateTime = LocalDateTime.now().minusDays(1L);
+        int interval = getInterval(duration);
+
+        if (duration.toHours() < 24) {
+            startDateTime = createdDateTime;
+        }
+
+        return bettingOrderStatistics.getBettingOrderStatsByMinuteInterval(bettingId, startDateTime, interval);
+    }
+
+    private int getInterval(Duration duration) {
+        int interval = 60 * 12;
+        if (duration.toHours() <= 6) {
+            interval = 1;
+        } else if (duration.toHours() <= 24) {
+            interval = 5;
+        } else if (duration.toDays() <= 3) {
+            interval = 15;
+        } else if (duration.toDays() <= 7) {
+            interval = 30;
+        } else if (duration.toDays() <= 14) {
+            interval = 60;
+        } else if (duration.toDays() <= 21) {
+            interval = 60 * 2;
+        } else if (duration.toDays() <= 31) {
+            interval = 60 * 3;
+        }
+
+        return interval;
+    }
+
+    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistoryInOneWeek(Long bettingId) {
+        BettingProduct bettingProduct = getBettingProduct(bettingId);
+        LocalDateTime createdDateTime = bettingProduct.getCreatedAt();
+        Duration duration = Duration.between(createdDateTime, LocalDateTime.now());
+
+        LocalDateTime startDateTime = LocalDateTime.now().minusWeeks(1L);
+        int interval = getInterval(duration);
+
+        if (duration.toDays() < 24 * 7) {
+            startDateTime = createdDateTime;
+        }
+
+        return bettingOrderStatistics.getBettingOrderStatsByMinuteInterval(bettingId, startDateTime, interval);
+    }
+
+    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistoryInOneMonth(Long bettingId) {
+        BettingProduct bettingProduct = getBettingProduct(bettingId);
+        LocalDateTime createdDateTime = bettingProduct.getCreatedAt();
+        Duration duration = Duration.between(createdDateTime, LocalDateTime.now());
+
+        LocalDateTime startDateTime = LocalDateTime.now().minusMinutes(1L);
+        int interval = getInterval(duration);
+
+        if (duration.toDays() < 24 * 31) {
+            startDateTime = createdDateTime;
+        }
+
+        return bettingOrderStatistics.getBettingOrderStatsByMinuteInterval(bettingId, startDateTime, interval);
+    }
+
+    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistoryAll(Long bettingId) {
+        BettingProduct bettingProduct = getBettingProduct(bettingId);
+        LocalDateTime createdDateTime = bettingProduct.getCreatedAt();
+        Duration duration = Duration.between(createdDateTime, LocalDateTime.now());
+
+        int interval = getInterval(duration);
+
+        return bettingOrderStatistics.getBettingOrderStatsByMinuteInterval(bettingId, createdDateTime, interval);
     }
 
     /**
@@ -252,8 +386,8 @@ public class BettingOrderQueryService {
 
         return timeIntervals;
     }
-
-    public Map<Long, Map<LocalDate, List<StatisticsTimeDTO>>> findBettingOrderHistoryInLastHour(Long bettingId) {
-        return bettingOrderStatistics.findBettingOrderHistoryInLastHour(bettingId);
-    }
+    //
+    // public Map<Long, Map<LocalDate, List<StatisticsTimeDTO>>> findBettingOrderHistoryInLastHour(Long bettingId) {
+    //     return bettingOrderStatistics.findBettingOrderHistoryInLastHour(bettingId);
+    // }
 }

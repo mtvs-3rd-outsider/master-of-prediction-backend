@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.betting.command.infrastructure.se
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.BettingKafkaService;
+import com.outsider.masterofpredictionbackend.bettingorder.query.dto.UserPredictionResultDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -51,6 +52,16 @@ public class BettingKafkaServiceImpl implements BettingKafkaService {
                 log.error("error kafka sending settlement event: {}", e.getMessage());
                 throw new RuntimeException();
             }
+        }
+    }
+
+    @Override
+    public void sendPredictionResult(List<UserPredictionResultDTO> userPredictionResultDTOS) {
+        try {
+            kafkaTemplate.send("predictionResult", objectMapper.writeValueAsString(userPredictionResultDTOS));
+        } catch (JsonProcessingException e) {
+            log.error("error kafka sending settlement event: {}", e.getMessage());
+            throw new RuntimeException();
         }
     }
 }
