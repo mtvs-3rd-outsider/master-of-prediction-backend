@@ -142,4 +142,11 @@ public class BettingProductController {
             return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @GetMapping("/api/v1/betting-products/test/user-prediction-resultdto")
+    @Operation(summary = "유저의 예측 결과 조회(테스트)")
+    public ResponseEntity<?> getUserPredictionResultDTO(@RequestParam Long productId, @RequestParam Long matchedOptionId){
+        return ResponseEntity.ok(bettingProductService.findUserPredictionResult(productId, matchedOptionId));
+    }
 }

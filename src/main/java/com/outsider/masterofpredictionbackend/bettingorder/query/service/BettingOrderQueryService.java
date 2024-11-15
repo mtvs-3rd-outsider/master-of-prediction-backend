@@ -60,6 +60,53 @@ public class BettingOrderQueryService {
         return bettingQueryRepository.findById(bettingId).orElseThrow(() -> new IllegalArgumentException("BettingProduct not found"));
     }
 
+    public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistory(Long bettingId, String timeRange) {
+        BettingProduct bettingProduct = getBettingProduct(bettingId);
+        LocalDateTime createdDateTime = bettingProduct.getCreatedAt();
+        Duration duration = Duration.between(createdDateTime, LocalDateTime.now());
+
+        LocalDateTime startDateTime;
+        int interval = getInterval(duration);
+
+        switch (timeRange) {
+            case "lastHour":
+                startDateTime = LocalDateTime.now().minusHours(1);
+                if (duration.toMinutes() < 60) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            case "last6Hour":
+                startDateTime = LocalDateTime.now().minusHours(6);
+                if (duration.toHours() < 6) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            case "oneDay":
+                startDateTime = LocalDateTime.now().minusDays(1L);
+                if (duration.toHours() < 24) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            case "oneWeek":
+                startDateTime = LocalDateTime.now().minusWeeks(1L);
+                if (duration.toDays() < 7) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            case "oneMonth":
+                startDateTime = LocalDateTime.now().minusMonths(1L);
+                if (duration.toDays() < 31) {
+                    startDateTime = createdDateTime;
+                }
+                break;
+            default:
+                startDateTime = createdDateTime;
+                break;
+        }
+        return bettingOrderStatistics.getBettingOrderStatsByMinuteInterval(bettingId, startDateTime, interval);
+    }
+
+
     public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistoryInLastHour(Long bettingId) {
         BettingProduct bettingProduct = getBettingProduct(bettingId);
         LocalDateTime createdDateTime = bettingProduct.getCreatedAt();

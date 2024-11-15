@@ -91,4 +91,21 @@ public interface BettingOrderQueryRepository extends JpaRepository<BettingOrder,
             " bo.bettingOptionId, bo.userId, sum(bo.point) " +
             ") from BettingOrder bo where bo.bettingId = :productId group by bo.bettingOptionId, bo.userId")
     List<BettingOrderSumPointDTO> calculateUserOrderPointSumByProductId(Long productId);
+
+    @Query("SELECT new com.outsider.masterofpredictionbackend.bettingorder.query.dto.UserPredictionResultDTO(" +
+            "    bo.userId, " +
+            "    CASE " +
+            "        WHEN COUNT(CASE WHEN bo.bettingOptionId = :selected_betting_option_id THEN 1 END) = 0 " +
+            "            THEN 'lose' " +
+            "        WHEN COUNT(DISTINCT bo.bettingOptionId) = 1 AND " +
+            "             COUNT(CASE WHEN bo.bettingOptionId = :selected_betting_option_id THEN 1 END) > 0 " +
+            "            THEN 'win' " +
+            "        ELSE 'draw' " +
+            "        END " +
+            ") FROM BettingOrder bo " +
+            "WHERE " +
+            "    bo.bettingId = :bettingId " +
+            "GROUP BY " +
+            "    bo.userId ")
+    List<UserPredictionResultDTO> findUserPredictionResult(Long bettingId, Long selected_betting_option_id);
 }

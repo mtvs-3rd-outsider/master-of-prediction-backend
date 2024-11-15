@@ -33,39 +33,8 @@ public class BettingOrderQueryController {
 
     @GetMapping("/api/v1/betting-products/orders")
     @Operation(summary = "모든 배팅 상품 구매내역 조회(그래프)")
-    public ResponseEntity<?> getBettingOrderHistory(@RequestParam Long bettingId){
-        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistoryAll(bettingId));
-    }
-
-    @GetMapping("/api/v1/betting-products/options/last-hour-statistics")
-    @Operation(summary = "한 시간 동안의 배팅 상품 구매내역 조회(그래프)")
-    public ResponseEntity<?> getBettingOrderHistoryInLastHour(@RequestParam Long bettingId){
-        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistoryInLastHour(bettingId));
-    }
-
-    @GetMapping("/api/v1/betting-products/options/last-6hour-statistics")
-    @Operation(summary = "여섯 시간 동안의 배팅 상품 구매내역 조회(그래프)")
-    public ResponseEntity<?> getBettingOrderHistoryInLast6Hour(@RequestParam Long bettingId){
-        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistoryInLast6Hour(bettingId));
-    }
-
-    @GetMapping("/api/v1/betting-products/options/one-day-statistics")
-    @Operation(summary = "하루 동안의 배팅 상품 구매내역 조회(그래프)")
-    public ResponseEntity<?> getBettingOrderHistoryInOneDay(@RequestParam Long bettingId){
-        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistoryInOneDay(bettingId));
-    }
-
-    @GetMapping("/api/v1/betting-products/options/one-week-statistics")
-    @Operation(summary = "일주일 동안의 배팅 상품 구매내역 조회(그래프)")
-    public ResponseEntity<?> getBettingOrderHistoryInOneWeek(@RequestParam Long bettingId){
-        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistoryInOneWeek(bettingId));
-    }
-
-
-    @GetMapping("/api/v1/betting-products/options/one-month-statistics")
-    @Operation(summary = "한달 동안의 배팅 상품 구매내역 조회(그래프)")
-    public ResponseEntity<?> getBettingOrderHistoryInOneMonth(@RequestParam Long bettingId){
-        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistoryInOneMonth(bettingId));
+    public ResponseEntity<?> getBettingOrderHistory(@RequestParam Long bettingId, @RequestParam String timeRange){
+        return ResponseEntity.ok(bettingOrderQueryService.findBettingOrderHistory(bettingId, timeRange));
     }
 
     @GetMapping("/api/v1/betting-products/activity")

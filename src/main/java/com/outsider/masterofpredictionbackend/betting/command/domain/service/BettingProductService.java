@@ -9,6 +9,7 @@ import com.outsider.masterofpredictionbackend.betting.command.domain.repository.
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductRepository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
 import com.outsider.masterofpredictionbackend.betting.command.infrastructure.service.BettingOrderSumPointDTO;
+import com.outsider.masterofpredictionbackend.bettingorder.query.dto.UserPredictionResultDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,10 @@ public class BettingProductService {
         }
         return !LocalDate.now().isEqual(bettingProduct.getDeadlineDate()) ||
                 !LocalTime.now().isAfter(bettingProduct.getDeadlineTime());
+    }
+
+    public List<UserPredictionResultDTO> findUserPredictionResult(Long productId, Long matchedOptionId) {
+        return bettingOrderService.findUserPredictionResult(productId, matchedOptionId);
     }
 
     @Transactional
@@ -167,6 +172,14 @@ public class BettingProductService {
         for (Map.Entry<Long, BigDecimal> entry : userPointMap.entrySet()) {
             log.info("send settlement event: userId: {}, newPoints: {}", entry.getKey(), entry.getValue());
             bettingKafkaService.sendSettlementEvent(entry.getKey(), entry.getValue());
+        }
+
+        //NOTE: 관리자가 만든 배팅만 실행되어야함
+        if (userService.isAdmin(userId)){
+            List<UserPredictionResultDTO> userPredictionResultDTOS = findUserPredictionResult(productId, optionId);
+            if (!userPredictionResultDTOS.isEmpty()){
+                bettingKafkaService.sendPredictionResult(userPredictionResultDTOS);
+            }
         }
     }
 }
