@@ -1,8 +1,10 @@
 package com.outsider.masterofpredictionbackend.exception;
 
+import com.outsider.masterofpredictionbackend.common.exception.CustomExceptionMapping;
 import com.outsider.masterofpredictionbackend.notification.DiscordMessage;
 import com.outsider.masterofpredictionbackend.notification.DiscordNotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     private final DiscordNotificationService discordService;
-
+    private final MessageSource messageSource;
 
     // NullPointerException 처
     @ExceptionHandler(NullPointerException.class)
@@ -58,20 +60,23 @@ public class GlobalExceptionHandler {
     }
     // 기타 예외 처리
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex, WebRequest request) {
-        // 에러 메시지 생성
-        String errorMessage = "An error occurred: " + ex.getMessage();
-
-        // Discord 알림 전송
-        DiscordMessage message = discordService.createMessage(ex, request);
-        discordService.sendAlarm(message);
-        // 응답 반환
-
-        // 예외 로그 처리
+    public ResponseEntity<Map<String, String>> handleException(Exception ex, WebRequest request) {
+        CustomExceptionMapping mapping = CustomExceptionMapping.fromException(ex.getClass());
         Map<String, String> response = new HashMap<>();
-        response.put("message", "서버 오류가 발생했습니다.");
-        response.put("details", ex.getMessage());  // 예외 메시지 추가
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+
+        if (mapping != null) {
+            // 다국어 메시지 처리
+            response.put("message", mapping.getMessage(messageSource));
+            return ResponseEntity.status(mapping.getHttpStatus()).body(response);
+        } else {
+            // 500 내부 서버 오류의 경우 Discord 알림 전송
+            DiscordMessage message = discordService.createMessage(ex, request);
+            discordService.sendAlarm(message);
+
+            // 기본 오류 응답
+            response.put("message", "서버 오류가 발생했습니다.");
+            response.put("details", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 }
