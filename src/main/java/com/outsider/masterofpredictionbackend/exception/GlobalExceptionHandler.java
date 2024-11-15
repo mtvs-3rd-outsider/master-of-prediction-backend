@@ -1,5 +1,8 @@
 package com.outsider.masterofpredictionbackend.exception;
 
+import com.outsider.masterofpredictionbackend.notification.DiscordMessage;
+import com.outsider.masterofpredictionbackend.notification.DiscordNotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,14 +12,20 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
 @Profile("prod")
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    // NullPointerException 처리
+
+    private final DiscordNotificationService discordService;
+
+
+    // NullPointerException 처
     @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleNullPointerException(NullPointerException ex, WebRequest request) {
@@ -38,11 +47,27 @@ public class GlobalExceptionHandler {
         errors.put("message", "유효성 검사에 실패했습니다.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
-
+    // 404 오류 처리 (Discord 알림 없이)
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Map<String, String>> handleNotFoundException(NoHandlerFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "요청한 리소스를 찾을 수 없습니다.");
+        response.put("details", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
     // 기타 예외 처리
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex, WebRequest request) {
+        // 에러 메시지 생성
+        String errorMessage = "An error occurred: " + ex.getMessage();
+
+        // Discord 알림 전송
+        DiscordMessage message = discordService.createMessage(ex, request);
+        discordService.sendAlarm(message);
+        // 응답 반환
+
         // 예외 로그 처리
         Map<String, String> response = new HashMap<>();
         response.put("message", "서버 오류가 발생했습니다.");

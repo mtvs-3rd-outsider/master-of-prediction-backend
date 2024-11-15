@@ -142,3 +142,7 @@ logging:
           elasticsearch: DEBUG
 kafka:
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+discord:
+  webhook:
+    url: https://discord.com/api/webhooks/1304103241105145907/B0ylq8IWZwvmJYUFBzUARMyceh2gcIXEdExSi0dVFiKDFQIGMm_cJydIWzeZuuu0Y9Fh

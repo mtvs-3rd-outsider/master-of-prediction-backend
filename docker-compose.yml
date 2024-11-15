@@ -101,7 +101,7 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./cert:/etc/prometheus/cert
-      - ./prometheus-data:/prometheus
+      -  prometheus-data:/prometheus
     ports:
       - "9090:9090"
     profiles:
@@ -148,10 +148,11 @@ services:
       - maildata:/var/mail
       - mailstate:/var/mail-state
       - maillogs:/var/log/mail
+      - ./email-server-config/config/postfix-accounts.cf:/tmp/docker-mailserver/
 #      - /etc/localtime:/etc/localtime:ro
       - ./email-server-config/custom-certs:/etc/config
       - ./email-server-config/setup.sh:/usr/local/bin/setup.sh
-      - ./email-server-config/config/:/tmp/docker-mailserver/${SELINUX_LABEL}
+#      - ./email-server-config/config/:/tmp/docker-mailserver/${SELINUX_LABEL}
     restart: always
     stop_grace_period: 1m
     cap_add:
@@ -409,7 +410,7 @@ services:
       - "8087:8086"  # InfluxDB API 및 관리 포트
     volumes:
       - influxdb_data:/var/lib/influxdb2                   # InfluxDB 데이터 볼륨 마운트
-    profiles: [ "db", "required" ]
+    profiles: [ "db" ]
 
 volumes:
   grafana-storage:
@@ -423,4 +424,5 @@ volumes:
   zookeeper_data:
   kafka-data:
   es_data:
+  prometheus-data:
   influxdb_data:
