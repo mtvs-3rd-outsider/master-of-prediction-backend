@@ -165,7 +165,7 @@ public class SecurityConfig {
                 .clientSecret(clientSecret)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("https://master-of-prediction.shop:8081/login/oauth2/code/google")
+                .redirectUri(redirectUri)
                 .scope("profile", "email")
                 .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
                 .tokenUri("https://www.googleapis.com/oauth2/v4/token")
