@@ -9,8 +9,10 @@ import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embe
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserService;
+import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.OAuth2SuccessHandler;
 import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.PrincipalOauthUserService;
 import com.outsider.masterofpredictionbackend.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +23,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -39,22 +47,30 @@ import static com.outsider.masterofpredictionbackend.common.constant.StringConst
 @EnableWebSecurity
 @Profile("dev")
 public class DevSecurityConfig {
+    @Value("${google.client.id}")
+    private String clientId;
 
-    private final UserCommandRepository userCommandRepository;
-    private final UserRegistService userRegistService;
+    @Value("${google.client.secret}")
+    private String clientSecret;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    @Value("${google.redirect.uri}")
+    private String redirectUri;
+    @Value("${google.redirect.successfulUri}")
+    private String successfulUri;
     private final JwtUtil jwtUtil;
+    private final UserCommandRepository userCommandRepository;
+    private final GetOrFullAuthorizationManager customAuthorizationManager;
+    private final UserRegistService userRegistService;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-    private final GetOrFullAuthorizationManager customAuthorizationManager;
-
-    public DevSecurityConfig(UserRegistService userRegistService, JwtUtil jwtUtil, UserCommandRepository userMapper, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint, GetOrFullAuthorizationManager customAuthorizationManager) {
-
-        this.jwtUtil = jwtUtil;
+    public DevSecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint) {
         this.userRegistService = userRegistService;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+        this.jwtUtil = jwtUtil;
         this.userCommandRepository = userMapper;
+        this.customAuthorizationManager = customAuthorizationManager;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
-        this.customAuthorizationManager = customAuthorizationManager;
     }
 
     @Bean
@@ -66,30 +82,43 @@ public class DevSecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                .cors(Customizer.withDefaults()).
+                requiresChannel(channel -> channel
+                        .anyRequest().requiresSecure()
+                )
                 .authorizeHttpRequests(auth -> auth
                         // .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register").permitAll()
+                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/signup/email","/signup/emailAuth").permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable
-                ).httpBasic(AbstractHttpConfigurer::disable).exceptionHandling(
+                ).
+                httpBasic(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable).exceptionHandling(
                         handler->handler
-                .accessDeniedHandler(accessDeniedHandler) // 403 발생 시 커스텀 핸들러 사용
-                .authenticationEntryPoint(authenticationEntryPoint) // 401 발생 시 커스텀 핸들러 사용
+                                .accessDeniedHandler(accessDeniedHandler) // 403 발생 시 커스텀 핸들러 사용
+                                .authenticationEntryPoint(authenticationEntryPoint) // 401 발생 시 커스텀 핸들러 사용
                 )
-                .addFilterBefore(new JwtAuthFilter( jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2 -> oauth2
 
-
-
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(redirection -> redirection
+                                .baseUri("/login/oauth2/code/*"))
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(this.oauth2UserService()))
+                        .successHandler(oAuth2SuccessHandler)
+                );
 
 
         return http.build();
     }
-    private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService( ) {
+
+    private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
         final PrincipalOauthUserService delegate = new PrincipalOauthUserService(passwordEncoder(), userRegistService,userCommandRepository);
         return (userRequest) -> {
 
@@ -98,6 +127,7 @@ public class DevSecurityConfig {
         };
 
     }
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -107,20 +137,44 @@ public class DevSecurityConfig {
         config.addAllowedOrigin("https://lh3.googleusercontent.com");
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("https://localhost:3000");
-        config.addAllowedOrigin("http://125.132.216.190:3301");
-        config.addAllowedOrigin("http://125.132.216.190");
-        config.addAllowedOrigin("http://master-of-prediction.shop:3334");
-        config.addAllowedOrigin("https://master-of-prediction.shop");
-        config.addAllowedOrigin("https://master-of-prediction.shop:3334");
+        config.addAllowedOrigin("https://192.168.0.38:3000");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
         config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.addAllowedOrigin("https://master-of-prediction.shop");
+        config.addAllowedOrigin("https://master-of-prediction.shop");
+        config.addAllowedOrigin("https://*.master-of-prediction.shop");
+        config.addAllowedOrigin("https://app.master-of-prediction.shop");
+        config.addAllowedOrigin("https://master-of-prediction.shop:3334");
+        config.addAllowedOrigin("https://master-of-prediction-frontend-psxd.vercel.app/");
+        config.addAllowedOrigin("https://master-of-prediction-frontend.vercel.app");
+        config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
 
+    @Bean
+    public ClientRegistrationRepository clientRegistrationRepository() {
+        return new InMemoryClientRegistrationRepository(this.googleClientRegistration());
+    }
+
+    private ClientRegistration googleClientRegistration() {
+        return ClientRegistration.withRegistrationId("google")
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .redirectUri(redirectUri)
+                .scope("profile", "email")
+                .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
+                .tokenUri("https://www.googleapis.com/oauth2/v4/token")
+                .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
+                .userNameAttributeName(IdTokenClaimNames.SUB)
+                .jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
+                .clientName("Google")
+                .build();
+    }
 
 
 }

@@ -18,7 +18,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @Component
-@Profile("prod")
+//@Profile("prod")
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil tokenProvider;

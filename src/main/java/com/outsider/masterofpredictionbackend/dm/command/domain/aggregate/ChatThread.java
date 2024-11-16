@@ -2,6 +2,8 @@ package com.outsider.masterofpredictionbackend.dm.command.domain.aggregate;
 
 
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class ChatThread {
 
     // 마지막 메시지가 전송된 시간을 저장하는 필드
     @Column(name = "last_message_time", nullable = true)
-    private LocalDateTime lastMessageTime;
+    private Instant lastMessageTime;
 
     // 채팅방의 참여자 목록을 나타내는 관계 설정
     @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -74,11 +76,11 @@ public class ChatThread {
         this.lastMessage = lastMessage;
     }
 
-    public LocalDateTime getLastMessageTime() {
+    public Instant getLastMessageTime() {
         return lastMessageTime;
     }
 
-    public void setLastMessageTime(LocalDateTime lastMessageTime) {
+    public void setLastMessageTime(Instant lastMessageTime) {
         this.lastMessageTime = lastMessageTime;
     }
 

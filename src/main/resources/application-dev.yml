@@ -1,0 +1,11 @@
+
+google:
+  client:
+    id: ${GOOGLE_CLIENT_ID}
+    secret: ${GOOGLE_CLIENT_SECRET}
+  redirect:
+    uri: ${GOOGLE_REDIRECT_URI}
+    successfulUri: https://localhost:3000/
+firebase:
+  config:
+    path: src/main/resources/firebase/master-of-prediction-384d0-firebase-adminsdk-47mce-780f4ac1f3.json

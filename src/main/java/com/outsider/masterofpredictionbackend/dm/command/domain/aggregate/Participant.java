@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.dm.command.domain.aggregate;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,7 +39,7 @@ public class Participant {
     }
 
     @Column(name = "last_read_time", nullable = true)
-    private LocalDateTime lastReadTime = LocalDateTime.now();
+    private Instant lastReadTime = Instant.now();
     // Boolean 대신 Integer로 수정하여 읽지 않은 메시지 카운트로 사용
     @Column(name = "unread_message_count", nullable = false)
     private Integer unreadMessageCount = 0;
@@ -100,11 +101,11 @@ public class Participant {
         this.isOnline = isOnline;
     }
 
-    public LocalDateTime getLastReadTime() {
+    public Instant getLastReadTime() {
         return lastReadTime;
     }
 
-    public void setLastReadTime(LocalDateTime lastReadTime) {
+    public void setLastReadTime(Instant lastReadTime) {
         this.lastReadTime = lastReadTime;
     }
 }
