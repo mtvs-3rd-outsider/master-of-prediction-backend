@@ -65,6 +65,32 @@ public class AuthService {
     public void checkWithdrawalStatus(User user) {
         if (user.getWithdrawal()) {
             user.setWithdrawal(false);
+            userCommandRepository.save(user); // 변경사항을 저장
         }
     }
+    @Transactional
+    public boolean changePassword(String email, String currentPassword, String newPassword) {
+        User user = userCommandRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!encoder.matches(currentPassword, user.getPassword())) {
+            return false; // 현재 비밀번호가 일치하지 않음
+        }
+
+        user.setPassword(encoder.encode(newPassword));
+        userCommandRepository.save(user);
+        return true;
+    }
+    @Transactional
+    public boolean deleteAccount(String email) {
+        User user = userCommandRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // 소프트 삭제 처리: isWithdrawal을 true로 설정
+        user.setWithdrawal(true);
+        userCommandRepository.save(user); // 변경사항 저장
+
+        return true;
+    }
+
 }
