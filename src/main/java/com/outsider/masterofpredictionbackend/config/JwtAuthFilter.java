@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -49,7 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 // 사용자 정보를 HTTP 헤더에 추가하여 다른 마이크로서비스로 전달
-
+                String encodedUserName = Base64.getEncoder().encodeToString(userName.getBytes(StandardCharsets.UTF_8));
                 request.setAttribute("X-User-Id", userId.toString());
                 request.setAttribute("X-User-Email", email);
                 request.setAttribute("X-User-Name", userName);
@@ -57,7 +59,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 //TODO: MSA 헤더 User 정보 전파
                 response.setHeader("X-User-Id", userId.toString());
                 response.setHeader("X-User-Email", email);
-                response.setHeader("X-User-Name", userName);
+                response.setHeader("X-User-Name", encodedUserName);
                 response.setHeader("X-User-Role", role);
             }
         }
