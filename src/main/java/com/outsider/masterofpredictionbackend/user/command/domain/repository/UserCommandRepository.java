@@ -15,7 +15,7 @@ public interface UserCommandRepository extends JpaRepository<User, Long> {
 
     // 사용자 이름(userName)을 기반으로 사용자 검색 (중복 확인을 위해 필요)
     Optional<User> findByUserName(String userName);
-
+    Optional<User> findByEmailAndIsWithdrawalFalse(String email);
     // 사용자 탈퇴 상태를 업데이트하는 커스텀 메서드
     @Modifying
     @Query("UPDATE User u SET u.isWithdrawal = true WHERE u = :user")
