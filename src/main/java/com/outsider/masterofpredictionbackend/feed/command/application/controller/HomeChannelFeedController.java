@@ -23,54 +23,45 @@ public class HomeChannelFeedController {
     private final HomeChannelFeedService homeChannelFeedService;
     private final FollowFeedService followFeedService;
 
-    @GetMapping("/hot-topic")
-    public ResponseEntity<Page<FeedsResponseDTO>> getHottopicFeeds(
-            @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @UserId CustomUserInfoDTO customUserInfoDTO) {
-        long userId = customUserInfoDTO.getUserId() != null ? customUserInfoDTO.getUserId() : -1L;
+    @GetMapping("/home")
+    public ResponseEntity<Page<FeedsResponseDTO>> getHomeFeeds(
+            @PageableDefault(page = 0, size = 10, sort = "shortAt", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false) Long userId
+    ) {
+        // userId가 없는 경우에도 피드 조회 가능
+        Page<FeedsResponseDTO> recentFeeds = homeChannelFeedService.getFeeds(pageable, userId != null ? userId : -1L);
+        return ResponseEntity.ok(recentFeeds);
+    }
 
-        // 조회수 기준 정렬
+    @GetMapping("/hot-topic")
+    public ResponseEntity<Page<FeedsResponseDTO>> getHotTopicFeeds(
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @RequestParam(required = false) Long userId
+    ) {
+        // userId가 없는 경우에도 피드 조회 가능
         Pageable viewCountPageable = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "viewCount")
         );
 
-        Page<FeedsResponseDTO> hotTopicFeeds = homeChannelFeedService.getFeeds(viewCountPageable, userId);
+        Page<FeedsResponseDTO> hotTopicFeeds = homeChannelFeedService.getFeeds(viewCountPageable, userId != null ? userId : -1L);
         return ResponseEntity.ok(hotTopicFeeds);
-    }
-
-    @GetMapping("/home")
-    public ResponseEntity<Page<FeedsResponseDTO>> getCreateAtFeeds(
-            @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @UserId CustomUserInfoDTO customUserInfoDTO) {
-        long userId = customUserInfoDTO.getUserId() != null ? customUserInfoDTO.getUserId() : -1L;
-
-        // 최신순 정렬
-        Pageable shortAtPageable = PageRequest.of(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "shortAt")
-        );
-
-        Page<FeedsResponseDTO> recentFeeds = homeChannelFeedService.getFeeds(shortAtPageable, userId);
-        return ResponseEntity.ok(recentFeeds);
     }
 
     @GetMapping("/like")
     public ResponseEntity<Page<FeedsResponseDTO>> getLikeCountFeeds(
             @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @UserId CustomUserInfoDTO customUserInfoDTO) {
-        long userId = customUserInfoDTO.getUserId() != null ? customUserInfoDTO.getUserId() : -1L;
-
-        // 좋아요순 정렬
+            @RequestParam(required = false) Long userId
+    ) {
+        // userId가 없는 경우에도 피드 조회 가능
         Pageable likesCountPageable = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "likesCount")
         );
 
-        Page<FeedsResponseDTO> likedFeeds = homeChannelFeedService.getFeeds(likesCountPageable, userId);
+        Page<FeedsResponseDTO> likedFeeds = homeChannelFeedService.getFeeds(likesCountPageable, userId != null ? userId : -1L);
         return ResponseEntity.ok(likedFeeds);
     }
 
