@@ -82,10 +82,10 @@ public class DevSecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults()).
-                requiresChannel(channel -> channel
-                        .anyRequest().requiresSecure()
-                )
+                .cors(Customizer.withDefaults())
+//                requiresChannel(channel -> channel
+//                        .anyRequest().requiresSecure()
+//                )
                 .authorizeHttpRequests(auth -> auth
                         // .requestMatchers("/**").permitAll()
                         .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/signup/email","/signup/emailAuth").permitAll()
