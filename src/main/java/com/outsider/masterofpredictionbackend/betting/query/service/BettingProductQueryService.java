@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.betting.query.service;
 
+import com.outsider.masterofpredictionbackend.betting.command.application.service.BettingProductException;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductImage;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO;
@@ -102,6 +103,10 @@ public class BettingProductQueryService {
 
     public BettingDetailDTO detail(Long id) {
         BettingDetailDTO bettingDetailDTO = bettingQueryRepository.findBettingById(id);
+        if (bettingDetailDTO == null) {
+            log.info("BettingProductQueryService.detail - bettingDetailDTO is null");
+            throw new BettingProductException.NotFound();
+        }
         if (bettingDetailDTO.getProduct().getIsBlind()){
             bettingDetailDTO.setUser(null);
         }

@@ -1,6 +1,8 @@
 package com.outsider.masterofpredictionbackend.betting.query.controller;
 
 
+import com.outsider.masterofpredictionbackend.betting.command.application.service.BettingProductMessageCode;
+import com.outsider.masterofpredictionbackend.betting.command.application.service.CustomBettingProductMessage;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO;
 import com.outsider.masterofpredictionbackend.betting.query.service.BettingProductQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

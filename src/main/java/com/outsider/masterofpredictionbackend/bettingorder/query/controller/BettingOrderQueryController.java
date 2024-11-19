@@ -1,10 +1,13 @@
 package com.outsider.masterofpredictionbackend.bettingorder.query.controller;
 
+import com.outsider.masterofpredictionbackend.betting.command.application.service.BettingProductMessageCode;
+import com.outsider.masterofpredictionbackend.betting.command.application.service.CustomBettingProductMessage;
 import com.outsider.masterofpredictionbackend.bettingorder.query.dto.TopHolderDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.query.service.BettingOrderQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,10 +22,12 @@ import java.util.Map;
 public class BettingOrderQueryController {
 
     private final BettingOrderQueryService bettingOrderQueryService;
+    private final CustomBettingProductMessage messageSource;
 
-    public BettingOrderQueryController(BettingOrderQueryService bettingOrderQueryService) {
+    public BettingOrderQueryController(BettingOrderQueryService bettingOrderQueryService, CustomBettingProductMessage messageSource) {
         this.bettingOrderQueryService = bettingOrderQueryService;
 
+        this.messageSource = messageSource;
     }
 
     @GetMapping("/api/v1/user/betting-products")
@@ -54,6 +59,4 @@ public class BettingOrderQueryController {
     public ResponseEntity<?> getBettingProductOptions(@RequestParam Long bettingId){
         return ResponseEntity.ok(bettingOrderQueryService.findBettingProductOptionsRatio(bettingId));
     }
-
-
 }

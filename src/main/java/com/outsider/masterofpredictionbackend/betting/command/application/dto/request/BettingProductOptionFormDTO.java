@@ -15,9 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 public class BettingProductOptionFormDTO {
 
-    @NotNull(message = "options_image is required")
+    @NotNull(message = "{options.image.required}")
     private List<MultipartFile>options_image;
 
-    @NotNull(message = "options_content is required")
+    @NotNull(message = "{options.content.required}")
     private List<String> options_content;
 }
