@@ -3,11 +3,13 @@ package com.outsider.masterofpredictionbackend.feed.command.application.service.
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.converter.FeedsResponseDTOConverter;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.repository.FeedRepository;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalLikeService;
 import com.outsider.masterofpredictionbackend.like.command.application.dto.LikeDTO;
 import com.outsider.masterofpredictionbackend.like.command.domain.aggregate.enumtype.LikeType;
 import com.outsider.masterofpredictionbackend.like.command.domain.aggregate.enumtype.ViewType;
+import org.hibernate.usertype.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,10 +41,13 @@ public class HomeChannelFeedService {
         // 페이징된 피드들의 좋아요 수 동기화
         List<Feed> pagedFeeds = feedPage.getContent();
         for (Feed feed : pagedFeeds) {
-            int likeCount = externalLikeService.getLikeCount(
-                    new LikeDTO(LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getUser().getUserId(), feed.getId())
-            );
-            feed.setLikesCount(likeCount);
+            if(feed.getAuthorType()== AuthorType.USER) {
+                int likeCount = externalLikeService.getLikeCount(
+                        new LikeDTO(LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getUser().getUserId(), feed.getId())
+                );
+                feed.setLikesCount(likeCount);
+            }
+
         }
         feedRepository.saveAll(pagedFeeds);
 
