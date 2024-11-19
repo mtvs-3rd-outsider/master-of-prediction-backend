@@ -26,17 +26,17 @@ public class HomeChannelFeedController {
     @GetMapping("/home")
     public ResponseEntity<Page<FeedsResponseDTO>> getHomeFeeds(
             @PageableDefault(page = 0, size = 10, sort = "shortAt", direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestParam(required = false) Long userId
+            @UserId CustomUserInfoDTO userInfoDTO
     ) {
         // userId가 없는 경우에도 피드 조회 가능
-        Page<FeedsResponseDTO> recentFeeds = homeChannelFeedService.getFeeds(pageable, userId != null ? userId : -1L);
+        Page<FeedsResponseDTO> recentFeeds = homeChannelFeedService.getFeeds(pageable, userInfoDTO.getUserId() != null ? userInfoDTO.getUserId()  : -1L);
         return ResponseEntity.ok(recentFeeds);
     }
 
     @GetMapping("/hot-topic")
     public ResponseEntity<Page<FeedsResponseDTO>> getHotTopicFeeds(
             @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @RequestParam(required = false) Long userId
+            @UserId CustomUserInfoDTO userInfoDTO
     ) {
         // userId가 없는 경우에도 피드 조회 가능
         Pageable viewCountPageable = PageRequest.of(
@@ -45,14 +45,14 @@ public class HomeChannelFeedController {
                 Sort.by(Sort.Direction.DESC, "viewCount")
         );
 
-        Page<FeedsResponseDTO> hotTopicFeeds = homeChannelFeedService.getFeeds(viewCountPageable, userId != null ? userId : -1L);
+        Page<FeedsResponseDTO> hotTopicFeeds = homeChannelFeedService.getFeeds(viewCountPageable, userInfoDTO.getUserId()  != null ? userInfoDTO.getUserId()  : -1L);
         return ResponseEntity.ok(hotTopicFeeds);
     }
 
     @GetMapping("/like")
     public ResponseEntity<Page<FeedsResponseDTO>> getLikeCountFeeds(
             @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @RequestParam(required = false) Long userId
+            @UserId CustomUserInfoDTO userInfoDTO
     ) {
         // userId가 없는 경우에도 피드 조회 가능
         Pageable likesCountPageable = PageRequest.of(
@@ -61,7 +61,7 @@ public class HomeChannelFeedController {
                 Sort.by(Sort.Direction.DESC, "likesCount")
         );
 
-        Page<FeedsResponseDTO> likedFeeds = homeChannelFeedService.getFeeds(likesCountPageable, userId != null ? userId : -1L);
+        Page<FeedsResponseDTO> likedFeeds = homeChannelFeedService.getFeeds(likesCountPageable, userInfoDTO.getUserId()  != null ? userInfoDTO.getUserId()  : -1L);
         return ResponseEntity.ok(likedFeeds);
     }
 
