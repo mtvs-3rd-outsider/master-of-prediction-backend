@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class HomeChannelFeedService {
@@ -66,5 +67,39 @@ public class HomeChannelFeedService {
 
             return responseDTO;
         });
+    }
+
+    @Transactional
+    public List<FeedsResponseDTO> getFeedsByIds(List<Long> ids, long userId) {
+        List<Feed> feeds = feedRepository.findAllByIdIn(ids);
+
+        // 피드들의 좋아요 수 동기화
+        for (Feed feed : feeds) {
+            if(feed.getAuthorType() == AuthorType.USER) {
+                int likeCount = externalLikeService.getLikeCount(
+                        new LikeDTO(LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getUser().getUserId(), feed.getId())
+                );
+                feed.setLikesCount(likeCount);
+            }
+        }
+        feedRepository.saveAll(feeds);
+
+        return feeds.stream()
+                .map(feed -> {
+                    boolean isLiked = externalLikeService.checkUserLike(
+                            userId,
+                            LikeType.FEED,
+                            ViewType.HOTTOPICCHANNEL,
+                            feed.getId()
+                    );
+                    feed.setIsLike(isLiked);
+
+                    boolean isShared = feed.isReupLoadedBy(userId);
+                    FeedsResponseDTO responseDTO = converterFacade.fromEntity(feed, userId);
+                    responseDTO.setIsShare(isShared);
+
+                    return responseDTO;
+                })
+                .collect(Collectors.toList());
     }
 }

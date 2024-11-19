@@ -24,9 +24,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Feed {
+public class Feed extends GenerateEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_id")
     private long id;
 
@@ -89,12 +88,6 @@ public class Feed {
             joinColumns = @JoinColumn(name = "feed_id"))
     @Column(name = "user_id")
     private List<Long> reupLoadUsers = new ArrayList<>();
-
-//    @Column(name = "feed_is_quote_betting")
-//    private Boolean isQuoteBetting = false;
-//
-//    @Embedded
-//    private QuoteBetting quoteBetting;
 
 
     // reupLoadUsers 추가

@@ -57,5 +57,7 @@ public interface FeedRepository extends JpaRepository<Feed, Long>{
             @Param("channelIds") List<Long> channelIds,
             Pageable pageable
     );
+
+    List<Feed> findAllByIdIn(List<Long> ids);
 }
 
