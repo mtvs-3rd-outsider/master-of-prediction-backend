@@ -68,12 +68,11 @@ public class HomeChannelFeedController {
     }
 
     @GetMapping("/betting")
-    public ResponseEntity<List<FeedsResponseDTO>> getFeedsByIds(
-            @RequestParam List<Long> ids,
+    public ResponseEntity<Page<FeedsResponseDTO>> getFeedsByIds(
+            @PageableDefault(page = 0, size = 10, sort = "shortAt", direction = Sort.Direction.DESC) Pageable pageable,
             @UserId CustomUserInfoDTO userInfoDTO
     ) {
-        List<FeedsResponseDTO> feedsByIds = homeChannelFeedService.getFeedsByIds(
-                ids,
+        Page<FeedsResponseDTO> feedsByIds = homeChannelFeedService.getBettingFeeds(pageable,
                 userInfoDTO.getUserId() != null ? userInfoDTO.getUserId() : -1L
         );
         return ResponseEntity.ok(feedsByIds);

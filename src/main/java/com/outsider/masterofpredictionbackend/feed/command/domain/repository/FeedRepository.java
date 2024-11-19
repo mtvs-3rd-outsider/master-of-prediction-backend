@@ -57,7 +57,9 @@ public interface FeedRepository extends JpaRepository<Feed, Long>{
             @Param("channelIds") List<Long> channelIds,
             Pageable pageable
     );
+    @Query("SELECT f FROM Feed f WHERE f.id < 0")
+    @NotNull
+    Page<Feed> findAllByIdLessThanZero(@NotNull Pageable pageable);
 
-    List<Feed> findAllByIdIn(List<Long> ids);
 }
 
