@@ -15,6 +15,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/feeds")
 @RequiredArgsConstructor
@@ -65,6 +67,18 @@ public class HomeChannelFeedController {
         return ResponseEntity.ok(likedFeeds);
     }
 
+    @GetMapping("/betting")
+    public ResponseEntity<List<FeedsResponseDTO>> getFeedsByIds(
+            @RequestParam List<Long> ids,
+            @UserId CustomUserInfoDTO userInfoDTO
+    ) {
+        List<FeedsResponseDTO> feedsByIds = homeChannelFeedService.getFeedsByIds(
+                ids,
+                userInfoDTO.getUserId() != null ? userInfoDTO.getUserId() : -1L
+        );
+        return ResponseEntity.ok(feedsByIds);
+    }
+
     @GetMapping("/following")
     public ResponseEntity<Page<FeedsResponseDTO>> getFollowingFeeds(
             @PageableDefault(page = 0, size = 10, sort = "shortAt", direction = Sort.Direction.DESC) Pageable pageable,
@@ -76,4 +90,5 @@ public class HomeChannelFeedController {
         );
         return ResponseEntity.ok(followingFeeds);
     }
+
 }
