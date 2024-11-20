@@ -8,6 +8,7 @@ import com.outsider.masterofpredictionbackend.betting.command.application.servic
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.naver.ApiBettingProductService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.BettingProductService;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.BettingFeedService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.AdminUserIdList;
 import com.outsider.masterofpredictionbackend.util.UserId;
@@ -41,20 +42,22 @@ public class BettingProductController {
     private final BettingProductService bettingProductService;
     private final ApiBettingProductService apiBettingProductService;
     private final CustomBettingProductMessage messageSource;
+    private final BettingFeedService bettingFeedService;
 
     @Autowired
-    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService, ApiBettingProductService apiBettingProductService, CustomBettingProductMessage messageSource) {
+    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService, ApiBettingProductService apiBettingProductService, CustomBettingProductMessage messageSource, BettingFeedService bettingFeedService) {
         this.productCommandService = productCommandService;
         this.bettingProductService = bettingProductService;
         this.apiBettingProductService = apiBettingProductService;
         this.messageSource = messageSource;
+        this.bettingFeedService = bettingFeedService;
     }
 
     @PostMapping("/api/v1/betting-products")
     @Operation(summary = "배팅 상품 등록")
     public ResponseEntity<?> save(
-                @Valid @ModelAttribute  BettingProductAndOptionDTO bettingProductAndOptionDTO,
-            @Valid @ModelAttribute  BettingProductOptionFormDTO bettingProductOptionFormDTO,
+               @Valid @ModelAttribute BettingProductAndOptionDTO bettingProductAndOptionDTO,
+           @Valid @ModelAttribute BettingProductOptionFormDTO bettingProductOptionFormDTO,
             BindingResult bindingResult,
             @UserId CustomUserInfoDTO customUserInfo
             ){
@@ -92,6 +95,7 @@ public class BettingProductController {
         Long productId;
         try {
             productId = productCommandService.save(bettingProductAndOptionDTO);
+            bettingFeedService.createBettingFeed(-productId);
         } catch (BadRequestException e) {
             return new ResponseEntity<>(Map.of("message",messageSource.getMessage(BettingProductMessageCode.CREATE_FAILED)), HttpStatus.BAD_REQUEST);
         }

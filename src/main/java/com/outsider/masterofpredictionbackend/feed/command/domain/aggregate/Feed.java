@@ -27,7 +27,6 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Feed{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_id")
     private long id;
 
@@ -90,7 +89,6 @@ public class Feed{
             joinColumns = @JoinColumn(name = "feed_id"))
     @Column(name = "user_id")
     private List<Long> reupLoadUsers = new ArrayList<>();
-
 
     public void setCustomId(Long customId){
         this.id=customId;
