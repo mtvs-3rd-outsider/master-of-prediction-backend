@@ -16,6 +16,11 @@ import java.util.Optional;
 
 @Repository
 public interface FeedRepository extends JpaRepository<Feed, Long>{
+
+    @NotNull
+    @Query("SELECT f FROM Feed f WHERE f.id > 0")
+    Page<Feed> findAll(@NotNull Pageable pageable);
+
     @NotNull
     Optional<Feed> findById(@NotNull Long id);
 
