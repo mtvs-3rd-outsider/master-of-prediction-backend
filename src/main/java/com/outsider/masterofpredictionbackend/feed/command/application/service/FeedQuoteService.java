@@ -68,7 +68,7 @@ public class FeedQuoteService {
         newFeed.setShortAt(LocalDateTime.now());
         newFeed.setUser(new User(userId));
         newFeed.setChannel(feedCreateDTO.getChannel());
-
+        newFeed.setCustomId(feedRepository.findMaxId()+1);
         // Handle file uploads
         if (files != null && !files.isEmpty()) {
             List<String> fileUrls = externalFileService.uploadFiles(files);
