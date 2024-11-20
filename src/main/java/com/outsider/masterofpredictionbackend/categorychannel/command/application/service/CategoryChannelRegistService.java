@@ -7,7 +7,6 @@ import com.outsider.masterofpredictionbackend.categorychannel.command.domain.agg
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.repository.CategoryChannelRepository;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.service.ChannelSubscribeClient;
-import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.service.ChannelSubscribeService;
 import com.outsider.masterofpredictionbackend.file.FileUploadService;
 import com.outsider.masterofpredictionbackend.utils.IdGenerator;
 import jakarta.transaction.Transactional;
@@ -19,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CategoryChannelRegistService {
 
     private final CategoryChannelRepository categoryChannelRepository;
-    private final FileUploadService fileUploadService;  // 파일 업로드 인터페이스
+    private final FileUploadService fileUploadService;
     private final ChannelSubscribeClient channelSubscribeClient;
 
     @Autowired
@@ -28,34 +27,33 @@ public class CategoryChannelRegistService {
         this.fileUploadService = fileUploadService;
         this.channelSubscribeClient = channelSubscribeClient;
     }
+
     @Transactional
-    public void registerCategoryChannelWithManualId(
+    public Long registerCategoryChannelWithManualId(
             CategoryChannelRegistRequestDTO registRequestDTO,
             MultipartFile representativeImageFile,
             MultipartFile bannerImageFile,
             Long userId,
-            Long manualId // 수동으로 할당할 ID
+            Long manualId
     ) {
-
         CategoryChannel categoryChannel = new CategoryChannel(
                 registRequestDTO.getDisplayName(),
-                userId, // ownerUserId
+                userId,
                 registRequestDTO.getDescription(),
                 new CommunityRule(registRequestDTO.getCommunityRule()),
                 new CategoryChannelUserCounts(1),
                 CategoryChannelStatus.APPLY
         );
-        categoryChannel.setCategoryChannelId(manualId); // 수동으로 ID 할당
+        categoryChannel.setCategoryChannelId(manualId);
 
-        channelSubscribeClient.publish(userId,manualId, false,"subscribe");
+        channelSubscribeClient.publish(userId, manualId, false, "subscribe");
+
         try {
-            // 대표 이미지 업로드 및 URL 설정
             if (representativeImageFile != null && !representativeImageFile.isEmpty()) {
                 String representativeImageUrl = fileUploadService.uploadFile(representativeImageFile);
                 categoryChannel.setImageUrl(representativeImageUrl);
             }
 
-            // 배너 이미지 업로드 및 URL 설정
             if (bannerImageFile != null && !bannerImageFile.isEmpty()) {
                 String bannerImageUrl = fileUploadService.uploadFile(bannerImageFile);
                 categoryChannel.setBannerImg(bannerImageUrl);
@@ -65,44 +63,44 @@ public class CategoryChannelRegistService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return categoryChannel.getId(); // 생성된 ID 반환
     }
+
     @Transactional
-    public void registerCategoryChannel(
+    public Long registerCategoryChannel(
             CategoryChannelRegistRequestDTO registRequestDTO,
-            MultipartFile representativeImageFile,  // 대표 이미지 파일
-            MultipartFile bannerImageFile, // 배너 이미지 파일
+            MultipartFile representativeImageFile,
+            MultipartFile bannerImageFile,
             Long userId
     ) {
-
         CategoryChannel categoryChannel = new CategoryChannel(
                 registRequestDTO.getDisplayName(),
-                // TODO: 현재 로그인 된 유저 정보 넣기, 임의로 99 넣음.
-                userId, // ownerUserId
+                userId,
                 registRequestDTO.getDescription(),
                 new CommunityRule(registRequestDTO.getCommunityRule()),
                 new CategoryChannelUserCounts(1),
                 CategoryChannelStatus.APPLY
         );
         categoryChannel.setCategoryChannelId(IdGenerator.generateId());
-        channelSubscribeClient.publish(userId,categoryChannel.getId(), false,"subscribe");
+        channelSubscribeClient.publish(userId, categoryChannel.getId(), false, "subscribe");
 
         try {
-            // 대표 이미지 업로드 및 URL 설정
             if (representativeImageFile != null && !representativeImageFile.isEmpty()) {
                 String representativeImageUrl = fileUploadService.uploadFile(representativeImageFile);
                 categoryChannel.setImageUrl(representativeImageUrl);
             }
 
-            // 배너 이미지 업로드 및 URL 설정
             if (bannerImageFile != null && !bannerImageFile.isEmpty()) {
                 String bannerImageUrl = fileUploadService.uploadFile(bannerImageFile);
-                categoryChannel.setBannerImg(bannerImageUrl);  // 배너 이미지 필드 설정
+                categoryChannel.setBannerImg(bannerImageUrl);
             }
 
             categoryChannelRepository.save(categoryChannel);
         } catch (Exception e) {
-            // TODO: 예외 처리 통일되면 추가 예정
             e.printStackTrace();
         }
+
+        return categoryChannel.getId(); // 생성된 ID 반환
     }
 }

@@ -11,4 +11,6 @@ import java.util.List;
 public interface CategoryChannelRepository extends JpaRepository<CategoryChannel, Long> {
     List<CategoryChannel> findByCategoryChannelStatus(CategoryChannelStatus status);
     Page<CategoryChannel> findByCategoryChannelStatus(CategoryChannelStatus status, Pageable pageable);
+    // 특정 이름의 카테고리 채널이 존재하는지 확인하는 메서드
+    boolean existsByDisplayName(String name);
 }

@@ -22,6 +22,13 @@ public class CategoryChannelQueryController {
 
     private final CategoryChannelQueryService categoryChannelQueryService;
     private final CategoryChannelRepository categoryChannelRepository;
+    // 페이지네이션으로 모든 카테고리 채널 조회 (DTO로 변환 없이 직접 반환)
+    @GetMapping("/all")
+    public ResponseEntity<Page<CategoryChannel>> getAllCategoryChannels(
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        Page<CategoryChannel> channels = categoryChannelRepository.findAll(pageable);
+        return ResponseEntity.ok(channels);
+    }
 
     @Autowired
     public CategoryChannelQueryController(CategoryChannelQueryService categoryChannelQueryService, CategoryChannelRepository categoryChannelRepository) {
