@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.feed.command.application.service;
 
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO;
+import com.outsider.masterofpredictionbackend.betting.query.dto.BettingOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.query.service.BettingProductQueryService;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedCreateDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,8 +61,14 @@ public class BettingFeedService {
                 dto.getUser().getUserImg()
         ));
         response.setChannel(new Channel());//수정
-        response.setContent(dto.getProduct().getContent());
-        response.setMediaFileUrls(dto.getProductImages());
+        response.setContent(dto.getProduct().getTitle());
+        List<String> imgUrls = new ArrayList<>();
+
+        for(BettingOptionDTO op: dto.getOptions()){
+            imgUrls.add(op.getImgUrl());
+        }
+
+        response.setMediaFileUrls(imgUrls);
         response.setAuthorType(AuthorType.USER);
         response.setTitle(dto.getProduct().getTitle());
         return response;
