@@ -39,10 +39,10 @@ public class FeedReadService {
     public FeedResponseDTO getFeed(Long feedId, Long userId) {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new EntityNotFoundException("Feed not found with id: " + feedId));
-        if(feed.getAuthorType()== AuthorType.USER){
+
             feed.setIsLike(externalLikeService.checkUserLike(userId, LikeType.FEED, ViewType.HOTTOPICCHANNEL,feedId));
-            feed.setLikesCount(externalLikeService.getLikeCount(new LikeDTO(LikeType.FEED,ViewType.HOTTOPICCHANNEL,userId,feedId)));
-        }
+            feed.setLikesCount(externalLikeService.getLikeCount(new LikeDTO(LikeType.FEED,ViewType.HOTTOPICCHANNEL,feedId)));
+
         FeedResponseDTO feedResponseDTO = converterFacade.fromEntity(feed,(feed.getAuthorType()==AuthorType.USER)?feed.getUser().getUserId():null);
 
         // 비동기적으로 조회수를 증가시킵니다.

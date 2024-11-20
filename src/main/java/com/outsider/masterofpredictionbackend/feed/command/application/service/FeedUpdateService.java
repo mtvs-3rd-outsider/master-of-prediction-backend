@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.feed.command.application.service;
 
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedUpdateDTO;
+import com.outsider.masterofpredictionbackend.feed.command.application.dto.GuestDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.MediaFile;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.YouTubeVideo;
@@ -40,6 +41,15 @@ public class FeedUpdateService {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new EntityNotFoundException("Feed not found with id: " + feedId));
 
+
+        // 게스트 인증 검증
+        if (feed.getAuthorType() == AuthorType.GUEST) {
+            if (!feed.getGuest().getGuestId().equals(feedUpdateDTO.getGuest().getGuestId()) ||
+                    !feed.getGuest().getGuestPassword().equals(feedUpdateDTO.getGuest().getGuestPassword())) {
+                throw new AccessDeniedException("Guest authentication failed");
+            }
+        }
+
         feed.setContent(feedUpdateDTO.getContent());
 
         feed.getMediaFiles().clear();
@@ -75,5 +85,18 @@ public class FeedUpdateService {
                 throw new AccessDeniedException("아이디 혹은 비밀번호가 틀립니다.");
             }
         }
+    }
+
+    @Transactional
+    public boolean verifyGuestCredentials(Long feedId, GuestDTO dto) {
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new EntityNotFoundException("Feed not found"));
+
+        if (feed.getAuthorType() != AuthorType.GUEST) {
+            return false;
+        }
+
+        return feed.getGuest().getGuestId().equals(dto.getGuestId()) &&
+                feed.getGuest().getGuestPassword().equals(dto.getGuestPassword());
     }
 }

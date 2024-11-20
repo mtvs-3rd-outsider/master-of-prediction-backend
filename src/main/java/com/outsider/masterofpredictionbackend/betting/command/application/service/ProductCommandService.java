@@ -30,13 +30,15 @@ public class ProductCommandService {
     private final CategoryService categoryService;
     private final BettingProductRepository bettingProductRepository;
     private final MinioService minioService;
+    private final BettingFeedService bettingFeedService;
 
-    public ProductCommandService(BettingProductService bettingProductService, UserService userService, CategoryService categoryService, BettingProductRepository bettingProductRepository, MinioService minioService) {
+    public ProductCommandService(BettingProductService bettingProductService, UserService userService, CategoryService categoryService, BettingProductRepository bettingProductRepository, MinioService minioService, BettingFeedService bettingFeedService) {
         this.bettingProductService = bettingProductService;
         this.userService = userService;
         this.categoryService = categoryService;
         this.bettingProductRepository = bettingProductRepository;
         this.minioService = minioService;
+        this.bettingFeedService = bettingFeedService;
     }
 
 
@@ -65,6 +67,7 @@ public class ProductCommandService {
         List<BettingProductOption> bettingProductOptions = BettingDTOConverter.convertToBettingProductOption(saveBetting.getId(), bettingProductAndOptionDTO.getOptions(), optionImgUrls);
         try{
             bettingProductService.save(bettingProductImages, bettingProductOptions);
+            bettingFeedService.createBettingFeed(saveBetting.getId() * -1);
         }catch (IllegalArgumentException e){
             throw new BadRequestException(e.getMessage());
         }

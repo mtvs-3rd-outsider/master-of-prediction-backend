@@ -15,14 +15,15 @@ import com.outsider.masterofpredictionbackend.like.command.domain.aggregate.enum
 import com.outsider.masterofpredictionbackend.like.query.application.dto.LikeCountIdDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-
 public class BettingFeedService {
     private final BettingProductQueryService bettingProductQueryService;
     private final FeedRepository feedRepository;
@@ -37,12 +38,13 @@ public class BettingFeedService {
         this.externalLikeService = externalLikeService;
     }
 
-
-
+    @Transactional
     public void createBettingFeed(Long id) {
-        BettingDetailDTO dto = bettingProductQueryService.detail(-id);
+        BettingDetailDTO dto = bettingProductQueryService.detailAdminFunction(-id);
         FeedCreateDTO feedCreateDTO = convertBetting(dto);
         Feed feed = converterFacade.toEntity(feedCreateDTO);
+        feedRepository.save(feed);
+        feed.setCustomId(id);
         feedRepository.save(feed);
         LikeCountIdDTO likeCountIdDTO = new LikeCountIdDTO(feed.getId(), LikeType.FEED);
         externalLikeService.saveLikeCount(likeCountIdDTO);

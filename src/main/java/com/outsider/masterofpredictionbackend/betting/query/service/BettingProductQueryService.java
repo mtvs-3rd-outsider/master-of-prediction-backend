@@ -116,6 +116,17 @@ public class BettingProductQueryService {
 
     }
 
+    public BettingDetailDTO detailAdminFunction(Long id){
+        BettingDetailDTO bettingDetailDTO = bettingQueryRepository.findBettingById(id);
+        if (bettingDetailDTO == null) {
+            log.info("BettingProductQueryService.detail - bettingDetailDTO is null");
+            throw new BettingProductException.NotFound();
+        }
+        bettingDetailDTO.setProductImages(bettingImageQueryRepository.findByBettingId(id));
+        bettingDetailDTO.setOptions(bettingOptionQueryRepository.findByBettingId(id));
+        return bettingDetailDTO;
+    }
+
     public BigDecimal findUserPoint(Long id) {
         return userQueryRepository.findById(id).get().getPoints();
     }
