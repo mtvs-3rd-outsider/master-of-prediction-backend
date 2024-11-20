@@ -17,6 +17,7 @@ import org.checkerframework.checker.units.qual.C;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Entity
@@ -24,8 +25,9 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Feed extends GenerateEntity{
+public class Feed{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_id")
     private long id;
 
@@ -89,6 +91,12 @@ public class Feed extends GenerateEntity{
     @Column(name = "user_id")
     private List<Long> reupLoadUsers = new ArrayList<>();
 
+
+    public void setCustomId(Long customId){
+        if(this.id==0){
+            this.id=customId;
+        }
+    }
 
     // reupLoadUsers 추가
     public void addReupLoadUser(Long userId) {
@@ -154,5 +162,6 @@ public class Feed extends GenerateEntity{
                 ", youtubeVideos=" + youtubeVideos +
                 '}';
     }
+
 
 }

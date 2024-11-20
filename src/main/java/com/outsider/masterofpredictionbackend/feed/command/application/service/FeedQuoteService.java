@@ -41,6 +41,9 @@ public class FeedQuoteService {
         if (originalFeed.getIsquote()) {
             throw new IllegalStateException("이미 인용된 게시물은 다시 인용할 수 없습니다.");
         }
+        if(originalFeed.getAuthorType()==AuthorType.GUEST) {
+            throw new IllegalStateException("게스트 게시글은 인용할 수 없습니다.");
+        }
 
         originalFeed.setShareCount(originalFeed.getShareCount() + 1);
         feedRepository.save(originalFeed);

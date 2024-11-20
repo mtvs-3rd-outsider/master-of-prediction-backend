@@ -14,6 +14,12 @@ public class LikeDTO {
     public LikeDTO() {
     }
 
+    public LikeDTO(LikeType feed, ViewType hottopicchannel, long id) {
+        this.likeType = feed;
+        this.viewType = hottopicchannel;
+        this.targetId = id;
+    }
+
     public LikeDTO(LikeType likeType, ViewType viewType, Long userId, Long targetId) {
         this.likeType = likeType;
         this.viewType = viewType;

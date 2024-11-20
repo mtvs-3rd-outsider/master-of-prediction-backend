@@ -43,6 +43,7 @@ public class BettingFeedService {
         BettingDetailDTO dto = bettingProductQueryService.detail(-id);
         FeedCreateDTO feedCreateDTO = convertBetting(dto);
         Feed feed = converterFacade.toEntity(feedCreateDTO);
+        feed.setCustomId(id);
         feedRepository.save(feed);
         LikeCountIdDTO likeCountIdDTO = new LikeCountIdDTO(feed.getId(), LikeType.FEED);
         externalLikeService.saveLikeCount(likeCountIdDTO);
