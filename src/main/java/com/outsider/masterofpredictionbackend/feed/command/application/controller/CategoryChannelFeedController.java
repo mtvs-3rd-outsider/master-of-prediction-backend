@@ -32,8 +32,14 @@ public class CategoryChannelFeedController {
             @PageableDefault(page = 0, size = 10, sort = "shortAt", direction = Sort.Direction.DESC) Pageable pageable,
             @UserId CustomUserInfoDTO userInfoDTO
     ) {
+        long userId;
+        if(userInfoDTO.getUserId()==null){
+            userId = -1L;
+        }else {
+            userId = userInfoDTO.getUserId();
+        }
         ChannelType type = ChannelType.valueOf(channelType.toUpperCase());
-        Page<FeedsResponseDTO> channelFeeds = categoryChannelFeedService.getFeeds(type, channelId, pageable, userInfoDTO.getUserId());
+        Page<FeedsResponseDTO> channelFeeds = categoryChannelFeedService.getFeeds(type, channelId, pageable, userId);
         return ResponseEntity.ok(channelFeeds);
     }
 }

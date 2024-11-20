@@ -27,7 +27,7 @@ public class ChannelSubscriptionController {
     public ResponseEntity<Page<ChannelInfo>> getFollowingByUserId(
             @PathVariable Long userId,
             @RequestParam boolean isUserChannel,  // 컨트롤러에서 isUserChannel 값을 받음
-            @RequestParam(required = false, defaultValue = "ALL") String flag,  // 추가된 flag 파라미터
+            @RequestParam(required = false, defaultValue = "CATEGORY") String flag,  // 추가된 flag 파라미터
             @PageableDefault(size = 10, page = 0, direction = Sort.Direction.ASC) Pageable pageable,
             @UserId CustomUserInfoDTO userInfoDTO) {
         Page<ChannelInfo> following = subscriptionService.getAllFollowingByUserId(userId, userInfoDTO.getUserId(), isUserChannel, pageable, flag);

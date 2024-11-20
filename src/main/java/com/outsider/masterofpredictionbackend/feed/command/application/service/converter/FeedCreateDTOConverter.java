@@ -49,9 +49,9 @@ public class FeedCreateDTOConverter {
                 0,
                 0,
                 0,
-                userDTOConverter.toEntity(dto.getUser()),
-                new Guest(),//수정요청
-                new Channel(),//수정요청
+                (dto.getUser()!=null)?userDTOConverter.toEntity(dto.getUser()):null,
+                (dto.getGuest()!=null)?new Guest(dto.getGuest().getGuestId(),dto.getGuest().getGuestPassword()):new Guest(),//수정요청
+                dto.getChannel(),//수정요청
                 dto.getIsQuote(), // isQuote 추가
                 new ArrayList<>(),
                 new ArrayList<>()

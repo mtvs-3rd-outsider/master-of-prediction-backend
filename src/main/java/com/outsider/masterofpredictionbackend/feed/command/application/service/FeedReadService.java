@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.feed.command.application.service;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.converter.FeedResponseDTOConverter;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.repository.FeedRepository;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalCommentService;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalLikeService;
@@ -38,9 +39,11 @@ public class FeedReadService {
     public FeedResponseDTO getFeed(Long feedId, Long userId) {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new EntityNotFoundException("Feed not found with id: " + feedId));
-        feed.setIsLike(externalLikeService.checkUserLike(userId, LikeType.FEED, ViewType.HOTTOPICCHANNEL,feedId));
-        feed.setLikesCount(externalLikeService.getLikeCount(new LikeDTO(LikeType.FEED,ViewType.HOTTOPICCHANNEL,userId,feedId)));
-        FeedResponseDTO feedResponseDTO = converterFacade.fromEntity(feed,userId);
+        if(feed.getAuthorType()== AuthorType.USER){
+            feed.setIsLike(externalLikeService.checkUserLike(userId, LikeType.FEED, ViewType.HOTTOPICCHANNEL,feedId));
+            feed.setLikesCount(externalLikeService.getLikeCount(new LikeDTO(LikeType.FEED,ViewType.HOTTOPICCHANNEL,userId,feedId)));
+        }
+        FeedResponseDTO feedResponseDTO = converterFacade.fromEntity(feed,(feed.getAuthorType()==AuthorType.USER)?feed.getUser().getUserId():null);
 
         // 비동기적으로 조회수를 증가시킵니다.
         feedViewCountService.incrementViewCount(feedId);

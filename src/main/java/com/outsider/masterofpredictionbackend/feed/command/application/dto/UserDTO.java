@@ -14,4 +14,15 @@ public class UserDTO {
     private Authority authority;
     private Tier tier;
     private String userImg;
+
+    public UserDTO() {
+    }
+
+    public UserDTO(Long userId, String userName, String displayName, Authority authority, String userImg) {
+        this.userId = userId;
+        this.userName = userName;
+        this.displayName = displayName;
+        this.authority = authority;
+        this.userImg = userImg;
+    }
 }

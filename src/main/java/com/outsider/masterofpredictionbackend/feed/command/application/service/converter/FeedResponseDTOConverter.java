@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedR
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.QuoteFeedDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.UserDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalUserService;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +50,7 @@ public class FeedResponseDTOConverter {
                 feed.getShortAt(),
                 feed.getUpdatedAt(),
                 feed.getViewCount(),
-                feed.getUser().getUserId() != null ? externalUserService.getUser(feed.getUser().getUserId()) : null,
+                (feed.getAuthorType()==AuthorType.USER) ? externalUserService.getUser(feed.getUser().getUserId()) : null,
                 null,
                 feed.getMediaFiles(),
                 feed.getYoutubeVideos(),
@@ -59,7 +60,7 @@ public class FeedResponseDTOConverter {
                 feed.getLikesCount(),
                 feed.getCommentsCount(),
                 feed.getShareCount(),
-                feed.isReupLoadedBy(currentUserId),
+                feed.getAuthorType() == AuthorType.USER && feed.isReupLoadedBy(currentUserId),
                 feed.getIsquote(),
                 quoteFeedDTO
         );

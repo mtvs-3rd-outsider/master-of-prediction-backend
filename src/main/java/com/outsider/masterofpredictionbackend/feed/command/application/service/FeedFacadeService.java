@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.feed.command.application.dto.*;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.AuthorType;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalCommentService;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalReplyService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,21 +19,15 @@ public class FeedFacadeService {
     private final FeedReadService feedReadService;
     private final FeedUpdateService feedUpdateService;
     private final FeedDeleteService feedDeleteService;
-    private final ExternalCommentService externalCommentService;
-    private final ExternalReplyService externalReplyService;
 
-    public FeedFacadeService(FeedCreateService feedCreateService,
-                             FeedReadService feedReadService,
-                             FeedUpdateService feedUpdateService,
-                             FeedDeleteService feedDeleteService,
-                             ExternalCommentService externalCommentService,
-                             ExternalReplyService externalReplyService) {
+    public FeedFacadeService(@Lazy FeedCreateService feedCreateService,
+                             @Lazy FeedReadService feedReadService,
+                             @Lazy FeedUpdateService feedUpdateService,
+                             @Lazy FeedDeleteService feedDeleteService) {
         this.feedCreateService = feedCreateService;
         this.feedReadService = feedReadService;
         this.feedUpdateService = feedUpdateService;
         this.feedDeleteService = feedDeleteService;
-        this.externalCommentService = externalCommentService;
-        this.externalReplyService = externalReplyService;
     }
 
     // Feed 생성 메서드
@@ -54,15 +49,5 @@ public class FeedFacadeService {
     // Feed 삭제 메서드
     public void deleteFeed(Long feedId) {
         feedDeleteService.deleteFeed(feedId);
-    }
-
-    // 댓글 조회 메서드
-    public List<CommentDTO> getComments(Long feedId) {
-        return externalCommentService.getCommentsByFeedId(feedId);
-    }
-
-    // 답글 조회 메서드
-    public List<ReplyDTO> getReplies(Long commentId) {
-        return externalReplyService.getRepliesByCommentId(commentId);
     }
 }

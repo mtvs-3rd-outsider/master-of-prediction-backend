@@ -8,6 +8,7 @@ import com.outsider.masterofpredictionbackend.betting.command.application.dto.re
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductImage;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductOption;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.BettingFeedService;
 import com.outsider.masterofpredictionbackend.file.MinioService;
 import com.outsider.masterofpredictionbackend.utils.ImageRollbackHelper;
 import com.outsider.masterofpredictionbackend.utils.InvalidImageException;
@@ -25,15 +26,13 @@ import java.util.List;
 public class ProductCommandService {
 
     private final BettingProductService bettingProductService;
-    private final ImageRollbackHelper imageRollbackHelper;
     private final UserService userService;
     private final CategoryService categoryService;
     private final BettingProductRepository bettingProductRepository;
     private final MinioService minioService;
 
-    public ProductCommandService(BettingProductService bettingProductService, ImageRollbackHelper imageRollbackHelper, UserService userService, CategoryService categoryService, BettingProductRepository bettingProductRepository, MinioService minioService) {
+    public ProductCommandService(BettingProductService bettingProductService, UserService userService, CategoryService categoryService, BettingProductRepository bettingProductRepository, MinioService minioService) {
         this.bettingProductService = bettingProductService;
-        this.imageRollbackHelper = imageRollbackHelper;
         this.userService = userService;
         this.categoryService = categoryService;
         this.bettingProductRepository = bettingProductRepository;

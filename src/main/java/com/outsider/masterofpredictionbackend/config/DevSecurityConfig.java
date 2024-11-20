@@ -88,7 +88,7 @@ public class DevSecurityConfig {
                 // )
                 .authorizeHttpRequests(auth -> auth
                         // .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/signup/email","/signup/emailAuth").permitAll()
+                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/signup/email","/signup/emailAuth","/api/v1/feeds").permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
