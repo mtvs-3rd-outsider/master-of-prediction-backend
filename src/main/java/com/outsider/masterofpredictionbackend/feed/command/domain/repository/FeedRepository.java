@@ -61,5 +61,6 @@ public interface FeedRepository extends JpaRepository<Feed, Long>{
     @NotNull
     Page<Feed> findAllByIdLessThanZero(@NotNull Pageable pageable);
 
+    List<Feed> findAllByIdIn(List<Long> ids);
 }
 

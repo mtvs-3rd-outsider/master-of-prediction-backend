@@ -33,7 +33,7 @@ public class MyChannelFeedController {
     ) {
         long userId;
         if(userInfoDTO.getUserId()==null){
-            userId = -1L;
+            userId = 0L;
         }else {
             userId = userInfoDTO.getUserId();
         }
