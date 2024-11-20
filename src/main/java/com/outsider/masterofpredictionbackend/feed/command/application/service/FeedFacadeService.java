@@ -50,4 +50,8 @@ public class FeedFacadeService {
     public void deleteFeed(Long feedId) {
         feedDeleteService.deleteFeed(feedId);
     }
+
+    public boolean verifyGuest(Long feedId, GuestDTO guestDTO) {
+        return feedUpdateService.verifyGuestCredentials(feedId,guestDTO);
+    }
 }

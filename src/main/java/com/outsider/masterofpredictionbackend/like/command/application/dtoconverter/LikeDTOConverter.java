@@ -2,6 +2,8 @@ package com.outsider.masterofpredictionbackend.like.command.application.dtoconve
 
 import com.outsider.masterofpredictionbackend.like.command.application.dto.LikeDTO;
 import com.outsider.masterofpredictionbackend.like.command.domain.aggregate.Like;
+import com.outsider.masterofpredictionbackend.like.command.domain.aggregate.enumtype.LikeType;
+import com.outsider.masterofpredictionbackend.like.command.domain.aggregate.enumtype.ViewType;
 
 public class LikeDTOConverter {
 

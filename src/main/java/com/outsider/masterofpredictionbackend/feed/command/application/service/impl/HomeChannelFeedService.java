@@ -42,12 +42,12 @@ public class HomeChannelFeedService {
         // 페이징된 피드들의 좋아요 수 동기화
         List<Feed> pagedFeeds = feedPage.getContent();
         for (Feed feed : pagedFeeds) {
-            if(feed.getAuthorType()== AuthorType.USER) {
+
                 int likeCount = externalLikeService.getLikeCount(
-                        new LikeDTO(LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getUser().getUserId(), feed.getId())
+                        new LikeDTO(LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getId())
                 );
                 feed.setLikesCount(likeCount);
-            }
+
 
         }
         feedRepository.saveAll(pagedFeeds);

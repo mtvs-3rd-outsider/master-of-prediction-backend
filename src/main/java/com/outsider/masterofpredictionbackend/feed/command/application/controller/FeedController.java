@@ -5,6 +5,7 @@ import com.outsider.masterofpredictionbackend.common.ResponseMessage;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedCreateDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedUpdateDTO;
+import com.outsider.masterofpredictionbackend.feed.command.application.dto.GuestDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.FeedFacadeService;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.embedded.User;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
@@ -87,6 +88,25 @@ public class FeedController {
                     .body(new ResponseMessage("피드 수정에 실패했습니다: " + e.getMessage()));
         }
     }
+
+    @PostMapping("/{feedId}/verify-guest")
+    public ResponseEntity<ResponseMessage> verifyGuestCredentials(
+            @PathVariable Long feedId,
+            @RequestBody GuestDTO guestDTO) {
+        try {
+            boolean isValid = feedFacadeService.verifyGuest(feedId, guestDTO);
+            if (isValid) {
+                return ResponseEntity.ok(new ResponseMessage("게스트 인증 성공"));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ResponseMessage("게스트 인증 실패"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseMessage("게스트 인증 중 오류 발생: " + e.getMessage()));
+        }
+    }
+
 
     // Feed 삭제 엔드포인트
     @DeleteMapping("/{feedId}")
