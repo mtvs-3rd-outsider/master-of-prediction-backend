@@ -6,6 +6,7 @@ import com.outsider.masterofpredictionbackend.betting.command.application.dto.re
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.naver.ApiBettingProductService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.BettingProductService;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.BettingFeedService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.AdminUserIdList;
 import com.outsider.masterofpredictionbackend.util.UserId;
@@ -37,12 +38,14 @@ public class BettingProductController {
     private final ProductCommandService productCommandService;
     private final BettingProductService bettingProductService;
     private final ApiBettingProductService apiBettingProductService;
+    private final BettingFeedService bettingFeedService;
 
     @Autowired
-    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService, ApiBettingProductService apiBettingProductService) {
+    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService, ApiBettingProductService apiBettingProductService,BettingFeedService bettingFeedService) {
         this.productCommandService = productCommandService;
         this.bettingProductService = bettingProductService;
         this.apiBettingProductService = apiBettingProductService;
+        this.bettingFeedService = bettingFeedService;
     }
 
     @PostMapping("/api/v1/betting-products")
@@ -86,6 +89,7 @@ public class BettingProductController {
         Long productId;
         try {
             productId = productCommandService.save(bettingProductAndOptionDTO);
+            bettingFeedService.createBettingFeed(-productId);
         } catch (BadRequestException e) {
             return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
         }

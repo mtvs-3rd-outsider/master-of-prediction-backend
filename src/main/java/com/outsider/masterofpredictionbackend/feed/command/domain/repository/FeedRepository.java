@@ -59,5 +59,8 @@ public interface FeedRepository extends JpaRepository<Feed, Long>{
     Page<Feed> findAllByIdLessThanZero(@NotNull Pageable pageable);
 
     List<Feed> findAllByIdIn(List<Long> ids);
+
+    @Query("SELECT MAX(f.id) FROM Feed f")
+    Long findMaxId();
 }
 
