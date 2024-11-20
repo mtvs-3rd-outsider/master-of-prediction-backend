@@ -19,11 +19,24 @@ public class CategoryChannelApprovalService {
     }
 
     @Transactional
-    public void approveCategoryChannel(Long channelId) {
+    public void changeCategoryChannelStatus(Long channelId, CategoryChannelStatus newStatus) {
         CategoryChannel categoryChannel = categoryChannelRepository.findById(channelId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid channel ID"));
 
-        categoryChannel.setCategoryChannelStatus(CategoryChannelStatus.APPROVED);
+        // 현재 상태와 동일한 상태로의 변경을 방지
+        if (categoryChannel.getCategoryChannelStatus() == newStatus) {
+            throw new IllegalStateException("The channel is already " + newStatus);
+        }
+
+        // 이미 확정된 상태인지 확인
+        if (categoryChannel.getCategoryChannelStatus() == CategoryChannelStatus.APPROVED
+                || categoryChannel.getCategoryChannelStatus() == CategoryChannelStatus.REJECTED) {
+            throw new IllegalStateException("The channel has already been finalized with status: "
+                    + categoryChannel.getCategoryChannelStatus());
+        }
+
+        categoryChannel.setCategoryChannelStatus(newStatus);
         categoryChannelRepository.save(categoryChannel);
     }
+
 }
