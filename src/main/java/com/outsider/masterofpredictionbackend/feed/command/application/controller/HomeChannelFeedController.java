@@ -31,7 +31,7 @@ public class HomeChannelFeedController {
             @UserId CustomUserInfoDTO userInfoDTO
     ) {
         // userId가 없는 경우에도 피드 조회 가능
-        Page<FeedsResponseDTO> recentFeeds = homeChannelFeedService.getFeeds(pageable, userInfoDTO.getUserId() != null ? userInfoDTO.getUserId()  : -1L);
+        Page<FeedsResponseDTO> recentFeeds = homeChannelFeedService.getFeeds(pageable, userInfoDTO.getUserId() != null ? userInfoDTO.getUserId()  : 0L);
         return ResponseEntity.ok(recentFeeds);
     }
 
@@ -47,7 +47,7 @@ public class HomeChannelFeedController {
                 Sort.by(Sort.Direction.DESC, "viewCount")
         );
 
-        Page<FeedsResponseDTO> hotTopicFeeds = homeChannelFeedService.getFeeds(viewCountPageable, userInfoDTO.getUserId()  != null ? userInfoDTO.getUserId()  : -1L);
+        Page<FeedsResponseDTO> hotTopicFeeds = homeChannelFeedService.getFeeds(viewCountPageable, userInfoDTO.getUserId()  != null ? userInfoDTO.getUserId()  :0L);
         return ResponseEntity.ok(hotTopicFeeds);
     }
 
@@ -63,17 +63,18 @@ public class HomeChannelFeedController {
                 Sort.by(Sort.Direction.DESC, "likesCount")
         );
 
-        Page<FeedsResponseDTO> likedFeeds = homeChannelFeedService.getFeeds(likesCountPageable, userInfoDTO.getUserId()  != null ? userInfoDTO.getUserId()  : -1L);
+        Page<FeedsResponseDTO> likedFeeds = homeChannelFeedService.getFeeds(likesCountPageable, userInfoDTO.getUserId()  != null ? userInfoDTO.getUserId()  : 0L);
         return ResponseEntity.ok(likedFeeds);
     }
 
     @GetMapping("/betting")
-    public ResponseEntity<Page<FeedsResponseDTO>> getFeedsByIds(
-            @PageableDefault(page = 0, size = 10, sort = "shortAt", direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<List<FeedsResponseDTO>> getFeedsByIds(
+            @RequestParam List<Long> ids,
             @UserId CustomUserInfoDTO userInfoDTO
     ) {
-        Page<FeedsResponseDTO> feedsByIds = homeChannelFeedService.getBettingFeeds(pageable,
-                userInfoDTO.getUserId() != null ? userInfoDTO.getUserId() : -1L
+        List<FeedsResponseDTO> feedsByIds = homeChannelFeedService.getFeedsByIds(
+                ids,
+                userInfoDTO.getUserId() != null ? userInfoDTO.getUserId() : 0L
         );
         return ResponseEntity.ok(feedsByIds);
     }

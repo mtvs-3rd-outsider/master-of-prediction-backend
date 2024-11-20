@@ -3,9 +3,12 @@ package com.outsider.masterofpredictionbackend.feed.command.application.controll
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.BettingFeedService;
+import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -33,4 +36,5 @@ public class BettingFeedController {
             return ResponseEntity.ok(e.getMessage());
         }
     }
+
 }
