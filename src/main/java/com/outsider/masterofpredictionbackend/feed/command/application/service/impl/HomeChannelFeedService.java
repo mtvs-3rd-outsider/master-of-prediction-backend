@@ -69,37 +69,38 @@ public class HomeChannelFeedService {
         });
     }
 
-    public Page<FeedsResponseDTO>getBettingFeeds(Pageable pageable, long userId) {
-        // pageable의 정렬 기준을 사용하여 데이터 조회
-        Page<Feed> feedPage = feedRepository.findAllByIdLessThanZero(pageable);
 
-        // 페이징된 피드들의 좋아요 수 동기화
-        List<Feed> pagedFeeds = feedPage.getContent();
-        for (Feed feed : pagedFeeds) {
-            if(feed.getAuthorType()== AuthorType.USER) {
+    @Transactional
+    public List<FeedsResponseDTO> getFeedsByIds(List<Long> ids, long userId) {
+        List<Feed> feeds = feedRepository.findAllByIdIn(ids);
+
+        // 피드들의 좋아요 수 동기화
+        for (Feed feed : feeds) {
+            if(feed.getAuthorType() == AuthorType.USER) {
                 int likeCount = externalLikeService.getLikeCount(
                         new LikeDTO(LikeType.FEED, ViewType.HOTTOPICCHANNEL, feed.getUser().getUserId(), feed.getId())
                 );
                 feed.setLikesCount(likeCount);
             }
-
         }
-        feedRepository.saveAll(pagedFeeds);
+        feedRepository.saveAll(feeds);
 
-        return feedPage.map(feed -> {
-            boolean isLiked = externalLikeService.checkUserLike(
-                    userId,
-                    LikeType.FEED,
-                    ViewType.HOTTOPICCHANNEL,
-                    feed.getId()
-            );
-            feed.setIsLike(isLiked);
+        return feeds.stream()
+                .map(feed -> {
+                    boolean isLiked = externalLikeService.checkUserLike(
+                            userId,
+                            LikeType.FEED,
+                            ViewType.HOTTOPICCHANNEL,
+                            feed.getId()
+                    );
+                    feed.setIsLike(isLiked);
 
-            boolean isShared = feed.isReupLoadedBy(userId);
-            FeedsResponseDTO responseDTO = converterFacade.fromEntity(feed, userId);
-            responseDTO.setIsShare(isShared);
+                    boolean isShared = feed.isReupLoadedBy(userId);
+                    FeedsResponseDTO responseDTO = converterFacade.fromEntity(feed, userId);
+                    responseDTO.setIsShare(isShared);
 
-            return responseDTO;
-        });
+                    return responseDTO;
+                })
+                .collect(Collectors.toList());
     }
 }

@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.feed.command.application.service;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO;
 import com.outsider.masterofpredictionbackend.betting.query.service.BettingProductQueryService;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedCreateDTO;
+import com.outsider.masterofpredictionbackend.feed.command.application.dto.FeedsResponseDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.UserDTO;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.converter.FeedCreateDTOConverter;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.Feed;
@@ -15,7 +16,10 @@ import com.outsider.masterofpredictionbackend.like.query.application.dto.LikeCou
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 
@@ -60,4 +64,5 @@ public class BettingFeedService {
         response.setTitle(dto.getProduct().getTitle());
         return response;
     }
+
 }
