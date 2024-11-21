@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,8 @@ public class BettingViewDTO {
 
     private String blindName;
 
+    private LocalDateTime createdAt;
+
     public BettingViewDTO(Long userID, String userName, String displayName,
                           String tierName, String userImg, String title,
                           Long bettingId, Boolean isBlind) {
@@ -49,7 +52,7 @@ public class BettingViewDTO {
     }
     public BettingViewDTO(Long userID, String userName, String displayName,
                           String tierName, String userImg, String title,
-                          Long bettingId, Boolean isBlind, String blindName) {
+                          Long bettingId, Boolean isBlind, String blindName, LocalDateTime createdAt) {
         this.userID = userID;
         this.userName = userName;
         this.displayName = displayName;
@@ -60,6 +63,7 @@ public class BettingViewDTO {
         this.bettingId = bettingId;
         this.isBlind = isBlind;
         this.blindName = blindName;
+        this.createdAt = createdAt;
     }
 
     public void addImgUrl(String imgUrl){

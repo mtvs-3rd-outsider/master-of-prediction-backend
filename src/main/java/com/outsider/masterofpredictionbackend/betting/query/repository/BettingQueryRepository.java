@@ -12,8 +12,8 @@ import java.util.List;
 
 public interface BettingQueryRepository extends JpaRepository<BettingProduct, Long> {
 
-    @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO(" +
-            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind, bp.blindName)  FROM BettingProduct bp " +
+    @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO( " +
+            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind, bp.blindName, bp.createdAt)  FROM BettingProduct bp " +
             "JOIN User u ON bp.userId = u.id ORDER BY bp.id DESC")
     Page<BettingViewDTO> findBetting(Pageable pageable);
 
