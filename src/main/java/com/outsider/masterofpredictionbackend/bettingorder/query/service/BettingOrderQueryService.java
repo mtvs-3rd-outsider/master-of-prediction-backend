@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.bettingorder.query.service;
 
+import com.outsider.masterofpredictionbackend.betting.command.application.service.BettingProductException;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProduct;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingOptionDTO;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingOptionQueryRepository;
@@ -57,7 +58,7 @@ public class BettingOrderQueryService {
     }
 
     private BettingProduct getBettingProduct(Long bettingId) {
-        return bettingQueryRepository.findById(bettingId).orElseThrow(() -> new IllegalArgumentException("BettingProduct not found"));
+        return bettingQueryRepository.findById(bettingId).orElseThrow(BettingProductException.NotFound::new);
     }
 
     public Map<Long, List<BettingOrderStatisticsDTO>> findBettingOrderHistory(Long bettingId, String timeRange) {

@@ -15,9 +15,7 @@ import com.outsider.masterofpredictionbackend.feed.command.domain.service.Extern
 import com.outsider.masterofpredictionbackend.like.command.domain.aggregate.enumtype.LikeType;
 import com.outsider.masterofpredictionbackend.like.query.application.dto.LikeCountIdDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ public class BettingFeedService {
 
 
     public void createBettingFeed(Long id) {
-        BettingDetailDTO dto = bettingProductQueryService.detail(-id);
+        BettingDetailDTO dto = bettingProductQueryService.detailAdminFunction(-id);
         FeedCreateDTO feedCreateDTO = convertBetting(dto);
         Feed feed = converterFacade.toEntity(feedCreateDTO);
         feed.setCustomId(id);

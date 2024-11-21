@@ -31,7 +31,6 @@ public class ChannelSubscriptionController {
             @PageableDefault(size = 10, page = 0, direction = Sort.Direction.ASC) Pageable pageable,
             @UserId CustomUserInfoDTO userInfoDTO) {
         Page<ChannelInfo> following = subscriptionService.getAllFollowingByUserId(userId, userInfoDTO.getUserId(), isUserChannel, pageable, flag);
-
         return ResponseEntity.ok(following);
     }
 

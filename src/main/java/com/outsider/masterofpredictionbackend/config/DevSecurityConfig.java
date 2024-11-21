@@ -83,9 +83,9 @@ public class DevSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-//                requiresChannel(channel -> channel
-//                        .anyRequest().requiresSecure()
-//                )
+                // requiresChannel(channel -> channel
+                //         .anyRequest().requiresSecure()
+                // )
                 .authorizeHttpRequests(auth -> auth
                         // .requestMatchers("/**").permitAll()
                         .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/signup/email","/signup/emailAuth","/api/v1/feeds","/api/v1/feeds/{feedId}/**").permitAll()
