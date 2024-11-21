@@ -42,6 +42,9 @@ public class FeedCreateService {
         feedCreateDTO.setYoutubeUrls(youtubeUrls);
         Feed feed =  converterFacade.toEntity(feedCreateDTO);
         Long lastId = feedRepository.findMaxId();
+        if(lastId==null){
+            lastId=0L;
+        }
         feed.setCustomId(lastId+1);
         Feed savedFeed = feedRepository.save(feed);
         LikeCountIdDTO likeCountIdDTO = new LikeCountIdDTO(feed.getId(), LikeType.FEED);
