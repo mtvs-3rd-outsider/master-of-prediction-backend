@@ -22,5 +22,6 @@ public class UserInfoResponseDTO {
     private LocalDate birthday;
     private String avatarUrl;
     private Boolean isWithdrawal;
-
+    private String tierName;
+    private String tierLevel;
 }

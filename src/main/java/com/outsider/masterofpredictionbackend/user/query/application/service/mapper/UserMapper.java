@@ -9,5 +9,7 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
 
     @Mapping(target = "avatarUrl", source = "userImg")
+    @Mapping(target = "tier.name", source = "tierName")
+    @Mapping(target = "tier.level", source = "tierLevel")
     UserInfoResponseDTO userToUserInfoDTO(User user);
 }
