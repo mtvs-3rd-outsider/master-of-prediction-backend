@@ -30,11 +30,11 @@ public interface FeedRepository extends JpaRepository<Feed, Long>{
     @Query("UPDATE Feed f SET f.viewCount = f.viewCount + 1 WHERE f.id = :feedId")
     void incrementViewCount(@Param("feedId") Long feedId);
 
-    @Query("SELECT f FROM Feed f WHERE f.channel.channelType = :channelType AND f.channel.channelId = :channelId ORDER BY f.shortAt DESC")
+    @Query("SELECT f FROM Feed f WHERE f.channel.channelType = :channelType AND f.channel.channelId = :channelId AND f.id > 0 ORDER BY f.shortAt DESC")
     Page<Feed> findByChannel_ChannelTypeAndChannel_ChannelId(ChannelType channelType, Long channelId, Pageable pageable);
 
     @Query("SELECT f FROM Feed f WHERE " +
-            "(f.channel.channelType = :channelType AND f.channel.channelId = :channelId) OR " +
+            "f.id > 0 AND (f.channel.channelType = :channelType AND f.channel.channelId = :channelId) OR " +
             ":channelId MEMBER OF f.reupLoadUsers " +
             "ORDER BY f.shortAt DESC")
     Page<Feed> findByChannel_ChannelTypeAndChannel_ChannelIdOrReuploadedBy(
