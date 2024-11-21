@@ -13,7 +13,7 @@ public class FileController {
     @Autowired
     private MinioService minioService;
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload",consumes = "multipart/form-data")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             String url= minioService.uploadFile(file);
