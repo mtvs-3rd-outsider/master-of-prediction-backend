@@ -56,18 +56,18 @@ public class MyChannelService {
             // 채널이 없으면 새로 등록
             myChannel = new MyChannel(
                     dto.getUserId(),
-                    new Bio(dto.getBio()),
-                    new Website(dto.getWebsite())
+                    dto.getBio(),
+                    dto.getWebsite()
             );
             myChannelRepository.save(myChannel);
             log.info("Channel registered: {}", myChannel.getId());
         } else {
             // 채널이 있으면 업데이트
             if (dto.getBio() != null) {
-                myChannel.setBio(new Bio(dto.getBio()));
+                myChannel.setBio(dto.getBio());
             }
             if (dto.getWebsite() != null) {
-                myChannel.setWebsite(new Website(dto.getWebsite()));
+                myChannel.setWebsite(dto.getWebsite());
             }
             if (dto.getBannerImg() != null) {
                 myChannel.setBannerImg(dto.getBannerImg());

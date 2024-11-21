@@ -28,10 +28,10 @@ public class Website {
         {
             return;
         }
-        if (url != null && !url.matches("^(http|https)://.*$")) {
+        if ( !url.matches("^(http|https)://.*$")) {
             throw new IllegalArgumentException("Website must be a valid URL");
         }
-        if (url != null && url.length() > 200) { // Assuming a reasonable max length for a URL
+        if ( url.length() > 200) { // Assuming a reasonable max length for a URL
             throw new IllegalArgumentException("Website URL cannot exceed 200 characters");
         }
     }

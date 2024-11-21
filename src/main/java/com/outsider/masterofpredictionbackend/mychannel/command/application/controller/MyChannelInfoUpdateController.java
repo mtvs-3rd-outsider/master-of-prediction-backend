@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.mychannel.command.application.con
 
 import com.outsider.masterofpredictionbackend.mychannel.command.application.dto.MyChannelInfoUpdateRequestDTO;
 import com.outsider.masterofpredictionbackend.mychannel.command.application.service.MyChannelInfoUpdateService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class MyChannelInfoUpdateController {
      * @return 상태 코드 200 OK 또는 404 Not Found
      */
     @PutMapping("/{userId}")
-    public ResponseEntity<String> updateMyChannel(@RequestBody MyChannelInfoUpdateRequestDTO dto,@PathVariable Long userId ) {
+    public ResponseEntity<String> updateMyChannel(@Valid @RequestBody MyChannelInfoUpdateRequestDTO dto, @PathVariable Long userId ) {
         try {
             myChannelInfoUpdateService.updateMyChannel(dto);
             return new ResponseEntity<>("Channel updated successfully", HttpStatus.OK);

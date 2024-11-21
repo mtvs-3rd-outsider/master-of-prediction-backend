@@ -55,11 +55,11 @@ public class MyChannelInfoUpdateService {
 
 
         if (dto.getBio() != null) {
-            myChannel.setBio(new Bio(dto.getBio()));
+            myChannel.setBio(dto.getBio());
         }
 
         if (dto.getWebsite() != null) {
-            myChannel.setWebsite(new Website(dto.getWebsite()));
+            myChannel.setWebsite(dto.getWebsite());
         }
         if (dto.getBannerImg() != null) {
             myChannel.setBannerImg(dto.getBannerImg());

@@ -12,11 +12,9 @@ public class MyChannel extends BaseEntity {
     @Column(name="channel_id")
     private Long id;
 
-    @Embedded
-    private Bio bio;
+    private String bio;
 
-    @Embedded
-    private Website website;
+    private String website;
 
     @Embedded
     private UserCounts userCounts;
@@ -35,7 +33,7 @@ public class MyChannel extends BaseEntity {
         this.id = userId;
         this.userCounts = new UserCounts(0,0);
     }
-    public MyChannel(Long userId, Bio bio, Website website) {
+    public MyChannel(Long userId, String bio, String website) {
         this.id = userId;
         this.bio = bio;
         this.website = website;
@@ -57,12 +55,12 @@ public class MyChannel extends BaseEntity {
     }
 
     public String getBio() {
-        return bio.getValue();
+        return bio;
     }
 
 
     public String getWebsite() {
-        return website.getWebsite();
+        return website;
     }
 
     public UserCounts getUserCounts() {
@@ -78,14 +76,13 @@ public class MyChannel extends BaseEntity {
     }
 
 
-    public void setBio(Bio bio) {
+    public void setBio(String bio) {
         this.bio = bio;
     }
 
-    public void setWebsite(Website website) {
+    public void setWebsite(String website) {
         this.website = website;
     }
-
     public String getBannerImg() {
         return bannerImg;
     }
