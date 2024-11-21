@@ -99,7 +99,7 @@ public class CategoryChannelConfig {
 
         // 파일과 유튜브 링크 설정
         List<MultipartFile> files = new ArrayList<>(); // 업로드할 파일 리스트, 더미 파일일 경우 빈 리스트
-        List<String> youtubeUrls = List.of("https://www.youtube.com/watch?v=sample_video");
+        List<String> youtubeUrls = List.of("https://www.youtube.com/watch?v=zBivxj0rbdY");
 
         Long feedId = feedService.createFeed(feedCreateDTO, files, youtubeUrls);
         System.out.println("Created feed with ID: " + feedId + " for category channel: " + categoryName);
