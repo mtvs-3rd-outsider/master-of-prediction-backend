@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.feed.command.domain.aggregate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class YouTubeVideo {
     private String youtubeUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "feed_id", nullable = false)
     private Feed feed;
 
@@ -36,7 +38,6 @@ public class YouTubeVideo {
         return "YouTubeVideo{" +
                 "id=" + id +
                 ", youtubeUrl='" + youtubeUrl + '\'' +
-                ", feed=" + feed +
                 '}';
     }
 
