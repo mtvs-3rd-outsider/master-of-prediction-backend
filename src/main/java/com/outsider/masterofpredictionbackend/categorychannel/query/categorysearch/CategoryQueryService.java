@@ -15,7 +15,7 @@ public class CategoryQueryService {
 
     // 페이징을 위한 메서드: displayName으로 검색
     public Page<CategorySearchModel> searchByDisplayName(String displayName, Pageable pageable) {
-        return categorySearchRepository.findByDisplayName(displayName, pageable);
+        return categorySearchRepository.findByDisplayNameOrContaining(displayName, pageable);
     }
 
 
