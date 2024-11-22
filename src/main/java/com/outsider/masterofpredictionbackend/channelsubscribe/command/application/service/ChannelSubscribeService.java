@@ -131,6 +131,8 @@ public class ChannelSubscribeService {
         ChannelSubscribe channelSubscribe = optionalSubscribe.orElse(null);
 
         if(dto.getUserId().equals(dto.getChannelId()) && dto.getIsUserChannel()) {
+            log.info("Subscription failed: User ID [{}] is equal to Channel ID [{}] and it is a user channel.",
+                    dto.getUserId(), dto.getChannelId());
             throw new InvalidSubscriptionException();
         }
 
