@@ -3,7 +3,9 @@ package com.outsider.masterofpredictionbackend.channelsubscribe.command.applicat
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
+@ToString
 public class ChannelSubscribeRequestDTO {
     private Long userId;
     private Long channelId;

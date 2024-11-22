@@ -110,6 +110,7 @@ public class ChannelSubscribeService {
 
             if (event.isValidationSuccess()) {
                 // 검증 성공 시 구독 처리 진행
+                log.info("Validation success for subscription: {}", dto);
                 manageSubscription(dto);
                 // 팔로워 및 팔로잉 수 업데이트 이벤트 발행
 //                producer.sendFollowerFollowingUpdate(dto);

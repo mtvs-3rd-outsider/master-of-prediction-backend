@@ -5,6 +5,7 @@ import com.outsider.masterofpredictionbackend.betting.query.repository.UserQuery
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.dto.ChannelSubscribeRequestDTO;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.event.ChannelSubscriptionEvent;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 @Service
+@Slf4j
 public class ChannelHandler {
 
     private final ObjectMapper objectMapper;
@@ -36,6 +38,11 @@ public class ChannelHandler {
                     dto,
                     userExists
             );
+            // 로그 기록
+            log.info("Processed validation request for getUserId: {}, getChannelId: {}, channelExists: {}",
+                    dto.getUserId(), dto.getChannelId(), userExists);
+
+
             String eventJson = objectMapper.writeValueAsString(responseEvent);
             kafkaTemplate.send("user-channel-validation-response-channel-part", eventJson);
             ack.acknowledge();
