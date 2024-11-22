@@ -10,7 +10,7 @@ import java.util.List;
 public class MessageVM {
     private String content;
     private UserVM user;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Seoul")
     private Instant sent;
     private String roomId;
     private Integer id;
