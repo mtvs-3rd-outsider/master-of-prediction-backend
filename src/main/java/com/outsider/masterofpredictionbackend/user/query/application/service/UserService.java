@@ -6,13 +6,14 @@ import com.outsider.masterofpredictionbackend.channelsubscribe.command.applicati
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.event.ChannelSubscriptionEvent;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.event.ChannelSubscriptionEventType;
 import com.outsider.masterofpredictionbackend.user.query.usersearch.UserSearchRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-
+@Slf4j
 @Service
 public class UserService {
     private final ObjectMapper objectMapper;
@@ -37,6 +38,9 @@ public class UserService {
                     dto,
                     userExists
             );
+            // 디버깅 정보를 로그에 기록
+            log.info("Processed validation request for userId: {}, getChannelId: {}, userExists: {}",
+                    dto.getUserId(), dto.getChannelId(), userExists);
             String eventJson = objectMapper.writeValueAsString(responseEvent);
             kafkaTemplate.send("user-channel-validation-response-user-part", eventJson);
             ack.acknowledge();
