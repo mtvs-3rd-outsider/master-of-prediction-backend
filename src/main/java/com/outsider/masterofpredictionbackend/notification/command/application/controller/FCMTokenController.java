@@ -30,15 +30,34 @@ public class FCMTokenController {
     }
 
     @PostMapping()
-    public ResponseEntity<Map<String, String>> registerToken(@UserId CustomUserInfoDTO customUserInfoDTO, @RequestBody FCMTokenRequest tokenRequest) {
+    public ResponseEntity<Map<String, String>> registerToken(
+            @UserId CustomUserInfoDTO customUserInfoDTO,
+            @RequestBody FCMTokenRequest tokenRequest) {
         String userId = customUserInfoDTO.getUserId().toString();
-        tokenService.saveToken(userId, tokenRequest.getToken());
-        NotificationDTO notificationDTO = new NotificationDTO( "로그인시에만 유지 됩니다.","알림 설정 완료",Long.parseLong(userId), NotificationType.SYSTEM);
-        fcmService.sendNotification(notificationDTO,tokenRequest.getToken());
+        String token = tokenRequest.getToken();
+
+        // 이미 저장된 토큰인지 확인
+        boolean isTokenAlreadyExists = tokenService.isTokenExists(userId, token);
+        if (!isTokenAlreadyExists) {
+            // 토큰 저장
+            tokenService.saveToken(userId, token);
+
+            // 알림 전송
+            NotificationDTO notificationDTO = new NotificationDTO(
+                    "로그인시에만 유지 됩니다.",
+                    "알림 설정 완료",
+                    Long.parseLong(userId),
+                    NotificationType.SYSTEM
+            );
+            fcmService.sendNotification(notificationDTO, token);
+        }
+
+        // 응답 생성
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
         return ResponseEntity.ok(response);
     }
+
 
     @DeleteMapping
     public ResponseEntity<String> removeToken(@UserId CustomUserInfoDTO customUserInfoDTO, @RequestBody FCMTokenRequest token) {

@@ -25,7 +25,10 @@ public class FCMTokenService {
         String key = TOKEN_PREFIX + userId;
         redisTemplate.opsForSet().add(key, token);
     }
-
+    public boolean isTokenExists(String userId, String token) {
+        String key = TOKEN_PREFIX + userId;
+        return redisTemplate.opsForSet().isMember(key, token);
+    }
     public Set<String> getTokens(String userId) {
         String key = TOKEN_PREFIX + userId;
         // 키가 존재하는지 확인
