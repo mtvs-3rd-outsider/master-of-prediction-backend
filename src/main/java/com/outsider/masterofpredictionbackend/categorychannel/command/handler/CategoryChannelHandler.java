@@ -5,6 +5,7 @@ import com.outsider.masterofpredictionbackend.categorychannel.command.domain.rep
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.dto.ChannelSubscribeRequestDTO;
 import com.outsider.masterofpredictionbackend.channelsubscribe.command.application.event.ChannelSubscriptionEvent;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.repository.MyChannelCommandRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 
 @Service
+@Slf4j
 public class CategoryChannelHandler {
 
     private final ObjectMapper objectMapper;
@@ -28,6 +30,7 @@ public class CategoryChannelHandler {
     @KafkaListener(topics = "category-channel-validation-request-channel-part", groupId = "channel-service-group")
     public void handleValidationRequest(String message, Acknowledgment ack) {
         try {
+            ack.acknowledge();
             // JSON 문자열을 ChannelSubscriptionEvent 객체로 역직렬화
             ChannelSubscriptionEvent event = objectMapper.readValue(message, ChannelSubscriptionEvent.class);
             ChannelSubscribeRequestDTO dto = event.getDto();
@@ -37,11 +40,19 @@ public class CategoryChannelHandler {
                     dto,
                     channelExists
             );
+            // 로그 기록
+            log.info("Validation request processed for channelId: {}, getChannelId: {}, channelExists: {}",
+                    dto.getChannelId(), dto.getChannelId(), channelExists);
+
             String eventJson = objectMapper.writeValueAsString(responseEvent);
             kafkaTemplate.send("user-channel-validation-response-channel-part", eventJson);
-            ack.acknowledge();
+
+
+            // 처리 확인 로그
+            log.info("Validation response sent for channelId: {}, getChannelId: {}",
+                    dto.getChannelId(), dto.getChannelId());
         } catch (Exception e) {
-            ack.nack(Duration.ofSeconds(1));
+            log.error("Error occurred while processing validation request: {}", e.getMessage(), e);
         }
     }
 }

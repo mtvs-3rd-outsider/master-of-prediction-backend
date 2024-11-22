@@ -123,7 +123,6 @@ public class ChannelSubscribeService {
             ack.acknowledge();
         } catch (Exception e) {
             log.error("Failed to handle validation response: {}", e.getMessage());
-            ack.nack(Duration.ofSeconds(1));
         }
     }
 
