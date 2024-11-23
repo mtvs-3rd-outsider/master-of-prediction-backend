@@ -4,9 +4,7 @@ package com.outsider.masterofpredictionbackend.user.query.mychannelinfo.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
 import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto.MyChannelInfoQueryModel;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
@@ -27,6 +25,6 @@ public interface MyChannelMapper {
     @Mapping(source = "bannerImg", target = "bannerImg")
     MyChannelInfoQueryModel toQueryModel(MyChannel myChannel);
 
-    // 기존 MyChannelInfoQueryModel과 병합
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromQueryModel(MyChannelInfoQueryModel source, @MappingTarget MyChannelInfoQueryModel target);
 }
