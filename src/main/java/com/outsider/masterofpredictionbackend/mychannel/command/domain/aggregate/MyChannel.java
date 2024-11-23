@@ -1,8 +1,10 @@
 package com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.outsider.masterofpredictionbackend.common.BaseEntity;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.embeded.*;
 import jakarta.persistence.*;
+import lombok.Builder;
 
 @Entity
 @Table(name="MY_CHANNEL")
@@ -10,6 +12,7 @@ public class MyChannel extends BaseEntity {
 
     @Id
     @Column(name="channel_id")
+    @JsonProperty("channel_id")
     private Long id;
 
     private String bio;
@@ -22,6 +25,7 @@ public class MyChannel extends BaseEntity {
 
     @Lob
     @Column(name="banner_img",length = 1000)
+    @JsonProperty("banner_img")
     private String bannerImg;
 
 
@@ -48,6 +52,10 @@ public class MyChannel extends BaseEntity {
                 ", website=" + website +
                 ", userCounts=" + userCounts +
                 '}';
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

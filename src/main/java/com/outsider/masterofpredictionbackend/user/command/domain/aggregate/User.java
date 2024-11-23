@@ -84,9 +84,11 @@ public class User extends BaseEntity {
     private ProviderInfo provider; //어떤 OAuth인지(google, naver 등)
     private String provideId; // 해당 OAuth 의 key(id)
     @Column(name = "user_img",length = 1000)
+    @JsonProperty("user_img")
     private String userImg;
 
     @Column(name = "joined_date")
+    @JsonProperty("joined_date")
     private LocalDate joinDate;
 
     public String getUserImg() {

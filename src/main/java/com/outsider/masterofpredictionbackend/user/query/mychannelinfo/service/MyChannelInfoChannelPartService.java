@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.user.query.mychannelinfo.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outsider.masterofpredictionbackend.mychannel.command.domain.aggregate.MyChannel;
@@ -15,21 +16,30 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+
+
+import java.time.Duration;
+
 @Service
-public class MyChannelInfoChannelPartService extends GenericService<MyChannelInfoQueryModel, Long, MyChannel> {
+public class MyChannelInfoChannelPartService {
 
     private static final Logger logger = LoggerFactory.getLogger(MyChannelInfoChannelPartService.class);
-    private final ObjectMapper mapper;
+    private final MyChannelInfoRepository repository;
+    private final ObjectMapper objectMapper;
+    private final MyChannelMapper myChannelMapper;
 
-    public MyChannelInfoChannelPartService(MyChannelInfoRepository repository, ObjectMapper mapper) {
-        super(repository, MyChannel.class);
-        this.mapper = mapper;
+    public MyChannelInfoChannelPartService(MyChannelInfoRepository repository,
+                                           ObjectMapper objectMapper,
+                                           MyChannelMapper myChannelMapper) {
+        this.repository = repository;
+        this.objectMapper = objectMapper;
+        this.myChannelMapper = myChannelMapper;
     }
 
-    @KafkaListener(topics = "dbserver1.forecasthub.my_channel" ,groupId = "my-channel-info-channel-group")
+    @KafkaListener(topics = "dbserver1.forecasthub.my_channel", groupId = "my-channel-info-channel-group")
     @Transactional
     public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
-
         System.out.printf("Received message: %s, From partition: %d, With offset: %d, From topic: %s%n",
                 record.value(), record.partition(), record.offset(), record.topic());
         String consumedValue = record.value();
@@ -40,7 +50,7 @@ public class MyChannelInfoChannelPartService extends GenericService<MyChannelInf
         }
 
         try {
-            JsonNode jsonNode = mapper.readTree(consumedValue);
+            JsonNode jsonNode = objectMapper.readTree(consumedValue);
             JsonNode payload = jsonNode.path("payload");
             String operation = payload.get("op").asText().substring(0, 1);
             JsonNode after = payload.path("after");
@@ -60,21 +70,53 @@ public class MyChannelInfoChannelPartService extends GenericService<MyChannelInf
             ack.acknowledge();
         } catch (Exception e) {
             logger.error("Unexpected error occurred while consuming record: {}", record, e);
-
-            // 재처리 로직 - 메시지 처리 실패 시 재시도하거나 별도의 큐에 추가하는 방식으로 처리
             retryProcessing(record, ack);
         }
     }
 
-    public void handleCreateOrUpdate(JsonNode jsonNode) throws IllegalAccessException {
-        Long channelId = jsonNode.get("channel_id").asLong();
-        saveOrUpdate(jsonNode, channelId, MyChannelInfoQueryModel.class,"setUserId");
+    private void handleCreateOrUpdate(JsonNode jsonNode) {
+        try {
+            if (jsonNode.isNull()) {
+                logger.warn("No data found in 'after' field for update/create operation.");
+                return;
+            }
+
+            // JSON 데이터를 MyChannel 객체로 변환
+            MyChannel myChannel = objectMapper.treeToValue(jsonNode, MyChannel.class);
+
+            // MyChannel 객체를 MyChannelInfoQueryModel로 매핑
+            MyChannelInfoQueryModel newData = myChannelMapper.toQueryModel(myChannel);
+
+            // 기존 데이터 조회
+            Long channelId = newData.getUserId();
+            MyChannelInfoQueryModel existingData = repository.findById(channelId).orElse(null);
+
+            if (existingData == null) {
+                // 새로운 데이터 저장
+                repository.save(newData);
+            } else {
+                // 기존 데이터와 병합
+                myChannelMapper.updateFromQueryModel(newData, existingData);
+                repository.save(existingData);
+            }
+        } catch (Exception e) {
+            logger.error("Error while processing create/update: {}", jsonNode, e);
+            throw new RuntimeException(e);
+        }
     }
 
-    public void handleDelete(JsonNode jsonNode) {
-        Long channelId = jsonNode.get("channel_id").asLong();
-        deleteById(channelId);
+    private void handleDelete(JsonNode jsonNode) {
+        try {
+            Long channelId = jsonNode.get("channel_id").asLong();
+            repository.deleteById(channelId);
+        } catch (Exception e) {
+            logger.error("Error while processing delete: {}", jsonNode, e);
+            throw new RuntimeException(e);
+        }
     }
 
-
+    private void retryProcessing(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        logger.warn("Retry logic is not implemented yet for record: {}", record);
+        ack.nack(Duration.ofSeconds(1)); // 1초 대기 후 재처리
+    }
 }
