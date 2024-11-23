@@ -66,7 +66,6 @@ public class MyChannelInfoCDCUserPartConsumer {
             ack.acknowledge();
         } catch (Exception e) {
             logger.error("Unexpected error occurred while consuming record: {}", record, e);
-            retryProcessing(record, ack);
         }
     }
 
@@ -105,8 +104,5 @@ public class MyChannelInfoCDCUserPartConsumer {
         }
     }
 
-    private void retryProcessing(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        logger.warn("Retry logic is not implemented yet for record: {}", record);
-        ack.nack(Duration.ofSeconds(1)); // 1초 후 재처리
-    }
+
 }

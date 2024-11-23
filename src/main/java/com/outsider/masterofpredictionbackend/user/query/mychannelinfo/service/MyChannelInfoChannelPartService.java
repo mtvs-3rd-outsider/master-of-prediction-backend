@@ -70,7 +70,6 @@ public class MyChannelInfoChannelPartService {
             ack.acknowledge();
         } catch (Exception e) {
             logger.error("Unexpected error occurred while consuming record: {}", record, e);
-            retryProcessing(record, ack);
         }
     }
 
@@ -94,16 +93,19 @@ public class MyChannelInfoChannelPartService {
             if (existingData == null) {
                 // 새로운 데이터 저장
                 repository.save(newData);
+                logger.info("New data saved for channelId {}: {}", channelId, newData);
             } else {
                 // 기존 데이터와 병합
                 myChannelMapper.updateFromQueryModel(newData, existingData);
                 repository.save(existingData);
+                logger.info("Existing data updated for channelId {}: {}", channelId, existingData);
             }
         } catch (Exception e) {
             logger.error("Error while processing create/update: {}", jsonNode, e);
             throw new RuntimeException(e);
         }
     }
+
 
     private void handleDelete(JsonNode jsonNode) {
         try {
@@ -115,8 +117,5 @@ public class MyChannelInfoChannelPartService {
         }
     }
 
-    private void retryProcessing(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        logger.warn("Retry logic is not implemented yet for record: {}", record);
-        ack.nack(Duration.ofSeconds(1)); // 1초 대기 후 재처리
-    }
+
 }
