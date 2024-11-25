@@ -101,6 +101,9 @@ public class BettingProductQueryService {
         int limit = 10;
         int offset = 0;
         List<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBettingByUserIdLimit(userId, limit, offset);
+        // blind 상품은 List 에서 제거
+        bettingViewDTOS.removeIf(BettingViewDTO::getIsBlind);
+
         Map<Long, BettingViewDTO> maps = new HashMap<>();
         List<Long> ids = new ArrayList<>();
         for (BettingViewDTO dto : bettingViewDTOS) {
