@@ -88,7 +88,16 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/signup/email","/api/v1/auth/signup/emailAuth","/api/v1/auth/forgot-password","/api/v1/auth/reset-password","/api/v1/feeds","/api/v1/feeds/{feedId}/**").permitAll()
+                        .requestMatchers("/api/v1/auth/login",
+                                "/api/v1/auth/register",
+                                "/api/v1/auth/signup/email",
+                                "/api/v1/auth/signup/emailAuth",
+                                "/api/v1/auth/forgot-password",
+                                "/api/v1/auth/reset-password",
+                                "/api/v1/feeds",
+                                "/api/v1/feeds/{feedId}/**",
+                                "/api/v1/betting-products/sse")
+                        .permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
