@@ -62,6 +62,7 @@ public class BettingViewDTO {
         this.title = title;
         this.imgUrls = new ArrayList<>();
         this.bettingId = bettingId;
+        this.createdAt = createdAt;
     }
     public BettingViewDTO(Long userID, String userName, String displayName,
                           String tierName, String userImg, String title,
