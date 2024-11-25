@@ -47,11 +47,11 @@ public class BettingProductQueryController {
         return ResponseEntity.ok(bettingProductQueryService.findByCategoryId(pageable, categoryId));
     }
 
-    @GetMapping("/api/v1/betting-products/user")
-    @Operation(summary = "특정 유저의 상품 조회")
-    public ResponseEntity<?> getBettingProductsByUserId(@RequestParam Long userId){
-        return ResponseEntity.ok(bettingProductQueryService.allByUserId(userId));
-    }
+    // @GetMapping("/api/v1/betting-products/user")
+    // @Operation(summary = "특정 유저의 상품 조회")
+    // public ResponseEntity<?> getBettingProductsByUserId(@RequestParam Long userId){
+    //     return ResponseEntity.ok(bettingProductQueryService.allByUserId(userId));
+    // }
 
     @GetMapping("/api/v1/betting-products/user/v2")
     @Operation(summary = "특정 유저의 상품 조회")
