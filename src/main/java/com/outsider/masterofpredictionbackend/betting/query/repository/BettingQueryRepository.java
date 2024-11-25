@@ -29,7 +29,7 @@ public interface BettingQueryRepository extends JpaRepository<BettingProduct, Lo
     // List<BettingViewDTO> findBettingByUserIdLimit(Long userId, int limit, int offset);
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO(" +
-            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind) " +
+            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.createdAt) " +
             "FROM BettingProduct bp " +
             "JOIN User u ON bp.userId = u.id " +
             "WHERE u.id = :userId and bp.isBlind = false")
