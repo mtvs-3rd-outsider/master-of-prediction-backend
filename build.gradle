@@ -96,7 +96,7 @@ dependencies {
 	implementation 'com.influxdb:influxdb-client-java:7.2.0'
 	implementation 'org.slf4j:slf4j-api'
 	implementation 'ch.qos.logback:logback-classic'
-	implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
+//	implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
 }
 
 tasks.named('test') {
