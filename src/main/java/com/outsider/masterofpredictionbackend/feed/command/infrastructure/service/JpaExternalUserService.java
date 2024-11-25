@@ -3,6 +3,7 @@ package com.outsider.masterofpredictionbackend.feed.command.infrastructure.servi
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.UserDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.service.ExternalUserService;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Tier;
 import com.outsider.masterofpredictionbackend.user.query.application.dto.UserInfoResponseDTO;
 import com.outsider.masterofpredictionbackend.user.query.application.service.UserInfoService;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class JpaExternalUserService implements ExternalUserService {
             userDTO.setUserId(dto.getId());
             userDTO.setUserImg(dto.getAvatarUrl());
             userDTO.setUserName(dto.getUserName());
-            //티어넣어야함
+            userDTO.setTier(new Tier(dto.getTierName(),Integer.parseInt(dto.getTierLevel())));
             userDTO.setDisplayName(dto.getDisplayName());
             //권한다름
             return userDTO;
