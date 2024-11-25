@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -80,5 +81,24 @@ public class MyChannelInfoQueryModel {
 
     @JsonProperty("followers_count")
     private int followersCount;
+    @QueryProjection // QueryDSL에서 사용 가능하도록 추가
+    public MyChannelInfoQueryModel(
+            Long userId, String userName, String userEmail, String displayName, String bio,
+            String location, String website, String birthday, String bannerImg, String userImg,
+            String tierName, int tierLevel
+    ) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.displayName = displayName;
+        this.bio = bio;
+        this.location = location;
+        this.website = website;
+        this.birthday = birthday;
+        this.bannerImg = bannerImg;
+        this.userImg = userImg;
+        this.tierName = tierName;
+        this.tierLevel = tierLevel;
 
+    }
 }

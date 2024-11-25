@@ -1,7 +1,9 @@
 package com.outsider.masterofpredictionbackend.user.query.mychannelinfo.controller;
 
+import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.dto.MyChannelInfoQueryModel;
 import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.repository.MyChannelInfoRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,20 +17,18 @@ import org.slf4j.LoggerFactory;
 @RestController
 @RequestMapping("/api/v1/my-channel")
 @Slf4j
+@RequiredArgsConstructor
 public class MyChannelInfoController {
 
-    private final MyChannelInfoRepository myChannelInfoRepository;
-
+//    private final MyChannelInfoRepository myChannelInfoRepository;
     // SLF4J 로거 선언
+    private final UserCommandRepository userCommandRepository;
 
-    public MyChannelInfoController(MyChannelInfoRepository myChannelInfoRepository) {
-        this.myChannelInfoRepository = myChannelInfoRepository;
-    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<MyChannelInfoQueryModel> getUserData(@PathVariable Long userId) {
         // 레포지토리를 사용하여 데이터베이스에서 사용자 데이터를 가져옵니다.
-        return myChannelInfoRepository.findById(userId)
+        return userCommandRepository.findMyChannelInfoByUserId(userId)
                 .map(userData -> {
                     // 반환되는 데이터를 로그로 출력
                     log.info("Found user data: {}", userData);

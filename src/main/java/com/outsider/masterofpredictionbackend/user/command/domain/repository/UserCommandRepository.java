@@ -1,6 +1,7 @@
 package com.outsider.masterofpredictionbackend.user.command.domain.repository;
 
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
+import com.outsider.masterofpredictionbackend.user.query.mychannelinfo.repository.UserChannelInfoRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface UserCommandRepository extends JpaRepository<User, Long> {
+public interface UserCommandRepository extends JpaRepository<User, Long>, UserChannelInfoRepositoryCustom {
 
     // 이메일을 기반으로 사용자 검색
     Optional<User> findByEmail(String email);
