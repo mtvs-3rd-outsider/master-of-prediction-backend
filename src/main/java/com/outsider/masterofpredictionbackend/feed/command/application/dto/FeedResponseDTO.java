@@ -36,6 +36,7 @@ public class FeedResponseDTO {
     private Boolean isShare;
     private Boolean isQuote;  // 인용 여부 추가
     private QuoteFeedDTO quoteFeed;  // 인용된 피드 정보
+    private ChannelDTO channel;
     public FeedResponseDTO(long id, AuthorType authorType, String content,
                            LocalDateTime createdAt, LocalDateTime shortAt, LocalDateTime updatedAt,
                            int viewCount, UserDTO user, GuestDTO guest,
