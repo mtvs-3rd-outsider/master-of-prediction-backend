@@ -5,6 +5,38 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 로그 파일 위치 및 이름 -->
+        <file>logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 날짜별 로그 파일 패턴 -->
+            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 최대 보관 기간 (30일) -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <!-- 로그 타임스탬프 -->
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <!-- 로거 이름 -->
+                <loggerName/>
+                <!-- JSON 로그 패턴 -->
+                <pattern>
+                    <pattern>
+                        {
+                        "level": "%level",
+                        "thread": "%thread",
+                        "message": "%message",
+                        "context": "%contextName",
+                        "caller": "%caller"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
 
 <!--    &lt;!&ndash; Logstash TCP Appender &ndash;&gt;-->
 <!--    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
@@ -21,5 +53,6 @@
     <root level="info">
         <appender-ref ref="CONSOLE" />
 <!--        <appender-ref ref="LOGSTASH" />-->
+        <appender-ref ref="FILE" />
     </root>
 </configuration>

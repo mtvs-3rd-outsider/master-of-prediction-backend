@@ -12,6 +12,9 @@ import com.outsider.masterofpredictionbackend.channelsubscribe.command.domain.se
 import com.outsider.masterofpredictionbackend.channelsubscribe.exception.InvalidSubscriptionException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -126,6 +129,19 @@ public class ChannelSubscribeService {
         }
     }
 
+    // 재처리 횟수 추적
+    private int extractRetryCount(Headers headers) {
+        Header retryHeader = headers.lastHeader("retry-count");
+        if (retryHeader == null) {
+            return 0;
+        }
+        return Integer.parseInt(new String(retryHeader.value()));
+    }
+    // DLQ로 메시지 전송
+    private void sendToDLQ(ConsumerRecord<String, String> record) {
+        // DLQ 전송 로직
+        log.warn("Sending message to DLQ: {}", record.value());
+    }
 
     @Transactional
     public void manageSubscription(ChannelSubscribeRequestDTO dto) {
