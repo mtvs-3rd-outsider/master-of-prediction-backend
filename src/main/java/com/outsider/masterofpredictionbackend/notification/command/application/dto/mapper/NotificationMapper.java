@@ -4,10 +4,12 @@ import com.outsider.masterofpredictionbackend.notification.command.application.d
 import com.outsider.masterofpredictionbackend.notification.command.domain.aggregate.Notification;
 import com.outsider.masterofpredictionbackend.notification.query.NotificationResponseDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
-
-   Notification ToEntity(NotificationDTO notificationDTO);
+   @Mapping(target = "id", ignore = true)
+   Notification toEntity(NotificationDTO notificationDTO);
    NotificationResponseDTO ToDTO(Notification notification);
+
 }
