@@ -31,16 +31,7 @@ public class BettingProductQueryService {
         this.userQueryRepository = userQueryRepository;
     }
 
-    /*
-     * 1. 배팅 10개와 유저를 join 하여 조회
-     * 2. 조회한 배팅에서 배팅 아이디를 추출하여 이미지 조회 전송
-     * 3. 조회된 이미지를 반환할 dto 에 추가하여 반환
-     * NOTE: Mongo DB 적용 검토 필요
-     */
-    public Page<BettingViewDTO> all(Pageable pageable) {
-
-        Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBetting(pageable);
-
+    private void filterBlindProducts(Page<BettingViewDTO> bettingViewDTOS){
         Map<Long, BettingViewDTO> maps = new HashMap<>();
         List<Long> ids = new ArrayList<>();
         for (BettingViewDTO dto : bettingViewDTOS) {
@@ -60,6 +51,29 @@ public class BettingProductQueryService {
             BettingViewDTO dto = maps.get(item.getBettingId());
             dto.addImgUrl(item.getImgUrl());
         }
+    }
+
+    public Page<BettingViewDTO> findByCategoryId(Pageable pageable, Long categoryId) {
+
+        Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findByCategoryId(pageable, categoryId);
+
+        filterBlindProducts(bettingViewDTOS);
+
+        return bettingViewDTOS;
+    }
+
+    /*
+     * 1. 배팅 10개와 유저를 join 하여 조회
+     * 2. 조회한 배팅에서 배팅 아이디를 추출하여 이미지 조회 전송
+     * 3. 조회된 이미지를 반환할 dto 에 추가하여 반환
+     * NOTE: Mongo DB 적용 검토 필요
+     */
+    public Page<BettingViewDTO> all(Pageable pageable) {
+
+        Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBetting(pageable);
+
+        filterBlindProducts(bettingViewDTOS);
+        
         return bettingViewDTOS;
     }
 

@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.bettingorder.command.application.service;
 
+import com.outsider.masterofpredictionbackend.betting.command.application.service.BettingEventService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.UserService;
 import com.outsider.masterofpredictionbackend.bettingorder.command.application.dto.request.BettingOrderDTO;
 import com.outsider.masterofpredictionbackend.bettingorder.command.domain.aggregate.BettingOrder;
@@ -27,14 +28,16 @@ public class BettingOrderCommandService {
     private final BettingProductValidator bettingProductValidator;
     private final UserService userService;
     private final BettingOrderRepository bettingOrderRepository;
+    private final BettingEventService bettingEventService;
 
     @Autowired
-    public BettingOrderCommandService(UserPoint userPoint, BettingOrderService bettingOrderService, BettingProductValidator bettingProductValidator, UserService userService, BettingOrderRepository bettingOrderRepository) {
+    public BettingOrderCommandService(UserPoint userPoint, BettingOrderService bettingOrderService, BettingProductValidator bettingProductValidator, UserService userService, BettingOrderRepository bettingOrderRepository, BettingEventService bettingEventService) {
         this.userPoint = userPoint;
         this.bettingOrderService = bettingOrderService;
         this.bettingProductValidator = bettingProductValidator;
         this.userService = userService;
         this.bettingOrderRepository = bettingOrderRepository;
+        this.bettingEventService = bettingEventService;
     }
 
     @Transactional
@@ -60,7 +63,9 @@ public class BettingOrderCommandService {
         validateBettingProductStatus(bettingOrderDTO.getBettingId());
 
         userPoint.pointUpdate(bettingOrderDTO.getUserId(), bettingOrderDTO.getPoint().negate());
-        return bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
+        BettingOrder bo = bettingOrderService.save(dtoConvertToEntity(bettingOrderDTO));
+        bettingEventService.notifyProductRoom(BettingOrderDTO.entityConvertToDTO(bo));
+        return bo;
     }
 
     @Transactional
