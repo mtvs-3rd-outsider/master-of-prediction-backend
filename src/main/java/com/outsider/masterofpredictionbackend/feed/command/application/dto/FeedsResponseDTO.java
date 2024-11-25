@@ -28,4 +28,5 @@ public class FeedsResponseDTO {
     private Boolean isShare;
     private Boolean isQuote;  // 인용 여부 추가
     private QuoteFeedDTO quoteFeed;  // 인용된 피드 정보
+    private ChannelDTO channel;
 }
