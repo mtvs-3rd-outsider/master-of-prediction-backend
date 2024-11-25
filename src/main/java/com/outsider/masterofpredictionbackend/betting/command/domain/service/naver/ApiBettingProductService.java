@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.*
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductImageRepository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductOptionRepository;
 import com.outsider.masterofpredictionbackend.betting.command.domain.repository.BettingProductRepository;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.BettingFeedService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +26,16 @@ public class ApiBettingProductService {
     private final BettingProductImageRepository bettingProductImageRepository;
     private final BettingProductOptionRepository bettingProductOptionRepository;
     private final APIOptionManagement apiOptionManagement;
+    private final BettingFeedService bettingFeedService;
 
     // WebClient 빌더를 주입받아 설정
-    public ApiBettingProductService(WebClient.Builder webClientBuilder, BettingProductRepository bettingProductRepository, BettingProductImageRepository bettingProductImageRepository, BettingProductOptionRepository bettingProductOptionRepository, APIOptionManagement apiOptionManagement) {
+    public ApiBettingProductService(WebClient.Builder webClientBuilder, BettingProductRepository bettingProductRepository, BettingProductImageRepository bettingProductImageRepository, BettingProductOptionRepository bettingProductOptionRepository, APIOptionManagement apiOptionManagement, BettingFeedService bettingFeedService) {
         this.webClient = webClientBuilder.build(); // 기본 URL 설정
         this.bettingProductRepository = bettingProductRepository;
         this.bettingProductImageRepository = bettingProductImageRepository;
         this.bettingProductOptionRepository = bettingProductOptionRepository;
         this.apiOptionManagement = apiOptionManagement;
+        this.bettingFeedService = bettingFeedService;
     }
 
     public ApiNaverResponse sendApi(LocalDate localDate, APIBettingProductCategory category) {
@@ -75,6 +78,9 @@ public class ApiBettingProductService {
                 });
 
         bettingProductRepository.saveAll(bettingProductsContainer);
+        for (BettingProduct bettingProduct : bettingProductsContainer) {
+            bettingFeedService.createBettingFeed(-bettingProduct.getId());
+        }
         int bettingProductsContainerSize = bettingProductsContainer.size();
         List<BettingProductOption> bettingProductOptionsContainer = new ArrayList<>();
         List<BettingProductImage> bettingProductImagesContainer = new ArrayList<>();
