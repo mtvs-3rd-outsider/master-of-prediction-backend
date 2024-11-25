@@ -23,7 +23,7 @@ public class NotificationBettingService {
     }
     // 파싱된 알림을 처리하는 메서드
     public void handleNotification(NotificationDTO notification) {
-        Notification notificationEntity =notifcationMapper.ToEntity(notification);
+        Notification notificationEntity =notifcationMapper.toEntity(notification);
         notificationRepository.save(notificationEntity);
         fcmService.sendNotificationToUser(notification);
     }
