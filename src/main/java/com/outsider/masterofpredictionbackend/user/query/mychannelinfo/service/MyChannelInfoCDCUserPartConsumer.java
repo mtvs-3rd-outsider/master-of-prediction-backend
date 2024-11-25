@@ -112,7 +112,7 @@ public class MyChannelInfoCDCUserPartConsumer {
             Long userId = jsonNode.get("user_id").asLong();
             repository.deleteById(userId);
         } catch (Exception e) {
-            logger.error("Error processing delete for JSON: {}", jsonNode, e);
+            log.error("Error processing delete for JSON: {}", jsonNode, e);
             throw new RuntimeException(e);
         }
     }
