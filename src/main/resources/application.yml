@@ -113,13 +113,22 @@ jwt:
   secret: ${JWT_SECRET}
 
 management:
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
   endpoints:
+    health:
+      probes:
+        enabled: true
     web:
       exposure:
         include: '*' # 모든 엔드포인트를 노출
   endpoint:
     prometheus:
       enabled: true # Prometheus 엔드포인트 활성화
+
 minio:
   url: ${MINIO_URL}
   accessKey: MY-USER
