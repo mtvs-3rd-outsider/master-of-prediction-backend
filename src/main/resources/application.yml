@@ -6,7 +6,6 @@ api:
     basketball: ${API_BASKETBALL_OPTION}
     korea-baseball: ${API_KOREA_BASEBALL_OPTION}
     global-baseball: ${API_GLOBAL_BASEBALL_OPTION}
-
 server:
   shutdown: graceful
   error:
