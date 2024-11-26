@@ -17,6 +17,8 @@ public class BettingDetailDTO {
 
     private List<BettingOptionDTO> options;
 
+    private Boolean isWriter;
+
     public BettingDetailDTO(BettingUserDTO user, BettingContentDTO product, List<String> productImages, List<BettingOptionDTO> options) {
         this.user = user;
         this.product = product;
