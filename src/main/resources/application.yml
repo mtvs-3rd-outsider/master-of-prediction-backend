@@ -13,6 +13,7 @@ server:
     include-binding-errors: always
     include-stacktrace: always
     include-exception: true
+
   port: 8080
   ssl:
     key-store:  ${KEY_STORE_PATH}
