@@ -70,14 +70,16 @@ public class FeedController {
         }
     }
 
-    @PutMapping(value = "/{feedId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // @PutMapping(value = "/{feedId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{feedId}")
     public ResponseEntity<ResponseMessage> updateFeed(
             @PathVariable Long feedId,
-            @RequestPart("feedData") FeedUpdateDTO feedUpdateDTO,
+            @RequestPart("feedData") String feedUpdate,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
-            @RequestPart(value = "youtubeUrls", required = false) List<String> youtubeUrls,
+            @RequestParam(value = "youtubeUrls", required = false) List<String> youtubeUrls,
             @UserId CustomUserInfoDTO customUserInfoDTO) {
         try {
+            FeedUpdateDTO feedUpdateDTO = objectMapper.readValue(feedUpdate, FeedUpdateDTO.class);
             feedFacadeService.updateFeed(feedId, feedUpdateDTO, files, youtubeUrls,customUserInfoDTO.getUserId());
             return ResponseEntity.ok(new ResponseMessage("피드가 성공적으로 수정되었습니다."));
         } catch (AccessDeniedException e) {

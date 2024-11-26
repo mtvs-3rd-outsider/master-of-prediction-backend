@@ -21,8 +21,8 @@ public class FeedUpdateDTO {
     private LocalDate updateAt;
     private UserDTO user;
     private GuestDTO guest;
-    private List<MediaFile> mediaFiles;
-    private List<YouTubeVideo> youTubeVideos;
+    private List<String> mediaFiles;
+    private List<String> youTubeVideos;
     private Boolean isQuote;  // 인용 여부 추가
     private QuoteFeedDTO quoteFeed;  // 인용된 피드 정보 추가
 }

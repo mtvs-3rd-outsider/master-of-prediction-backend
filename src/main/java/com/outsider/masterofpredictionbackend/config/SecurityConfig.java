@@ -96,6 +96,7 @@ public class SecurityConfig {
                                 "/api/v1/auth/reset-password",
                                 "/api/v1/feeds",
                                 "/api/v1/feeds/{feedId}/**",
+                                "/api/v1/feeds/**",
                                 "/api/v1/betting-products/sse")
                         .permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
