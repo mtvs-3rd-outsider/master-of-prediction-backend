@@ -16,6 +16,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -88,6 +89,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // .requestMatchers("/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/betting-products").permitAll()
                         .requestMatchers("/api/v1/auth/login",
                                 "/api/v1/auth/register",
                                 "/api/v1/auth/signup/email",
