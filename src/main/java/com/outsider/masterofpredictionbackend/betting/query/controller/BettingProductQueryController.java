@@ -43,7 +43,7 @@ public class BettingProductQueryController {
     public ResponseEntity<?> getBettingProducts(
             @PathVariable Long categoryId,
             @Parameter(description = "페이지 정보", schema = @Schema(type = "object", defaultValue = "{\n \"page\": 0,\n \"size\": 10\n}"))
-            @PageableDefault(page = 0, size = 10,  direction = Sort.Direction.DESC) Pageable pageable){
+            @PageableDefault(page = 0, size = 10, direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseEntity.ok(bettingProductQueryService.findByCategoryId(pageable, categoryId));
     }
 
@@ -55,9 +55,10 @@ public class BettingProductQueryController {
 
     @GetMapping("/api/v1/betting-products/user/v2")
     @Operation(summary = "특정 유저의 상품 조회")
+    @Parameter(name = "sort", in = ParameterIn.QUERY, hidden = true)
     public ResponseEntity<?> getBettingProductsByUserId(
             @RequestParam Long userId,
-            @PageableDefault(page = 0, size = 10,  direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(page = 0, size = 10,  sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<BettingViewDTO> bettingProducts = bettingProductQueryService.allByUserId(userId, pageable);
         return ResponseEntity.ok(bettingProducts);
     }
