@@ -43,7 +43,9 @@ public class UserChannelInfoRepositoryCustomImpl implements UserChannelInfoRepos
                                 channel.bannerImg,
                                 user.userImg,
                                 user.tier.name,
-                                user.tier.level
+                                user.tier.level,
+                                user.points
+
 //                                channel.transactions,
 //                                channel.profitRate,
 //                                channel.positionValue,

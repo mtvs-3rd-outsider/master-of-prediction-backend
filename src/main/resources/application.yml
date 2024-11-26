@@ -8,6 +8,7 @@ api:
     global-baseball: ${API_GLOBAL_BASEBALL_OPTION}
 
 server:
+  shutdown: graceful
   error:
     include-message: always
     include-binding-errors: always
@@ -28,6 +29,8 @@ server:
   tomcat:
     uri-encoding: UTF-8
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   main:
     allow-bean-definition-overriding: true
   messages:

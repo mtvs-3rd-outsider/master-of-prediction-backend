@@ -85,7 +85,7 @@ public class MyChannelInfoQueryModel {
     public MyChannelInfoQueryModel(
             Long userId, String userName, String userEmail, String displayName, String bio,
             String location, String website, String birthday, String bannerImg, String userImg,
-            String tierName, int tierLevel
+            String tierName, int tierLevel, BigDecimal points
     ) {
         this.userId = userId;
         this.userName = userName;
@@ -99,6 +99,7 @@ public class MyChannelInfoQueryModel {
         this.userImg = userImg;
         this.tierName = tierName;
         this.tierLevel = tierLevel;
+        this.points  = points;
 
     }
 }
