@@ -90,8 +90,11 @@ public class BettingProductController {
         for (int i = 0; i < size; i++) {
             bettingProductAndOptionDTO.getOptions().add(new BettingProductOptionDTO(bettingProductOptionFormDTO.getOptions_content().get(i), bettingProductOptionFormDTO.getOptions_image().get(i)));
         }
-        // NOTE: 임시 데이터
-        bettingProductAndOptionDTO.setUserId(customUserInfo.getUserId());
+        try{
+            bettingProductAndOptionDTO.setUserId(customUserInfo.getUserId());
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("message",messageSource.getMessage(BettingProductMessageCode.NOT_LOGIN)), HttpStatus.BAD_REQUEST);
+        }
         Long productId;
         try {
             productId = productCommandService.save(bettingProductAndOptionDTO);

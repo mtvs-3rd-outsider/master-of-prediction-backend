@@ -99,29 +99,7 @@ public class BettingProductQueryService {
         return bettingViewDTOS;
     }
 
-    // public List<BettingViewDTO> allByUserId(Long userId) {
-    //     // NOTE: 임시값
-    //     int limit = 10;
-    //     int offset = 0;
-    //     List<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBettingByUserIdLimit(userId, limit, offset);
-    //     // blind 상품은 List 에서 제거
-    //     bettingViewDTOS.removeIf(BettingViewDTO::getIsBlind);
-    //
-    //     Map<Long, BettingViewDTO> maps = new HashMap<>();
-    //     List<Long> ids = new ArrayList<>();
-    //     for (BettingViewDTO dto : bettingViewDTOS) {
-    //         ids.add(dto.getBettingId());
-    //         maps.put(dto.getBettingId(), dto);
-    //     }
-    //     List<BettingProductImage> bettingProductImages = bettingImageQueryRepository.findAllByIds(ids);
-    //     for (BettingProductImage item : bettingProductImages) {
-    //         BettingViewDTO dto = maps.get(item.getBettingId());
-    //         dto.addImgUrl(item.getImgUrl());
-    //     }
-    //     return bettingViewDTOS;
-    // }
-
-    public BettingDetailDTO detail(Long id) {
+    public BettingDetailDTO detail(Long id, Long userId) {
         BettingDetailDTO bettingDetailDTO = bettingQueryRepository.findBettingById(id);
         if (bettingDetailDTO == null) {
             log.info("BettingProductQueryService.detail - bettingDetailDTO is null");
@@ -132,6 +110,7 @@ public class BettingProductQueryService {
         }
         bettingDetailDTO.setProductImages(bettingImageQueryRepository.findByBettingId(id));
         bettingDetailDTO.setOptions(bettingOptionQueryRepository.findByBettingId(id));
+        bettingDetailDTO.setIsWriter(bettingDetailDTO.getUser().getUserID().equals(userId));
         feedViewCountService.incrementViewCount(-id);
         return bettingDetailDTO;
 
