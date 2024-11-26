@@ -11,10 +11,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class FeedResponseDTOConverter {
     private final ExternalUserService externalUserService;
+    private final GuestDTOConverter guestDTOConverter;
 
 
-    public FeedResponseDTOConverter(ExternalUserService externalUserService) {
+    public FeedResponseDTOConverter(ExternalUserService externalUserService, GuestDTOConverter guestDTOConverter) {
         this.externalUserService = externalUserService;
+        this.guestDTOConverter = guestDTOConverter;
     }
 
 
@@ -51,7 +53,7 @@ public class FeedResponseDTOConverter {
                 feed.getUpdatedAt(),
                 feed.getViewCount(),
                 (feed.getAuthorType()==AuthorType.USER) ? externalUserService.getUser(feed.getUser().getUserId()) : null,
-                null,
+                (feed.getAuthorType()==AuthorType.GUEST)? guestDTOConverter.fromEntity(feed.getGuest()):null,
                 feed.getMediaFiles(),
                 feed.getYoutubeVideos(),
                 null,
