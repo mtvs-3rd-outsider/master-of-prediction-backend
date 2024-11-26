@@ -8,6 +8,7 @@ import com.outsider.masterofpredictionbackend.betting.query.repository.BettingIm
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingOptionQueryRepository;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingQueryRepository;
 import com.outsider.masterofpredictionbackend.betting.query.repository.UserQueryRepository;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.FeedViewCountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,12 +24,14 @@ public class BettingProductQueryService {
     private final BettingImageQueryRepository bettingImageQueryRepository;
     private final BettingOptionQueryRepository bettingOptionQueryRepository;
     private final UserQueryRepository userQueryRepository;
+    private final FeedViewCountService feedViewCountService;
 
-    public BettingProductQueryService(BettingQueryRepository bettingQueryRepository, BettingImageQueryRepository bettingImageQueryRepository, BettingOptionQueryRepository bettingOptionQueryRepository, UserQueryRepository userQueryRepository) {
+    public BettingProductQueryService(BettingQueryRepository bettingQueryRepository, BettingImageQueryRepository bettingImageQueryRepository, BettingOptionQueryRepository bettingOptionQueryRepository, UserQueryRepository userQueryRepository, FeedViewCountService feedViewCountService) {
         this.bettingQueryRepository = bettingQueryRepository;
         this.bettingImageQueryRepository = bettingImageQueryRepository;
         this.bettingOptionQueryRepository = bettingOptionQueryRepository;
         this.userQueryRepository = userQueryRepository;
+        this.feedViewCountService = feedViewCountService;
     }
 
     private void filterBlindProducts(Page<BettingViewDTO> bettingViewDTOS){
@@ -129,6 +132,7 @@ public class BettingProductQueryService {
         }
         bettingDetailDTO.setProductImages(bettingImageQueryRepository.findByBettingId(id));
         bettingDetailDTO.setOptions(bettingOptionQueryRepository.findByBettingId(id));
+        feedViewCountService.incrementViewCount(-id);
         return bettingDetailDTO;
 
     }
