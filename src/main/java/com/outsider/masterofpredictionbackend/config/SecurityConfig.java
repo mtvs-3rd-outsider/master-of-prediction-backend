@@ -182,6 +182,7 @@ public class SecurityConfig {
     public static String[] permittedEndpoints() {
         return new String[]{
                 "/api/v1/auth/login",
+                "/api/v1/auth/admin/login",
                 "/api/v1/auth/register",
                 "/api/v1/auth/signup/email",
                 "/api/v1/auth/signup/emailAuth",
