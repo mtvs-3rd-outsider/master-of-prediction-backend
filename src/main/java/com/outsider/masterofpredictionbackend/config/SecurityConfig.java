@@ -88,18 +88,8 @@ public class SecurityConfig {
                         .anyRequest().requiresSecure()
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // .requestMatchers("/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/betting-products").permitAll()
-                        .requestMatchers("/api/v1/auth/login",
-                                "/api/v1/auth/register",
-                                "/api/v1/auth/signup/email",
-                                "/api/v1/auth/signup/emailAuth",
-                                "/api/v1/auth/forgot-password",
-                                "/api/v1/auth/reset-password",
-                                "/api/v1/feeds",
-                                "/api/v1/feeds/{feedId}/**",
-                                "/api/v1/feeds/**",
-                                "/api/v1/betting-products/sse")
+                        .requestMatchers(permittedEndpoints())
                         .permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
@@ -189,5 +179,19 @@ public class SecurityConfig {
                 .clientName("Google")
                 .build();
     }
-
+    public static String[] permittedEndpoints() {
+        return new String[]{
+                "/api/v1/auth/login",
+                "/api/v1/auth/register",
+                "/api/v1/auth/signup/email",
+                "/api/v1/auth/signup/emailAuth",
+                "/api/v1/auth/forgot-password",
+                "/api/v1/auth/reset-password",
+                "/api/v1/feeds",
+                "/api/v1/feeds/{feedId}/**",
+                "/api/v1/feeds/**",
+                "/api/v1/betting-products/sse",
+                "/api/v1/betting-products"
+        };
+    }
 }

@@ -4,6 +4,7 @@ import com.outsider.masterofpredictionbackend.user.command.application.dto.Custo
 import com.outsider.masterofpredictionbackend.user.command.application.dto.EmailAuthDTO;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.LoginRequestDTO;
 import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.User;
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import com.outsider.masterofpredictionbackend.user.command.domain.repository.UserCommandRepository;
 import com.outsider.masterofpredictionbackend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 @Service
@@ -34,6 +36,38 @@ public class AuthService {
         this.encoder = encoder;
         this.redisTemplate = redisTemplate;
     }
+    @Transactional
+    public String adminLogin(LoginRequestDTO dto) throws AccessDeniedException {
+        String email = dto.getEmail();
+        String password = dto.getPassword();
+
+        // 이메일로 사용자 조회
+        Optional<User> userOptional = userCommandRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("이메일이 존재하지 않습니다.");
+        }
+
+        User user = userOptional.get();
+
+        // 탈퇴 상태 확인
+        checkWithdrawalStatus(user);
+
+        // 비밀번호 확인
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 권한 확인 (ROLE_ADMIN)
+        if (!user.getAuthority().equals(Authority.ROLE_ADMIN)) {
+            throw new AccessDeniedException("관리자 권한이 없습니다.");
+        }
+
+        // 토큰 생성
+        CustomUserInfoDTO info = new CustomUserInfoDTO(user);
+        String accessToken = jwtUtil.createAccessToken(info);
+        return accessToken;
+    }
+
     @Transactional
     public String login(LoginRequestDTO dto) {
         String email = dto.getEmail();

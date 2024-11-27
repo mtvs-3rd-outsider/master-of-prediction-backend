@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 @RestController
@@ -27,6 +28,35 @@ public class AuthQueryController {
         this.messageSource = messageSource;
         this.authService = authService;
         this.userService = userService;
+    }
+
+
+    @PostMapping("admin/login")
+    public ResponseEntity<?> postAdminLogin(
+            @Valid @RequestBody LoginRequestDTO request,
+            HttpServletResponse response
+    ) throws AccessDeniedException {
+        System.out.println(request);
+
+        // 관리자 로그인 처리
+        String token = this.authService.adminLogin(request);
+
+        // 쿠키 생성
+        Cookie cookie = new Cookie("accessToken", token);
+        cookie.setHttpOnly(false); // 클라이언트 측에서 자바스크립트로 접근 가능하도록 설정
+        cookie.setSecure(true); // HTTPS 환경에서만 전송되도록 설정
+        cookie.setDomain("master-of-prediction.shop"); // 쿠키가 유효한 도메인 설정
+        cookie.setPath("/"); // 쿠키가 유효한 경로 설정
+        cookie.setAttribute("SameSite", "None");
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효 기간 (7일)
+        response.addCookie(cookie);
+
+        // 사용자 정보 조회
+        String email = request.getEmail();
+        UserInfoResponseDTO userInfo = userService.getUserInfoByEmail(email);
+        userInfo.setToken(token);
+
+        return ResponseEntity.ok(userInfo);
     }
     @PostMapping("login")
     public  ResponseEntity<?> postMemberProfile(

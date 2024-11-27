@@ -43,6 +43,7 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.List;
 
 import static com.outsider.masterofpredictionbackend.common.constant.StringConstants.*;
+import static com.outsider.masterofpredictionbackend.config.SecurityConfig.permittedEndpoints;
 
 @Configuration
 @EnableWebSecurity
@@ -89,17 +90,7 @@ public class DevSecurityConfig {
                 // )
                 .authorizeHttpRequests(auth -> auth
                         // .requestMatchers("/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/betting-products").permitAll()
-                        .requestMatchers("/api/v1/auth/login",
-                                "/api/v1/auth/register",
-                                "/api/v1/auth/signup/email",
-                                "/api/v1/auth/signup/emailAuth",
-                                "/api/v1/auth/forgot-password",
-                                "/api/v1/auth/reset-password",
-                                "/api/v1/feeds",
-                                "/api/v1/feeds/{feedId}/**",
-                                "/api/v1/feeds/**",
-                                "/api/v1/betting-products/sse")
+                        .requestMatchers(permittedEndpoints())
                         .permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
