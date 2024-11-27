@@ -58,6 +58,7 @@ public class GlobalExceptionHandler {
         response.put("details", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
     // 기타 예외 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleException(Exception ex, WebRequest request) {

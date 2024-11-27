@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.context.MessageSource;
-import org.springframework.web.reactive.resource.NoResourceFoundException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 public enum CustomExceptionMapping {
     USERNAME_NOT_FOUND(UsernameNotFoundException.class, HttpStatus.NOT_FOUND, "custom.http.status.username_not_found"),
@@ -15,9 +15,8 @@ public enum CustomExceptionMapping {
     TOKEN_NOT_FOUND(TokenNotFoundException.class, HttpStatus.NOT_FOUND, "custom.http.status.token_not_found"),
     SUBSCRIPTION_NOT_FOUND(SubscriptionNotFoundException.class, HttpStatus.NOT_FOUND, "custom.http.status.subscription_not_found"),
     USER_ALREADY_EXISTS(UserAlreadyExistsException.class, HttpStatus.CONFLICT, "custom.http.status.user_already_exists"),
-    NO_RESOURCE_FOUND(NoResourceFoundException .class, HttpStatus.NOT_FOUND, "custom.http.status.no_resource_found"), // 추가
+    NO_RESOURCE_FOUND(NoResourceFoundException.class, HttpStatus.NOT_FOUND, "custom.http.status.no_resource_found"), // 추가
     NO_HANDLER_FOUND(NoHandlerFoundException .class, HttpStatus.NOT_FOUND, "custom.http.status.no_handler_found"); // 추가
-
     private final Class<? extends Exception> exceptionClass;
     private final HttpStatus httpStatus;
     private final String messageKey;
