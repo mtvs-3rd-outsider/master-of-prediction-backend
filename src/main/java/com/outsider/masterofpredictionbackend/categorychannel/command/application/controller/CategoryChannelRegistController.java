@@ -5,21 +5,21 @@ import com.outsider.masterofpredictionbackend.categorychannel.command.applicatio
 import com.outsider.masterofpredictionbackend.categorychannel.command.application.service.CategoryChannelRegistService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.UserId;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/category-channels")
 public class CategoryChannelRegistController {
 
     private final CategoryChannelRegistService categoryChannelRegistService;
 
-    @Autowired
-    public CategoryChannelRegistController(CategoryChannelRegistService categoryChannelRegistService) {
-        this.categoryChannelRegistService = categoryChannelRegistService;
-    }
+
 
     @PostMapping("/register")
     public ResponseEntity<String> registerCategoryChannel(

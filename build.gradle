@@ -107,3 +107,28 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+def querydslSrcDir = 'src/main/generated'
+
+// QueryDSL에서 생성된 소스 파일의 경로를 지정하고, 해당 경로를 소스 세트에 포함시킵니다.
+tasks.withType(JavaCompile) {
+    options.generatedSourceOutputDirectory = file(querydslSrcDir)\
+}
+
+// 'clean' 작업 시 QueryDSL에서 생성된 소스 디렉토리를 삭제합니다.
+clean {
+    delete file(querydslSrcDir)
+}
+
+// 'sourceSets' 블록을 하나로 통합하여, QueryDSL과 MapStruct에서 생성된 소스 파일을 모두 포함시킵니다.
+sourceSets {
+    main {
+        java {
+            // 기존 소스 디렉토리와 함께, QueryDSL과 MapStruct에서 생성된 소스 디렉토리를 모두 포함시킵니다.
+            srcDirs = [
+                'src/main/java',
+                querydslSrcDir,
+                'build/generated/sources/annotationProcessor/java/main'
+            ]
+        }
+    }
+}

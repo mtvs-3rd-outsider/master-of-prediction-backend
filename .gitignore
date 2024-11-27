@@ -52,3 +52,9 @@ mysql_data/
 secrets.env
 
 **/email-server-config/
+src/main/generated
+build/generated/sources/annotationProcessor/java/main
+
+.env.k83
+
+logs/
