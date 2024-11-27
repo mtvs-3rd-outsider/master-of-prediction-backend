@@ -5,6 +5,7 @@ import com.outsider.masterofpredictionbackend.betting.command.application.servic
 import com.outsider.masterofpredictionbackend.betting.command.application.service.CustomBettingProductMessage;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO;
 import com.outsider.masterofpredictionbackend.betting.query.service.BettingProductQueryService;
+import com.outsider.masterofpredictionbackend.user.command.infrastructure.service.CustomUserDetail;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,29 +45,24 @@ public class BettingProductQueryController {
     public ResponseEntity<?> getBettingProducts(
             @PathVariable Long categoryId,
             @Parameter(description = "페이지 정보", schema = @Schema(type = "object", defaultValue = "{\n \"page\": 0,\n \"size\": 10\n}"))
-            @PageableDefault(page = 0, size = 10,  direction = Sort.Direction.DESC) Pageable pageable){
+            @PageableDefault(page = 0, size = 10, direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseEntity.ok(bettingProductQueryService.findByCategoryId(pageable, categoryId));
     }
 
-    // @GetMapping("/api/v1/betting-products/user")
-    // @Operation(summary = "특정 유저의 상품 조회")
-    // public ResponseEntity<?> getBettingProductsByUserId(@RequestParam Long userId){
-    //     return ResponseEntity.ok(bettingProductQueryService.allByUserId(userId));
-    // }
-
     @GetMapping("/api/v1/betting-products/user/v2")
     @Operation(summary = "특정 유저의 상품 조회")
+    @Parameter(name = "sort", in = ParameterIn.QUERY, hidden = true)
     public ResponseEntity<?> getBettingProductsByUserId(
             @RequestParam Long userId,
-            @PageableDefault(page = 0, size = 10,  direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(page = 0, size = 10,  sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<BettingViewDTO> bettingProducts = bettingProductQueryService.allByUserId(userId, pageable);
         return ResponseEntity.ok(bettingProducts);
     }
 
     @GetMapping("/api/v1/betting-products/{id}")
     @Operation(summary = "배팅 상품 상세 조회")
-    public ResponseEntity<?> getBettingProductDetail(@PathVariable Long id){
-        return ResponseEntity.ok(bettingProductQueryService.detail(id));
+    public ResponseEntity<?> getBettingProductDetail(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetail customUserDetail){
+        return ResponseEntity.ok(bettingProductQueryService.detail(id, customUserDetail != null ? customUserDetail.getId() : null));
     }
     
     @GetMapping("/api/v1/user-point/{id}")

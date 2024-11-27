@@ -8,6 +8,7 @@ import com.outsider.masterofpredictionbackend.betting.query.repository.BettingIm
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingOptionQueryRepository;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingQueryRepository;
 import com.outsider.masterofpredictionbackend.betting.query.repository.UserQueryRepository;
+import com.outsider.masterofpredictionbackend.feed.command.application.service.FeedViewCountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,12 +24,14 @@ public class BettingProductQueryService {
     private final BettingImageQueryRepository bettingImageQueryRepository;
     private final BettingOptionQueryRepository bettingOptionQueryRepository;
     private final UserQueryRepository userQueryRepository;
+    private final FeedViewCountService feedViewCountService;
 
-    public BettingProductQueryService(BettingQueryRepository bettingQueryRepository, BettingImageQueryRepository bettingImageQueryRepository, BettingOptionQueryRepository bettingOptionQueryRepository, UserQueryRepository userQueryRepository) {
+    public BettingProductQueryService(BettingQueryRepository bettingQueryRepository, BettingImageQueryRepository bettingImageQueryRepository, BettingOptionQueryRepository bettingOptionQueryRepository, UserQueryRepository userQueryRepository, FeedViewCountService feedViewCountService) {
         this.bettingQueryRepository = bettingQueryRepository;
         this.bettingImageQueryRepository = bettingImageQueryRepository;
         this.bettingOptionQueryRepository = bettingOptionQueryRepository;
         this.userQueryRepository = userQueryRepository;
+        this.feedViewCountService = feedViewCountService;
     }
 
     private void filterBlindProducts(Page<BettingViewDTO> bettingViewDTOS){
@@ -96,29 +99,7 @@ public class BettingProductQueryService {
         return bettingViewDTOS;
     }
 
-    // public List<BettingViewDTO> allByUserId(Long userId) {
-    //     // NOTE: 임시값
-    //     int limit = 10;
-    //     int offset = 0;
-    //     List<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBettingByUserIdLimit(userId, limit, offset);
-    //     // blind 상품은 List 에서 제거
-    //     bettingViewDTOS.removeIf(BettingViewDTO::getIsBlind);
-    //
-    //     Map<Long, BettingViewDTO> maps = new HashMap<>();
-    //     List<Long> ids = new ArrayList<>();
-    //     for (BettingViewDTO dto : bettingViewDTOS) {
-    //         ids.add(dto.getBettingId());
-    //         maps.put(dto.getBettingId(), dto);
-    //     }
-    //     List<BettingProductImage> bettingProductImages = bettingImageQueryRepository.findAllByIds(ids);
-    //     for (BettingProductImage item : bettingProductImages) {
-    //         BettingViewDTO dto = maps.get(item.getBettingId());
-    //         dto.addImgUrl(item.getImgUrl());
-    //     }
-    //     return bettingViewDTOS;
-    // }
-
-    public BettingDetailDTO detail(Long id) {
+    public BettingDetailDTO detail(Long id, Long userId) {
         BettingDetailDTO bettingDetailDTO = bettingQueryRepository.findBettingById(id);
         if (bettingDetailDTO == null) {
             log.info("BettingProductQueryService.detail - bettingDetailDTO is null");
@@ -129,6 +110,8 @@ public class BettingProductQueryService {
         }
         bettingDetailDTO.setProductImages(bettingImageQueryRepository.findByBettingId(id));
         bettingDetailDTO.setOptions(bettingOptionQueryRepository.findByBettingId(id));
+        bettingDetailDTO.setIsWriter(bettingDetailDTO.getUser().getUserID().equals(userId));
+        feedViewCountService.incrementViewCount(-id);
         return bettingDetailDTO;
 
     }
