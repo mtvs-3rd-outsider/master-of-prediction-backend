@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class RankingService {
@@ -28,24 +29,12 @@ public class RankingService {
     @Transactional
     public void updateRanking(Long userId, BigDecimal newPoints) {
         UserRanking ranking = userRankingRepository.findById(userId).orElse(new UserRanking(userId));
-
-        int oldRank = ranking.getRank();
-        int newRank = calculateRank(newPoints);
-
+        
         ranking.setPoints(newPoints);
-        ranking.setRank(newRank);
         ranking.setLastUpdated(LocalDateTime.now());
 
-        // 동일한 포인트를 가진 사용자들의 순위 조정
-        if (newRank != oldRank) {
-            userRankingRepository.findByPoints(newPoints)
-                    .forEach(r -> {
-                        if (!r.getUserId().equals(userId)) {
-                            r.setRank(newRank);
-                            userRankingRepository.save(r);
-                        }
-                    });
-        }
+        // 전체 순위 재계산
+        updateAllRankings();
 
         User user = userCommandRepository.findById(userId).orElseThrow(NotExistException::new);
         user.setPoints(newPoints);
@@ -53,9 +42,27 @@ public class RankingService {
         userRankingRepository.save(ranking);
     }
 
-    private int calculateRank(BigDecimal newPoints) {
-        long higherPointsCount = userRankingRepository.countByPointsGreaterThan(newPoints);
-        return (int)(higherPointsCount + 1);
+    private void updateAllRankings() {
+        // 포인트 내림차순으로 모든 랭킹을 조회
+        List<UserRanking> allRankings = userRankingRepository.findAllByOrderByPointsDescLastUpdatedAsc();
+        
+        int currentRank = 1;
+        BigDecimal previousPoints = null;
+        int sameRankCount = 0;
+
+        for (UserRanking ranking : allRankings) {
+            if (previousPoints != null && ranking.getPoints().compareTo(previousPoints) != 0) {
+                // 이전 포인트와 다른 경우, 중복된 순위만큼 건너뛴 순위 부여
+                currentRank += sameRankCount;
+                sameRankCount = 0;
+            }
+            
+            ranking.setRank(currentRank);
+            userRankingRepository.save(ranking);
+            
+            previousPoints = ranking.getPoints();
+            sameRankCount++;
+        }
     }
 
     @Transactional
@@ -67,24 +74,11 @@ public class RankingService {
         ranking.setScore(newScore);
         ranking.setLastUpdated(LocalDateTime.now());
 
-        int oldRank = ranking.getRank();
-        int newRank = calculateRankByScore(newScore);
-
-        ranking.setRank(newRank);
-
-        // 동일한 점수를 가진 사용자들의 순위 조정
-        if (newRank != oldRank) {
-            scoreRankingRepository.findByScore(newScore)
-                    .forEach(r -> {
-                        if (!r.getUserId().equals(userId)) {
-                            r.setRank(newRank);
-                            scoreRankingRepository.save(r);
-                        }
-                    });
-        }
+        // 전체 순위 재계산
+        updateAllScoreRankings();
 
         long totalUsers = scoreRankingRepository.count();
-        double percentile = ((double) (totalUsers - newRank + 1) / totalUsers) * 100;
+        double percentile = ((double) (totalUsers - ranking.getRank() + 1) / totalUsers) * 100;
 
         Tier newTier = Tier.getTierByPercentileAndBets(percentile);
         User user = userCommandRepository.findById(userId).orElseThrow(NotExistException::new);
@@ -92,6 +86,29 @@ public class RankingService {
 
         userCommandRepository.save(user);
         scoreRankingRepository.save(ranking);
+    }
+
+    private void updateAllScoreRankings() {
+        // 점수 내림차순으로 모든 랭킹을 조회
+        List<ScoreRanking> allRankings = scoreRankingRepository.findAllByOrderByScoreDescLastUpdatedAsc();
+        
+        int currentRank = 1;
+        Integer previousScore = null;
+        int sameRankCount = 0;
+
+        for (ScoreRanking ranking : allRankings) {
+            if (previousScore != null && ranking.getScore() != previousScore) {
+                // 이전 점수와 다른 경우, 중복된 순위만큼 건너뛴 순위 부여
+                currentRank += sameRankCount;
+                sameRankCount = 0;
+            }
+            
+            ranking.setRank(currentRank);
+            scoreRankingRepository.save(ranking);
+            
+            previousScore = ranking.getScore();
+            sameRankCount++;
+        }
     }
 
     private int calculateScoreByResult(String result) {

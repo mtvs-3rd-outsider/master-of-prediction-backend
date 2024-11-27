@@ -30,4 +30,6 @@ public interface UserRankingRepository extends JpaRepository<UserRanking, Long> 
     @Modifying
     @Query("UPDATE UserRanking u SET u.rank = u.rank - 1 WHERE u.rank >= ?1 AND u.rank <= ?2")
     void shiftRankingsUp(int lowerBound, int upperBound);
+
+    List<UserRanking> findAllByOrderByPointsDescLastUpdatedAsc();
 }

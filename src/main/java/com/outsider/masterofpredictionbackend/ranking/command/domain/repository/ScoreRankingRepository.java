@@ -31,4 +31,6 @@ public interface ScoreRankingRepository extends JpaRepository<ScoreRanking, Long
     @Transactional
     @Query("UPDATE ScoreRanking s SET s.rank = s.rank - 1 WHERE s.rank BETWEEN :startRank AND :endRank")
     void shiftRankingsUp(int startRank, int endRank);
+
+    List<ScoreRanking> findAllByOrderByScoreDescLastUpdatedAsc();
 }
