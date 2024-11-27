@@ -9,6 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DMNotificationDTO {
     private String senderUserId;
+    private String senderUserName;
     private String content;
     private String roomId;
     private String sent;

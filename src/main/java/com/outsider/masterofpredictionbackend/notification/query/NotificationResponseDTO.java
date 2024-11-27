@@ -4,6 +4,8 @@ import com.outsider.masterofpredictionbackend.notification.command.domain.aggreg
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class NotificationResponseDTO {
@@ -15,6 +17,8 @@ public class NotificationResponseDTO {
     private NotificationType type;
     private boolean isRead;
     private LocalDateTime createdAt; // 생성일
+    private Map<String, String> additionalData = new HashMap<>(); // 추가 데이터
+
     // 기본 생성자
     public NotificationResponseDTO() {
     }
@@ -28,9 +32,6 @@ public class NotificationResponseDTO {
     }
 
     public NotificationResponseDTO(String content, String title, Long userId, NotificationType type) {
-        this.content = content;
-        this.title = title;
-        this.userId = userId;
-        this.type = type;
+        this(content, title, userId, type, false);
     }
 }

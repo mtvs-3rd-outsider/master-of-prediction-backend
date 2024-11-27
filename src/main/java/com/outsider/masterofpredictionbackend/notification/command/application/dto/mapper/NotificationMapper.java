@@ -8,8 +8,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
-   @Mapping(target = "id", ignore = true)
+   @Mapping(target = "id", ignore = true) // ID는 자동 생성되므로 무시
+   @Mapping(target = "additionalData", source = "additionalData") // 추가 데이터 매핑
    Notification toEntity(NotificationDTO notificationDTO);
-   NotificationResponseDTO ToDTO(Notification notification);
 
+   @Mapping(target = "additionalData", source = "additionalData") // 추가 데이터 매핑
+   NotificationResponseDTO toDTO(Notification notification);
 }

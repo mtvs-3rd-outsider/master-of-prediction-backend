@@ -26,6 +26,6 @@ public class NotificationQueryService {
         Page<Notification> notificationsPage = notificationRepository.findByUserId(userId, pageable);
 
         // Convert each Notification entity to NotificationDTO using the mapper
-        return notificationsPage.map(notificationMapper::ToDTO);
+        return notificationsPage.map(notificationMapper::toDTO);
     }
 }
