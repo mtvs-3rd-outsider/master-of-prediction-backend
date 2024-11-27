@@ -7,6 +7,7 @@ import com.google.firebase.messaging.Notification;
 import com.outsider.masterofpredictionbackend.notification.command.application.dto.NotificationDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -35,15 +36,22 @@ public class FCMService {
     }
     // 각 토큰에 맞게 메시지를 생성하고 전송
     public void sendNotification(NotificationDTO notificationDTO, String token) {
+        // 알림 설정
         Notification notification = Notification.builder()
                 .setTitle(notificationDTO.getTitle())
                 .setBody(notificationDTO.getContent())
                 .build();
 
-        Message message = Message.builder()
+        // 메시지 빌드
+        Message.Builder messageBuilder = Message.builder()
                 .setToken(token)
-                .setNotification(notification)
-                .build();
+                .setNotification(notification);
+
+        // 추가 데이터 설정
+        Map<String, String> dataMap = notificationDTO.toMap();
+        dataMap.forEach(messageBuilder::putData);
+
+        Message message = messageBuilder.build();
 
         try {
             String response = FirebaseMessaging.getInstance().send(message);
@@ -53,4 +61,5 @@ public class FCMService {
             fcmTokenService.deleteToken(notificationDTO.getUserId().toString(), token); // 실패 시 토큰 삭제
         }
     }
+
 }
