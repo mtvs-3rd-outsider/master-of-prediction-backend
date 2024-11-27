@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.ranking.query;
 
+import com.outsider.masterofpredictionbackend.ranking.command.domain.aggregate.UserRanking;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ public class RankingRepositoryCustomImpl implements RankingRepositoryCustom {
                 .select(userRanking, user)
                 .from(userRanking)
                 .leftJoin(user).on(userRanking.userId.eq(user.id))
+                .orderBy(userRanking.points.desc()) // 포인트 기준 내림차순 정렬 추가
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -70,5 +73,16 @@ public class RankingRepositoryCustomImpl implements RankingRepositoryCustom {
         UserRankingDTO result = userRankingMapper.toDTO(tuple.get(userRanking), tuple.get(user));
         return Optional.of(result);
     }
+
+    @Override
+    public List<UserRanking> findByPoints(BigDecimal points) {
+        return queryFactory
+                .selectFrom(userRanking)
+                .where(userRanking.points.eq(points))
+                .orderBy(userRanking.points.desc())
+                .fetch();
+    }
+
+ 
 }
 
