@@ -5,6 +5,7 @@ import com.outsider.masterofpredictionbackend.categorychannel.command.domain.agg
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.CategoryChannelStatus;
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.ManagerRole;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ public class CategoryChannel {
     @Column(name = "CATRGORY_CHANNEL_STATUS")
     private CategoryChannelStatus categoryChannelStatus;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "categoryChannel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryChannelManager> managers = new ArrayList<>();
     // 부매니저 리스트 조회

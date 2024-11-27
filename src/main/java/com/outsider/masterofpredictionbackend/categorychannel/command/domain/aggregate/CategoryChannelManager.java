@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.categorychannel.command.domain.ag
 
 import com.outsider.masterofpredictionbackend.categorychannel.command.domain.aggregate.enumtype.ManagerRole;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "CATEGORY_CHANNEL_MANAGER")
@@ -12,6 +13,7 @@ public class CategoryChannelManager {
     @Column(name = "ID")
     private Long id;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "CATEGORY_CHANNEL_ID", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CategoryChannel categoryChannel;
