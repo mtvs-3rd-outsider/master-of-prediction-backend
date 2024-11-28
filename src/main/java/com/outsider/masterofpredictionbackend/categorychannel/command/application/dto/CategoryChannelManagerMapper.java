@@ -10,6 +10,5 @@ public interface CategoryChannelManagerMapper {
 
 
     @Mapping(target = "id", ignore = true) // ID는 자동 생성
-    @Mapping(target = "categoryChannel", ignore = true) // categoryChannel 무시
     CategoryChannelManager toEntity(CategoryChannelManagerAssignRequestDTO requestDTO);
 }
