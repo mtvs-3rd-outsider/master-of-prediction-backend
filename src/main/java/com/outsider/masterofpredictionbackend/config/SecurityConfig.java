@@ -36,7 +36,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -66,9 +65,8 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CorsFilter corsFilter;
-    private final CorsConfigurationSource corsConfigurationSource;
 
-    public SecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint, CorsFilter corsFilter, CorsConfigurationSource corsConfigurationSource) {
+    public SecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint, CorsFilter corsFilter) {
         this.userRegistService = userRegistService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtUtil = jwtUtil;
@@ -77,7 +75,6 @@ public class SecurityConfig {
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.corsFilter = corsFilter;
-        this.corsConfigurationSource = corsConfigurationSource;
     }
 
     @Bean
@@ -89,7 +86,7 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
                 .requiresChannel(channel -> channel
                         .anyRequest().requiresSecure()
                 )
