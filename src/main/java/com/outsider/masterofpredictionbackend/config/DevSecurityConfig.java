@@ -66,6 +66,7 @@ public class DevSecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CorsFilter corsFilter;
+    private final CorsConfigurationSource corsConfigurationSource;
     public DevSecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint, CorsFilter corsFilter, CorsConfigurationSource corsConfigurationSource) {
         this.userRegistService = userRegistService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
@@ -75,6 +76,7 @@ public class DevSecurityConfig {
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.corsFilter = corsFilter;
+        this.corsConfigurationSource = corsConfigurationSource;
     }
 
     @Bean
@@ -86,8 +88,7 @@ public class DevSecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .addFilter(corsFilter)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 // requiresChannel(channel -> channel
                 //         .anyRequest().requiresSecure()
                 // )
