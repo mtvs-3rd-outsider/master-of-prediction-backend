@@ -13,7 +13,8 @@ import java.util.Arrays;
 public class CorsConfig {
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
         // 모든 출처 허용 (개발 환경)
@@ -33,9 +34,7 @@ public class CorsConfig {
         config.setExposedHeaders(Arrays.asList("*"));
         config.setMaxAge(3600L);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        
-        return source;
+        return new CorsFilter(source);
     }
 } 

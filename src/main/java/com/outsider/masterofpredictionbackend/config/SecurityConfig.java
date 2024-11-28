@@ -89,7 +89,8 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .cors(Customizer.withDefaults())
+                .addFilter(corsFilter)
                 .requiresChannel(channel -> channel
                         .anyRequest().requiresSecure()
                 )
