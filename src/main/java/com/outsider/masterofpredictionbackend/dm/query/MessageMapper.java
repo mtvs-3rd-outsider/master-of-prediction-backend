@@ -23,6 +23,7 @@ public interface MessageMapper {
     @Mapping(target = "userName", source = "user.userName")
     @Mapping(target = "displayName", source = "user.displayName")
     @Mapping(target = "userImg", source = "user.userImg")
+    @Mapping(target = "reactionId", source = "id")
     ReactionVM toReactionVM(MessageReaction reaction);
 
     // Message에서 Reaction 리스트를 포함한 MessageVM 생성
