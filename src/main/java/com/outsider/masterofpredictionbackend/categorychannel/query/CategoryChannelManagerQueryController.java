@@ -34,4 +34,13 @@ public class CategoryChannelManagerQueryController {
         List<CategoryChannelManager> managers = categoryChannelManagerService.getChannelManagers(channelId);
         return ResponseEntity.ok(managers);
     }
+
+    @GetMapping("/{channelId}/is-manager")
+    public ResponseEntity<Boolean> isChannelManager(
+            @PathVariable Long channelId,
+            @RequestParam Long userId
+    ) {
+        boolean isManager = categoryChannelManagerService.isChannelManager(channelId, userId);
+        return ResponseEntity.ok(isManager);
+    }
 }

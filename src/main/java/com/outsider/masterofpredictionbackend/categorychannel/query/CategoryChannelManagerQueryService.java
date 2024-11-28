@@ -31,4 +31,11 @@ public class CategoryChannelManagerQueryService {
     public List<CategoryChannelManager> getChannelManagers(Long channelId) {
         return categoryChannelManagerRepository.findByCategoryChannelId(channelId);
     }
+
+    @Transactional(readOnly = true)
+    public boolean isChannelManager(Long channelId, Long userId) {
+        return categoryChannelManagerRepository
+                .findByCategoryChannelIdAndUserId(channelId, userId)
+                .isPresent();
+    }
 }
