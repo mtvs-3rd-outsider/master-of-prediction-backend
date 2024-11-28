@@ -65,7 +65,8 @@ public class DevSecurityConfig {
     private final UserRegistService userRegistService;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-    public DevSecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint) {
+    private final CorsFilter corsFilter;
+    public DevSecurityConfig(UserRegistService userRegistService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint, CorsFilter corsFilter) {
         this.userRegistService = userRegistService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtUtil = jwtUtil;
@@ -73,6 +74,7 @@ public class DevSecurityConfig {
         this.customAuthorizationManager = customAuthorizationManager;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.corsFilter = corsFilter;
     }
 
     @Bean
@@ -84,7 +86,7 @@ public class DevSecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
                 // requiresChannel(channel -> channel
                 //         .anyRequest().requiresSecure()
                 // )
@@ -129,32 +131,6 @@ public class DevSecurityConfig {
             return (CustomUserDetail) delegate.loadUser(userRequest);
         };
 
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://*.google.com");
-        config.addAllowedOrigin("https://lh3.googleusercontent.com");
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("https://localhost:3000");
-        config.addAllowedOrigin("https://192.168.0.38:3000");
-        config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
-        config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
-        config.addAllowedOrigin("https://master-of-prediction.shop");
-        config.addAllowedOrigin("https://master-of-prediction.shop");
-        config.addAllowedOrigin("https://*.master-of-prediction.shop");
-        config.addAllowedOrigin("https://app.master-of-prediction.shop");
-        config.addAllowedOrigin("https://master-of-prediction.shop:3334");
-        config.addAllowedOrigin("https://master-of-prediction-frontend-psxd.vercel.app/");
-        config.addAllowedOrigin("https://master-of-prediction-frontend.vercel.app");
-        config.setAllowedMethods(List.of("*"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("*"));
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
     }
 
     @Bean
