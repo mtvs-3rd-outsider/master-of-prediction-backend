@@ -58,3 +58,6 @@ build/generated/sources/annotationProcessor/java/main
 .env.k83
 
 logs/
+
+### mac ###
+.DS_Store
