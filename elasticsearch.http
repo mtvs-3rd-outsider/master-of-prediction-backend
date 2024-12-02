@@ -25,7 +25,6 @@ Content-Type: application/json
     "match_all": {}
   }
 }
-af61051359c2545adb450c9769f9c634-2001641979.ap-northeast-2.elb.amazonaws.com
 
 ###
 GET http://localhost:9200/users/_search

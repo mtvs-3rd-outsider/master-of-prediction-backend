@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+  echo "Windows detected. Running execution.bat..."
+  ./execution.bat
+else
+  echo "Unix-based OS detected. Running execution.sh..."
+  bash execution.sh
+fi
+
