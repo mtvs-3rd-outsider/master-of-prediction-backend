@@ -247,6 +247,7 @@ services:
     depends_on:
       - zookeeper
       - kafka
+      - mongodb
     environment:
       GROUP_ID: 1
       BOOTSTRAP_SERVERS: kafka:9092
@@ -267,6 +268,7 @@ services:
     volumes:
       - ./init-scripts/initialize.sh:/kafka/startup.sh
     profiles: ["kafka", "required","prod"]
+
   connect-init:
     image: debezium/connect:2.7.2.Final
     depends_on:
@@ -277,6 +279,7 @@ services:
       - ./init-scripts/mysql-connector.json:/kafka/connectors/mysql-connector.json
     entrypoint: ["/bin/bash", "/kafka/startup.sh"]
     profiles: ["kafka", "required","prod"]
+
   kafka:
     healthcheck:
       test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9093", "--list"]
