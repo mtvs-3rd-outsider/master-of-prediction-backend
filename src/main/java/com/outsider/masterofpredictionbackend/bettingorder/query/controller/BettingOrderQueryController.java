@@ -33,6 +33,12 @@ public class BettingOrderQueryController {
     @GetMapping("/api/v1/user/betting-products")
     @Operation(summary = "유저의 구매내역 조회")
     public ResponseEntity<?> getUserOrderHistory(@RequestParam Long userId, @RequestParam Long bettingId){
+        if (userId == null){
+            ResponseEntity.badRequest().body("등록되지 않은 사용자입니다.");
+        }
+        if (bettingId == null){
+            ResponseEntity.badRequest().body("등록되지 않은 배팅상품입니다.");
+        }
         return ResponseEntity.ok(bettingOrderQueryService.findUserOrderHistory(userId, bettingId));
     }
 
