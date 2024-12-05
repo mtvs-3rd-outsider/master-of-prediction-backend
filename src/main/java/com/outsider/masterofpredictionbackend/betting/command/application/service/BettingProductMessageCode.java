@@ -12,7 +12,8 @@ public enum BettingProductMessageCode {
     TIME_FORMAT_INVALID("error.time.format.invalid"),
     PRODUCT_OPTION_MISSING("error.product.option.missing"),
     NOT_LOGIN("unauthorized.guest"),
-    NOT_FOUND("betting.not.found");
+    NOT_FOUND("betting.not.found"),
+    USER_NOT_FOUND("user.not.found");
 
     private final String code;
 
