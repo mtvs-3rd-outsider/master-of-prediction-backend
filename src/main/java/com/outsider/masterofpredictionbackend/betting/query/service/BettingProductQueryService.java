@@ -110,7 +110,10 @@ public class BettingProductQueryService {
         }
         bettingDetailDTO.setProductImages(bettingImageQueryRepository.findByBettingId(id));
         bettingDetailDTO.setOptions(bettingOptionQueryRepository.findByBettingId(id));
-        bettingDetailDTO.setIsWriter(bettingDetailDTO.getUser().getUserID().equals(userId));
+        bettingDetailDTO.setIsWriter(false);
+        if (userId != null && bettingDetailDTO.getUser() != null) {
+            bettingDetailDTO.setIsWriter(bettingDetailDTO.getUser().getUserID().equals(userId));
+        }
         feedViewCountService.incrementViewCount(-id);
         return bettingDetailDTO;
 
