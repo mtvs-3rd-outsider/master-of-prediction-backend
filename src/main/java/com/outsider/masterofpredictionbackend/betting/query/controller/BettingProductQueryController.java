@@ -20,14 +20,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @Tag(description = "배팅 API", name = "배팅 API")
 public class BettingProductQueryController {
 
     private final BettingProductQueryService bettingProductQueryService;
+    private final CustomBettingProductMessage messageSource;
 
-    public BettingProductQueryController(BettingProductQueryService bettingProductQueryService) {
+
+    public BettingProductQueryController(BettingProductQueryService bettingProductQueryService, CustomBettingProductMessage messageSource) {
         this.bettingProductQueryService = bettingProductQueryService;
+        this.messageSource = messageSource;
     }
 
     @GetMapping("/api/v1/betting-products")
@@ -64,10 +69,23 @@ public class BettingProductQueryController {
     public ResponseEntity<?> getBettingProductDetail(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetail customUserDetail){
         return ResponseEntity.ok(bettingProductQueryService.detail(id, customUserDetail != null ? customUserDetail.getId() : null));
     }
-    
+
+
+    private Long parseUserId(String userId) {
+        try {
+            return Long.parseLong(userId.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     @GetMapping("/api/v1/user-point/{id}")
     @Operation(summary = "유저 포인트 조회")
-    public ResponseEntity<?> getUserPoint(@PathVariable Long id){
-        return ResponseEntity.ok(bettingProductQueryService.findUserPoint(id));
+    public ResponseEntity<?> getUserPoint(@PathVariable String id){
+        Long userNum = parseUserId(id);
+        if (userNum == null || userNum == 0){
+            return ResponseEntity.ok(BigDecimal.ZERO);
+        }
+        return ResponseEntity.ok(bettingProductQueryService.findUserPoint(userNum));
     }
 }

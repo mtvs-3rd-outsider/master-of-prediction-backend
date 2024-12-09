@@ -30,16 +30,27 @@ public class BettingOrderQueryController {
         this.messageSource = messageSource;
     }
 
+    private Long parseUserId(String userId) {
+        try {
+            return Long.parseLong(userId.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     @GetMapping("/api/v1/user/betting-products")
     @Operation(summary = "유저의 구매내역 조회")
-    public ResponseEntity<?> getUserOrderHistory(@RequestParam Long userId, @RequestParam Long bettingId){
-        if (userId == null){
-            ResponseEntity.badRequest().body(messageSource.getMessage(BettingProductMessageCode.USER_NOT_FOUND, (Object) null));
+    public ResponseEntity<?> getUserOrderHistory(@RequestParam String userId, @RequestParam Long bettingId){
+        Long userNum = parseUserId(userId);
+
+        if (userNum == null || userNum == 0){
+            return ResponseEntity.ok(null);
         }
+
         if (bettingId == null){
-            ResponseEntity.badRequest().body(messageSource.getMessage(BettingProductMessageCode.NOT_FOUND, (Object) null));
+            return ResponseEntity.badRequest().body(messageSource.getMessage(BettingProductMessageCode.NOT_FOUND, (Object) null));
         }
-        return ResponseEntity.ok(bettingOrderQueryService.findUserOrderHistory(userId, bettingId));
+        return ResponseEntity.ok(bettingOrderQueryService.findUserOrderHistory(userNum, bettingId));
     }
 
     @GetMapping("/api/v1/betting-products/orders")
