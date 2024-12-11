@@ -74,7 +74,7 @@ public class BettingProductService {
         if (bettingProduct == null) {
             return false;
         }
-        if(LocalDate.now().isAfter(bettingProduct.getDeadlineDate())){
+        if(LocalDate.now().isBefore(bettingProduct.getDeadlineDate())){
             return false;
         }
         return !LocalDate.now().isEqual(bettingProduct.getDeadlineDate()) ||
