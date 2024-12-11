@@ -69,10 +69,9 @@ public class NaverBettingScheduledTasks {
                 }
                 handleGameResults(bettingProduct, apiResult, saveBuffer);
             }
-            if (!saveBuffer.isEmpty()){
-                log.info("saveBuffer: {}", saveBuffer);
-                bettingProductRepository.saveAll(saveBuffer);
-            }
+        }
+        if (!saveBuffer.isEmpty()){
+            bettingProductRepository.saveAll(saveBuffer);
         }
     }
 
@@ -87,10 +86,15 @@ public class NaverBettingScheduledTasks {
             winningOptionId = options.get(1).getId();
         } else if ("DRAW".equals(winner)) {
             // 2번째 인덱스가 draw
+            try{
+                bettingOrderCommandService.refundPayment(bettingProduct.getId());
+            }catch (Exception e){
+                log.error("refundPayment error: {}", e.getMessage());
+                return;
+            }
             bettingProduct.setState(BettingProductState.END);
             bettingProduct.setWinningOption(0L);
             saveBuffer.add(bettingProduct);
-            bettingOrderCommandService.refundPayment(bettingProduct.getId());
             return;
         }
         if (winningOptionId != null) {
@@ -115,6 +119,12 @@ public class NaverBettingScheduledTasks {
                         log.info("game.getWinner(): {}", game.getWinner());
                         handleWinningOption(bettingProduct, game.getWinner(), options, saveBuffer);
                     }
+                }
+                else if ("BEFORE".equals(game.getStatusCode()) && "경기연기".equals(game.getStatusInfo())){
+                    bettingOrderCommandService.refundPayment(bettingProduct.getId());
+                    bettingProduct.setState(BettingProductState.END);
+                    bettingProduct.setWinningOption(0L);
+                    saveBuffer.add(bettingProduct);
                 }
                 break;
             }

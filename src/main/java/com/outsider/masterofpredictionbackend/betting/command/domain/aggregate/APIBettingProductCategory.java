@@ -8,8 +8,8 @@ import lombok.ToString;
 public enum APIBettingProductCategory {
     KOREA_FOOTBALL("kfootball"),
     GLOBAL_FOOTBALL("gfootball"),
-    KOREA_BASEBALL("kfootball"),
-    GLOBAL_BASEBALL("gfootball"),
+    KOREA_BASEBALL("kbaseball"),
+    GLOBAL_BASEBALL("gbaseball"),
     BASKETBALL("basketball");
 
     private final String category;

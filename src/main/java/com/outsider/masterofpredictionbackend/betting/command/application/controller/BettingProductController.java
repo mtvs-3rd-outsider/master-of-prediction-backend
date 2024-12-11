@@ -8,6 +8,7 @@ import com.outsider.masterofpredictionbackend.betting.command.application.servic
 import com.outsider.masterofpredictionbackend.betting.command.application.service.ProductCommandService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.naver.ApiBettingProductService;
 import com.outsider.masterofpredictionbackend.betting.command.domain.service.BettingProductService;
+import com.outsider.masterofpredictionbackend.bettingorder.command.domain.service.NaverBettingScheduledTasks;
 import com.outsider.masterofpredictionbackend.feed.command.application.service.BettingFeedService;
 import com.outsider.masterofpredictionbackend.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.masterofpredictionbackend.util.AdminUserIdList;
@@ -43,14 +44,16 @@ public class BettingProductController {
     private final ApiBettingProductService apiBettingProductService;
     private final CustomBettingProductMessage messageSource;
     private final BettingFeedService bettingFeedService;
+    private final NaverBettingScheduledTasks naverBettingScheduledTasks;
 
     @Autowired
-    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService, ApiBettingProductService apiBettingProductService, CustomBettingProductMessage messageSource, BettingFeedService bettingFeedService) {
+    public BettingProductController(ProductCommandService productCommandService, BettingProductService bettingProductService, ApiBettingProductService apiBettingProductService, CustomBettingProductMessage messageSource, BettingFeedService bettingFeedService, NaverBettingScheduledTasks naverBettingScheduledTasks) {
         this.productCommandService = productCommandService;
         this.bettingProductService = bettingProductService;
         this.apiBettingProductService = apiBettingProductService;
         this.messageSource = messageSource;
         this.bettingFeedService = bettingFeedService;
+        this.naverBettingScheduledTasks = naverBettingScheduledTasks;
     }
 
     @PostMapping("/api/v1/betting-products")
@@ -156,10 +159,19 @@ public class BettingProductController {
         }
     }
 
-
     @GetMapping("/api/v1/betting-products/test/user-prediction-resultdto")
     @Operation(summary = "유저의 예측 결과 조회(테스트)")
     public ResponseEntity<?> getUserPredictionResultDTO(@RequestParam Long productId, @RequestParam Long matchedOptionId){
         return ResponseEntity.ok(bettingProductService.findUserPredictionResult(productId, matchedOptionId));
+    }
+    @GetMapping("/api/v1/betting-products/api-game/settlement")
+    @Operation(summary = "API 게임 배팅 상품 수동 정산")
+    public ResponseEntity<?> settlementApiGame(){
+        try{
+            naverBettingScheduledTasks.runSettlementFootballTask();
+            return ResponseEntity.ok("success");
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error",e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 }
