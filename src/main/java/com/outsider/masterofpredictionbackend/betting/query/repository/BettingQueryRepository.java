@@ -13,26 +13,34 @@ import java.util.List;
 public interface BettingQueryRepository extends JpaRepository<BettingProduct, Long> {
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO( " +
-            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind, bp.blindName, bp.createdAt)  FROM BettingProduct bp " +
-            "JOIN User u ON bp.userId = u.id ORDER BY bp.id DESC")
+            "u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, " +
+            "bp.isBlind, bp.blindName, bp.createdAt, " +
+            "c.id, c.displayName, c.categoryChannelStatus) " +
+            "FROM BettingProduct bp " +
+            "JOIN User u ON bp.userId = u.id " +
+            "LEFT JOIN CategoryChannel c ON bp.categoryCode = c.id " +
+            "ORDER BY bp.id DESC")
     Page<BettingViewDTO> findBetting(Pageable pageable);
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO( " +
-            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind, bp.blindName, bp.createdAt)  FROM BettingProduct bp " +
-            "JOIN User u ON bp.userId = u.id where bp.categoryCode = :categoryId  ORDER BY bp.id DESC")
-    Page<BettingViewDTO> findByCategoryId(Pageable pageable, Long categoryId);
-
-
-    // @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO(" +
-    //         " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.isBlind, bp.blindName, bp.createdAt)  FROM BettingProduct bp " +
-    //         "JOIN User u ON bp.userId = u.id where u.id = :userId ORDER BY bp.id LIMIT :limit OFFSET :offset")
-    // List<BettingViewDTO> findBettingByUserIdLimit(Long userId, int limit, int offset);
-
-    @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO(" +
-            " u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, bp.createdAt) " +
+            "u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, " +
+            "bp.isBlind, bp.blindName, bp.createdAt, " +
+            "c.id, c.displayName, c.categoryChannelStatus) " +
             "FROM BettingProduct bp " +
             "JOIN User u ON bp.userId = u.id " +
-            "WHERE u.id = :userId and bp.isBlind = false")
+            "LEFT JOIN CategoryChannel c ON bp.categoryCode = c.id " +
+            "WHERE bp.categoryCode = :categoryId " +
+            "ORDER BY bp.id DESC")
+    Page<BettingViewDTO> findByCategoryId(Pageable pageable, Long categoryId);
+
+    @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO( " +
+            "u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, " +
+            "bp.isBlind, bp.blindName, bp.createdAt, " +
+            "c.id, c.displayName, c.categoryChannelStatus) " +
+            "FROM BettingProduct bp " +
+            "JOIN User u ON bp.userId = u.id " +
+            "LEFT JOIN CategoryChannel c ON bp.categoryCode = c.id " +
+            "WHERE u.id = :userId AND bp.isBlind = false")
     Page<BettingViewDTO> findBettingByUserId(Long userId, Pageable pageable);
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO(" +

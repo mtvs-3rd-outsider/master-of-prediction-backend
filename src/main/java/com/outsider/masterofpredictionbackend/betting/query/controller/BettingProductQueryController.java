@@ -45,7 +45,7 @@ public class BettingProductQueryController {
     }
 
     @GetMapping("/api/v1/betting-products/category/{categoryId}")
-    @Operation(summary = "배팅 상품 조회")
+    @Operation(summary = "카테고리 배팅 상품 조회")
     @Parameter(name = "sort", in = ParameterIn.QUERY, hidden = true)
     public ResponseEntity<?> getBettingProducts(
             @PathVariable Long categoryId,

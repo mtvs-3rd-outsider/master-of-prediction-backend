@@ -34,7 +34,7 @@ public class BettingProduct  {
     private Long userId;
 
     @Column(nullable = false)
-    private long categoryCode;
+    private Long categoryCode;
 
     @Column(nullable = false)
     private LocalDate deadlineDate;

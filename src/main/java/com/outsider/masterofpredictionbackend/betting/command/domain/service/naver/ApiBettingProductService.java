@@ -148,7 +148,7 @@ public class ApiBettingProductService {
                 matchTitle,
                 content.toString(),
                 userId,
-                1,
+                4L,
                 gameDateTime.toLocalDate(),
                 gameDateTime.toLocalTime(),
                 false,
