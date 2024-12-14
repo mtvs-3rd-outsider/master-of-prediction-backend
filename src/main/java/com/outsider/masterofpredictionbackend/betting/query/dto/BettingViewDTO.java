@@ -1,11 +1,10 @@
 package com.outsider.masterofpredictionbackend.betting.query.dto;
 
 
+import com.outsider.masterofpredictionbackend.user.command.domain.aggregate.embeded.Authority;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.springframework.cglib.core.Local;
 
 import com.outsider.masterofpredictionbackend.feed.command.application.dto.ChannelDTO;
 import com.outsider.masterofpredictionbackend.feed.command.domain.aggregate.enumtype.ChannelType;
@@ -44,35 +43,14 @@ public class BettingViewDTO {
 
     private ChannelDTO channel;
 
+    private Boolean isAdmin;
+
+    // 배팅 전체 검색에 사용됨
     public BettingViewDTO(Long userID, String userName, String displayName,
                           String tierName, String userImg, String title,
-                          Long bettingId, Boolean isBlind) {
-        this.userID = userID;
-        this.userName = userName;
-        this.displayName = displayName;
-        this.tierName = tierName;
-        this.userImg = userImg;
-        this.title = title;
-        this.imgUrls = new ArrayList<>();
-        this.bettingId = bettingId;
-        this.isBlind = isBlind;
-    }
-    public BettingViewDTO(Long userID, String userName, String displayName,
-                          String tierName, String userImg, String title,
-                          Long bettingId, LocalDateTime createdAt) {
-        this.userID = userID;
-        this.userName = userName;
-        this.displayName = displayName;
-        this.tierName = tierName;
-        this.userImg = userImg;
-        this.title = title;
-        this.imgUrls = new ArrayList<>();
-        this.bettingId = bettingId;
-        this.createdAt = createdAt;
-    }
-    public BettingViewDTO(Long userID, String userName, String displayName,
-                          String tierName, String userImg, String title,
-                          Long bettingId, Boolean isBlind, String blindName, LocalDateTime createdAt) {
+                          Long bettingId, Boolean isBlind, String blindName,
+                          LocalDateTime createdAt, Long channelId, String channelDisplayName,
+                          CategoryChannelStatus categoryChannelStatus, Authority authority) {
         this.userID = userID;
         this.userName = userName;
         this.displayName = displayName;
@@ -84,24 +62,7 @@ public class BettingViewDTO {
         this.isBlind = isBlind;
         this.blindName = blindName;
         this.createdAt = createdAt;
-    }
-    public BettingViewDTO(Long userID, String userName, String displayName,
-                          String tierName, String userImg, String title,
-                          Long bettingId, Boolean isBlind, String blindName, 
-                          LocalDateTime createdAt, Long channelId, String channelDisplayName, 
-                          CategoryChannelStatus categoryChannelStatus) {
-        this.userID = userID;
-        this.userName = userName;
-        this.displayName = displayName;
-        this.tierName = tierName;
-        this.userImg = userImg;
-        this.title = title;
-        this.imgUrls = new ArrayList<>();
-        this.bettingId = bettingId;
-        this.isBlind = isBlind;
-        this.blindName = blindName;
-        this.createdAt = createdAt;
-        
+        this.isAdmin = Authority.ROLE_ADMIN == authority;
         this.channel = new ChannelDTO(channelId, channelDisplayName, ChannelType.CATEGORYCHANNEL);
     }
 
