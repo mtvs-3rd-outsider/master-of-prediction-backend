@@ -1,5 +1,6 @@
 package com.outsider.masterofpredictionbackend.betting.query.repository;
 
+import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,8 +19,9 @@ public interface BettingQueryRepository extends JpaRepository<BettingProduct, Lo
             "FROM BettingProduct bp " +
             "JOIN User u ON bp.userId = u.id " +
             "LEFT JOIN CategoryChannel c ON bp.categoryCode = c.id " +
+            "WHERE bp.state = :state " +
             "ORDER BY bp.id DESC")
-    Page<BettingViewDTO> findBetting(Pageable pageable);
+    Page<BettingViewDTO> findBetting(Pageable pageable, BettingProductState state);
 
     @Query("SELECT new com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO( " +
             "u.id, u.userName, u.displayName, u.tier.name, u.userImg, bp.title, bp.id, " +

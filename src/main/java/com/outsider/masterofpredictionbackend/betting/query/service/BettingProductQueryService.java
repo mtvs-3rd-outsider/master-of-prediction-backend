@@ -2,6 +2,7 @@ package com.outsider.masterofpredictionbackend.betting.query.service;
 
 import com.outsider.masterofpredictionbackend.betting.command.application.service.BettingProductException;
 import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductImage;
+import com.outsider.masterofpredictionbackend.betting.command.domain.aggregate.BettingProductState;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingDetailDTO;
 import com.outsider.masterofpredictionbackend.betting.query.dto.BettingViewDTO;
 import com.outsider.masterofpredictionbackend.betting.query.repository.BettingImageQueryRepository;
@@ -73,7 +74,7 @@ public class BettingProductQueryService {
      */
     public Page<BettingViewDTO> all(Pageable pageable) {
 
-        Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBetting(pageable);
+        Page<BettingViewDTO> bettingViewDTOS = bettingQueryRepository.findBetting(pageable, BettingProductState.PROGRESS);
 
         filterBlindProducts(bettingViewDTOS);
         
