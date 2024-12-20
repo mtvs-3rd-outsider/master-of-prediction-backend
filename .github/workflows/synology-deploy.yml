@@ -62,6 +62,6 @@ jobs:
           
           cd /var/services/homes/dudnjsckrgo/docker/master-of-prediction-backend
           
-          docker compose -f docker-compose.prod.yml pull
-          docker compose -f docker-compose.prod.yml down
-          docker compose -f docker-compose.prod.yml up -d
+          docker-compose -f docker-compose.prod.yml pull
+          docker-compose -f docker-compose.prod.yml down
+          docker-compose -f docker-compose.prod.yml up -d
