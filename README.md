@@ -23,7 +23,7 @@
 
 
 ## 📝 소개
-백엔드 깃 레파지토리의 README.md를 빠르게 작성하기 위해 만든 템플릿입니다.
+모든것에 예측게임을 열고 서로 토론하며 배팅하는 커뮤니티형 SNS입니다.
 
 <br />
 
@@ -120,7 +120,6 @@ Infrastructure Layer (Data Access/External API)
 ## 보안
 - **JWT**: 토큰 기반 인증
 - **OAuth**: 소셜 로그인 지원
-- 모든 도메인에 통합 인증 적용
 
 ## 개발 가이드라인
 
@@ -132,8 +131,8 @@ Infrastructure Layer (Data Access/External API)
 
 ### 코드 구조
 ```
-src/main/java/
-├── domain/
+개별서버
+├── src/main/java//
 │   ├── betting/
 │   │   ├── application/     # Controller, Service
 │   │   ├── domain/          # Entity, Domain Service
