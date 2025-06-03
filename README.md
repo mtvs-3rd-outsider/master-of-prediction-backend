@@ -147,7 +147,18 @@ Infrastructure Layer (Data Access/External API)
 <br />
 
 ## 💁‍♂️ 프로젝트 팀원
-|Backend|Frontend|
-|:---:|:---:|
-| ![](https://github.com/yewon-Noh.png?size=120) | ![](https://github.com/SeongHo-C.png?size=120) |
-|[노예원](https://github.com/yewon-Noh)|[이성호](https://github.com/SeongHo-C)|
+#### 풀스택
+<table align="center">
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/jeonjinhyun"><img src="https://github.com/jeonjinhyun.png" width="100px;" alt=""/><br /><b>전진현</b></a><br /></td>
+      <td align="center"><a href="https://github.com/tripleyoung"><img src="https://github.com/tripleyoung.png" width="100px;" alt=""/><br /><b>윤여원</b></a><br /></td>
+      <td align="center"><a href="https://github.com/apfp77"><img src="https://github.com/apfp77.png" width="100px;" alt=""/><br /><b>김영규</b></a><br /></td>
+    </tr>
+    <tr>
+      <td align="center">팀장</td>
+      <td align="center">팀원</td>
+      <td align="center">팀원</td>
+    </tr>
+  </tbody>
+</table>
