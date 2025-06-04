@@ -27,6 +27,9 @@
 
 <br />
 
+## 🎞 Demo
+[시연영상](https://drive.google.com/drive/folders/1OaxGK4_IwRO0C4N7InPWIAcKHZZWCOUc?usp=drive_link)<br/>
+
 ### 프로젝트 구조
 # 프로젝트 아키텍처
 
